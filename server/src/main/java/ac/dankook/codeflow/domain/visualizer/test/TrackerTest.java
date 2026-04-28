@@ -15,8 +15,10 @@ public class TrackerTest {
                         .toAbsolutePath()
         );
 
+        String input = "4\n3 9 1 7";
+
         DockerTracker tracker = new DockerTracker();
-        DockerTracker.TraceResult result = tracker.runAndTrace(sourceCode);
+        DockerTracker.TraceResult result = tracker.runAndTrace(sourceCode, input);
 
         System.out.println("=== 1. 결과 ===");
         System.out.println(result.programOutput());
