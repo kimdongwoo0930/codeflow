@@ -79,8 +79,8 @@ class AuthServiceTest {
         SignupResponse response = authService.signup(signupRequest);
 
         // then
-        assertThat(response.getEmail()).isEqualTo("test@test.com");
-        assertThat(response.getNickname()).isEqualTo("tester");
+        assertThat(response.email()).isEqualTo("test@test.com");
+        assertThat(response.nickname()).isEqualTo("tester");
         verify(userRepository, times(1)).save(any(User.class));
     }
 
@@ -208,7 +208,7 @@ class AuthServiceTest {
         // then
         // 1. 반환된 accessToken 이 "jwt-token" 인지 확인
         // 힌트: assertThat(response.getAccessToken()).isEqualTo("jwt-token")
-        assertThat(response.getAccessToken()).isEqualTo("token");
+        assertThat(response.accessToken()).isEqualTo("token");
     }
 
     @Test

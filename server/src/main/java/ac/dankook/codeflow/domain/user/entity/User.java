@@ -52,7 +52,7 @@ public class User extends BaseTimeEntity {
     private boolean emailVerified;
 
     public static User from(SignupRequest request, String encodedPassword) {
-        return new User(null, request.getEmail(), encodedPassword, request.getNickname(), null,
+        return new User(null, request.email(), encodedPassword, request.nickname(), null,
                 LoginType.EMAIL, Role.ROLE_USER, true);
     }
 

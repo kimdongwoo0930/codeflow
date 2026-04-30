@@ -1,0 +1,1164 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>CodeFlow — 코딩 페이지</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #0B0F1A;
+    --bg2: #111827;
+    --border: #1F2937;
+    --blue: #3B82F6;
+    --purple: #8B5CF6;
+    --green: #10B981;
+    --font-body: 'Pretendard', -apple-system, sans-serif;
+    --font-code: 'JetBrains Mono', monospace;
+  }
+
+  html, body {
+    height: 100%;
+    overflow: hidden;
+  }
+
+  body {
+    background: var(--bg);
+    color: #f1f5f9;
+    font-family: var(--font-body);
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* ── TOP BAR ── */
+  .topbar {
+    height: 48px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 16px;
+    background: var(--bg2);
+    border-bottom: 1px solid var(--border);
+    z-index: 50;
+  }
+
+  .topbar-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .logo-icon {
+    width: 26px; height: 26px;
+    background: linear-gradient(135deg, var(--blue), var(--purple));
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .topbar-logo {
+    font-family: var(--font-code);
+    font-size: 14px;
+    font-weight: 600;
+    color: #e2e8f0;
+  }
+
+  .topbar-sep {
+    width: 1px; height: 18px;
+    background: var(--border);
+  }
+
+  .topbar-prob {
+    font-size: 13px;
+    color: #94a3b8;
+    max-width: 300px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .topbar-tags {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .tag {
+    display: inline-flex;
+    align-items: center;
+    padding: 2px 8px;
+    border-radius: 999px;
+    font-size: 10px;
+    font-weight: 500;
+    border: 1px solid;
+  }
+
+  .tag-blue { color: var(--blue); border-color: rgba(59,130,246,0.25); background: rgba(59,130,246,0.08); }
+  .tag-yellow { color: #fbbf24; border-color: rgba(251,191,36,0.25); background: rgba(251,191,36,0.08); }
+  .tag-green { color: var(--green); border-color: rgba(16,185,129,0.25); background: rgba(16,185,129,0.08); }
+
+  .topbar-right {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .btn-run {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 7px 16px;
+    font-size: 12px;
+    font-weight: 600;
+    color: #fff;
+    background: rgba(16,185,129,0.15);
+    border: 1px solid rgba(16,185,129,0.35);
+    border-radius: 7px;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+
+  .btn-run:hover { background: rgba(16,185,129,0.25); }
+
+  .btn-submit {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 7px 16px;
+    font-size: 12px;
+    font-weight: 600;
+    color: #fff;
+    background: linear-gradient(135deg, var(--blue), var(--purple));
+    border: none;
+    border-radius: 7px;
+    cursor: pointer;
+    transition: opacity 0.2s;
+  }
+
+  .btn-submit:hover { opacity: 0.9; }
+
+  .btn-viz {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 7px 14px;
+    font-size: 12px;
+    font-weight: 500;
+    color: #a78bfa;
+    background: rgba(139,92,246,0.10);
+    border: 1px solid rgba(139,92,246,0.25);
+    border-radius: 7px;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+
+  .btn-viz:hover { background: rgba(139,92,246,0.18); }
+
+  .topbar-back {
+    font-size: 12px;
+    color: #4b5563;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    transition: color 0.2s;
+  }
+
+  .topbar-back:hover { color: #94a3b8; }
+
+  /* ── MAIN LAYOUT ── */
+  .main-layout {
+    flex: 1;
+    display: flex;
+    overflow: hidden;
+  }
+
+  /* ── LEFT PANEL — Problem Description ── */
+  .left-panel {
+    width: 380px;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    border-right: 1px solid var(--border);
+    overflow: hidden;
+  }
+
+  .panel-tabs {
+    display: flex;
+    border-bottom: 1px solid var(--border);
+    background: var(--bg2);
+    flex-shrink: 0;
+  }
+
+  .ptab {
+    padding: 10px 16px;
+    font-size: 12px;
+    font-weight: 500;
+    color: #4b5563;
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    transition: color 0.2s, border-color 0.2s;
+    background: transparent;
+    border-top: none;
+    border-left: none;
+    border-right: none;
+  }
+
+  .ptab:hover { color: #94a3b8; }
+
+  .ptab.active {
+    color: var(--blue);
+    border-bottom-color: var(--blue);
+  }
+
+  .left-scroll {
+    flex: 1;
+    overflow-y: auto;
+    padding: 20px;
+    scrollbar-width: thin;
+    scrollbar-color: #1f2937 transparent;
+  }
+
+  .left-scroll::-webkit-scrollbar { width: 4px; }
+  .left-scroll::-webkit-scrollbar-track { background: transparent; }
+  .left-scroll::-webkit-scrollbar-thumb { background: #1f2937; border-radius: 4px; }
+
+  .prob-header-section {
+    margin-bottom: 20px;
+  }
+
+  .prob-title-main {
+    font-size: 18px;
+    font-weight: 700;
+    color: #f1f5f9;
+    margin-bottom: 10px;
+    line-height: 1.3;
+  }
+
+  .prob-tags-row {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+
+  .divider {
+    height: 1px;
+    background: var(--border);
+    margin: 16px 0;
+  }
+
+  .section-heading {
+    font-family: var(--font-code);
+    font-size: 11px;
+    font-weight: 600;
+    color: #4b5563;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 10px;
+  }
+
+  .prob-desc {
+    font-size: 13px;
+    line-height: 1.8;
+    color: #94a3b8;
+  }
+
+  .prob-desc strong {
+    color: #e2e8f0;
+    font-weight: 600;
+  }
+
+  .io-block {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 8px;
+    padding: 12px;
+    margin-bottom: 10px;
+  }
+
+  .io-label {
+    font-family: var(--font-code);
+    font-size: 10px;
+    color: var(--blue);
+    font-weight: 600;
+    margin-bottom: 8px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+
+  .io-pre {
+    font-family: var(--font-code);
+    font-size: 12px;
+    line-height: 1.7;
+    color: #cbd5e1;
+    white-space: pre-wrap;
+  }
+
+  .hint-box {
+    background: rgba(139,92,246,0.06);
+    border: 1px solid rgba(139,92,246,0.18);
+    border-radius: 8px;
+    padding: 12px;
+  }
+
+  .hint-label {
+    font-family: var(--font-code);
+    font-size: 10px;
+    color: #a78bfa;
+    font-weight: 600;
+    margin-bottom: 6px;
+    text-transform: uppercase;
+  }
+
+  .hint-text {
+    font-size: 12px;
+    line-height: 1.7;
+    color: #94a3b8;
+  }
+
+  .constraint-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .constraint-list li {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    font-size: 12px;
+    color: #64748b;
+  }
+
+  .constraint-list li::before {
+    content: '•';
+    color: var(--blue);
+    flex-shrink: 0;
+    line-height: 1.6;
+  }
+
+  /* ── CENTER PANEL — Editor ── */
+  .center-panel {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  .editor-topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 14px;
+    background: var(--bg2);
+    border-bottom: 1px solid var(--border);
+    flex-shrink: 0;
+  }
+
+  .editor-file-tab {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 12px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    font-family: var(--font-code);
+    font-size: 11px;
+    color: #94a3b8;
+  }
+
+  .editor-file-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--blue);
+  }
+
+  .lang-select {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 10px;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 6px;
+    font-family: var(--font-code);
+    font-size: 11px;
+    color: #64748b;
+    cursor: pointer;
+  }
+
+  /* ── CODE EDITOR AREA ── */
+  .editor-area {
+    flex: 1;
+    overflow-y: auto;
+    background: #0d1117;
+    scrollbar-width: thin;
+    scrollbar-color: #1f2937 transparent;
+  }
+
+  .editor-area::-webkit-scrollbar { width: 4px; }
+  .editor-area::-webkit-scrollbar-track { background: transparent; }
+  .editor-area::-webkit-scrollbar-thumb { background: #1f2937; border-radius: 4px; }
+
+  .code-editor {
+    padding: 16px 0;
+    min-height: 100%;
+  }
+
+  .code-line-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 0;
+    font-family: var(--font-code);
+    font-size: 13px;
+    line-height: 1.7;
+    color: #e2e8f0;
+    padding: 0 16px;
+    position: relative;
+  }
+
+  .code-line-row:hover { background: rgba(255,255,255,0.025); }
+
+  .code-line-row.active-line {
+    background: rgba(59,130,246,0.08);
+  }
+
+  .code-line-row.active-line::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 2px;
+    background: var(--blue);
+  }
+
+  .ln {
+    width: 44px;
+    flex-shrink: 0;
+    text-align: right;
+    padding-right: 20px;
+    color: #2d3748;
+    font-size: 12px;
+    user-select: none;
+  }
+
+  .code-line-row.active-line .ln { color: var(--blue); }
+
+  .kw { color: #c084fc; }
+  .str { color: #86efac; }
+  .num { color: #fbbf24; }
+  .fn { color: #60a5fa; }
+  .cm { color: #374151; }
+  .op { color: #f472b6; }
+  .type { color: #34d399; }
+  .ann { color: #94a3b8; }
+  .indent { display: inline-block; }
+
+  /* ── BOTTOM PANEL — Test Results ── */
+  .bottom-panel {
+    flex-shrink: 0;
+    border-top: 1px solid var(--border);
+    background: var(--bg2);
+    display: flex;
+    flex-direction: column;
+    height: 220px;
+    overflow: hidden;
+  }
+
+  .bottom-tabs {
+    display: flex;
+    align-items: center;
+    border-bottom: 1px solid var(--border);
+    padding: 0 12px;
+    gap: 4px;
+    flex-shrink: 0;
+  }
+
+  .btab {
+    padding: 8px 14px;
+    font-size: 11px;
+    font-weight: 500;
+    color: #4b5563;
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    background: transparent;
+    border-top: none; border-left: none; border-right: none;
+    transition: color 0.2s, border-color 0.2s;
+  }
+
+  .btab:hover { color: #94a3b8; }
+  .btab.active { color: var(--green); border-bottom-color: var(--green); }
+
+  .test-content {
+    flex: 1;
+    overflow-y: auto;
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    scrollbar-width: thin;
+    scrollbar-color: #1f2937 transparent;
+  }
+
+  .test-case-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 14px;
+    border-radius: 8px;
+    border: 1px solid;
+    font-size: 12px;
+  }
+
+  .test-case-row.pass {
+    background: rgba(16,185,129,0.06);
+    border-color: rgba(16,185,129,0.2);
+  }
+
+  .test-case-row.fail {
+    background: rgba(248,113,113,0.06);
+    border-color: rgba(248,113,113,0.2);
+  }
+
+  .test-status {
+    font-family: var(--font-code);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    width: 40px;
+    flex-shrink: 0;
+  }
+
+  .test-case-row.pass .test-status { color: var(--green); }
+  .test-case-row.fail .test-status { color: #f87171; }
+
+  .test-detail {
+    flex: 1;
+    color: #64748b;
+  }
+
+  .test-detail code {
+    font-family: var(--font-code);
+    font-size: 11px;
+    color: #94a3b8;
+  }
+
+  .test-time {
+    font-family: var(--font-code);
+    font-size: 10px;
+    color: #374151;
+    flex-shrink: 0;
+  }
+
+  .output-section {
+    padding: 12px 14px;
+    display: none;
+  }
+
+  .console-output {
+    font-family: var(--font-code);
+    font-size: 12px;
+    line-height: 1.7;
+    color: #94a3b8;
+    white-space: pre-wrap;
+  }
+
+  .console-output .out-green { color: var(--green); }
+  .console-output .out-red { color: #f87171; }
+
+  /* ── RIGHT PANEL — Visualizer ── */
+  .right-panel {
+    width: 300px;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    border-left: 1px solid var(--border);
+    overflow: hidden;
+    background: var(--bg2);
+  }
+
+  .right-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--border);
+    flex-shrink: 0;
+  }
+
+  .right-title {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    font-family: var(--font-code);
+    font-size: 11px;
+    font-weight: 600;
+    color: #a78bfa;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  .viz-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 2px 7px;
+    border-radius: 999px;
+    font-size: 9px;
+    font-weight: 600;
+    color: #a78bfa;
+    background: rgba(139,92,246,0.12);
+    border: 1px solid rgba(139,92,246,0.25);
+  }
+
+  .right-scroll {
+    flex: 1;
+    overflow-y: auto;
+    padding: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    scrollbar-width: thin;
+    scrollbar-color: #1f2937 transparent;
+  }
+
+  .right-scroll::-webkit-scrollbar { width: 4px; }
+  .right-scroll::-webkit-scrollbar-track { background: transparent; }
+  .right-scroll::-webkit-scrollbar-thumb { background: #1f2937; border-radius: 4px; }
+
+  /* Step controls */
+  .step-controls {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 8px;
+    padding: 8px;
+  }
+
+  .step-btn {
+    width: 28px; height: 28px;
+    display: flex; align-items: center; justify-content: center;
+    border-radius: 6px;
+    border: none;
+    background: rgba(255,255,255,0.05);
+    color: #94a3b8;
+    cursor: pointer;
+    font-size: 12px;
+    transition: background 0.15s, color 0.15s;
+  }
+
+  .step-btn:hover { background: rgba(59,130,246,0.15); color: var(--blue); }
+
+  .step-counter {
+    flex: 1;
+    text-align: center;
+    font-family: var(--font-code);
+    font-size: 11px;
+    color: #4b5563;
+  }
+
+  .step-counter strong { color: #94a3b8; }
+
+  /* Stack Frame */
+  .viz-section-title {
+    font-family: var(--font-code);
+    font-size: 10px;
+    color: #4b5563;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 8px;
+  }
+
+  .stack-frame {
+    background: rgba(59,130,246,0.06);
+    border: 1px solid rgba(59,130,246,0.18);
+    border-radius: 9px;
+    overflow: hidden;
+    margin-bottom: 6px;
+  }
+
+  .frame-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 12px;
+    background: rgba(59,130,246,0.08);
+    border-bottom: 1px solid rgba(59,130,246,0.12);
+  }
+
+  .frame-name {
+    font-family: var(--font-code);
+    font-size: 11px;
+    color: var(--blue);
+    font-weight: 600;
+  }
+
+  .frame-label {
+    font-family: var(--font-code);
+    font-size: 9px;
+    color: rgba(59,130,246,0.5);
+    text-transform: uppercase;
+  }
+
+  .var-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  .var-table tr {
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+  }
+
+  .var-table tr:last-child { border: none; }
+
+  .var-table td {
+    padding: 6px 12px;
+    font-family: var(--font-code);
+    font-size: 11px;
+  }
+
+  .vt-name { color: #7dd3fc; }
+  .vt-type { color: #4b5563; width: 48px; font-size: 10px; }
+  .vt-value { color: #86efac; text-align: right; }
+  .vt-value.highlight {
+    color: #fbbf24;
+    position: relative;
+  }
+
+  /* Heap */
+  .heap-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: rgba(139,92,246,0.06);
+    border: 1px solid rgba(139,92,246,0.15);
+    border-radius: 7px;
+    padding: 8px 12px;
+    font-family: var(--font-code);
+    font-size: 11px;
+    margin-bottom: 5px;
+  }
+
+  .heap-addr { color: #6b21a8; font-size: 10px; }
+  .heap-type { color: #4b5563; font-size: 10px; }
+  .heap-val { color: #c4b5fd; }
+
+  /* Note */
+  .step-note {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 8px;
+    padding: 10px 12px;
+    font-size: 12px;
+    line-height: 1.6;
+    color: #64748b;
+  }
+
+  .step-note strong { color: #94a3b8; }
+
+  /* Output box */
+  .viz-output {
+    background: rgba(16,185,129,0.06);
+    border: 1px solid rgba(16,185,129,0.15);
+    border-radius: 8px;
+    padding: 10px 12px;
+  }
+
+  .viz-output-label {
+    font-family: var(--font-code);
+    font-size: 10px;
+    color: var(--green);
+    font-weight: 600;
+    margin-bottom: 6px;
+    text-transform: uppercase;
+  }
+
+  .viz-output-text {
+    font-family: var(--font-code);
+    font-size: 12px;
+    color: #86efac;
+  }
+
+  /* ── STATUS BAR ── */
+  .statusbar {
+    height: 24px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 12px;
+    background: rgba(59,130,246,0.08);
+    border-top: 1px solid rgba(59,130,246,0.15);
+    font-family: var(--font-code);
+    font-size: 10px;
+    color: #374151;
+  }
+
+  .status-item {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .status-dot {
+    width: 5px; height: 5px;
+    border-radius: 50%;
+  }
+
+  .status-dot.online { background: var(--green); }
+</style>
+</head>
+<body>
+
+<!-- ── TOP BAR ── -->
+<div class="topbar">
+  <div class="topbar-left">
+    <a href="index.html" style="text-decoration:none">
+      <div class="logo-icon">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round">
+          <path d="M12 2L2 7l10 5 10-5-10-5z"/>
+          <path d="M2 17l10 5 10-5"/>
+          <path d="M2 12l10 5 10-5"/>
+        </svg>
+      </div>
+    </a>
+    <span class="topbar-logo">CodeFlow</span>
+    <div class="topbar-sep"></div>
+    <span class="topbar-prob">BFS로 미로 탈출하기</span>
+    <div class="topbar-tags">
+      <span class="tag tag-blue">그래프</span>
+      <span class="tag tag-yellow">중급</span>
+    </div>
+  </div>
+
+  <div class="topbar-right">
+    <button class="btn-viz">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+      시각화
+    </button>
+    <button class="btn-run">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+      실행
+    </button>
+    <button class="btn-submit">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+      제출
+    </button>
+    <a href="mypage.html" class="topbar-back">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+      목록
+    </a>
+  </div>
+</div>
+
+<!-- ── MAIN LAYOUT ── -->
+<div class="main-layout">
+
+  <!-- ── LEFT: PROBLEM DESCRIPTION ── -->
+  <div class="left-panel">
+    <div class="panel-tabs">
+      <button class="ptab active">문제</button>
+      <button class="ptab">풀이 힌트</button>
+      <button class="ptab">정답 코드</button>
+    </div>
+
+    <div class="left-scroll">
+      <div class="prob-header-section">
+        <div class="prob-title-main">BFS로 미로 탈출하기</div>
+        <div class="prob-tags-row">
+          <span class="tag tag-blue">그래프</span>
+          <span class="tag tag-yellow">중급</span>
+          <span class="tag" style="color:#a78bfa;border-color:rgba(139,92,246,0.25);background:rgba(139,92,246,0.08)">BFS</span>
+          <span class="tag tag-green">Java</span>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="section-heading">문제 설명</div>
+      <p class="prob-desc">
+        N×M 크기의 미로가 주어집니다. 시작 위치 <strong>(1, 1)</strong>에서 출발하여 출구 <strong>(N, M)</strong>까지 이동하는 최단 경로의 길이를 구하세요.
+        <br/><br/>
+        미로에서 <strong>1</strong>은 이동할 수 있는 칸, <strong>0</strong>은 이동할 수 없는 벽을 나타냅니다. 이동은 상하좌우 4방향만 가능합니다.
+      </p>
+
+      <div class="divider"></div>
+
+      <div class="section-heading">입력 형식</div>
+      <div class="io-block">
+        <div class="io-label">Input</div>
+        <pre class="io-pre">첫째 줄에 N, M (2 ≤ N, M ≤ 100)
+이후 N줄에 걸쳐 M개의 정수 (0 또는 1)</pre>
+      </div>
+
+      <div class="section-heading">출력 형식</div>
+      <div class="io-block">
+        <div class="io-label">Output</div>
+        <pre class="io-pre">최단 경로의 칸 수를 출력
+(시작, 도착 칸 포함)</pre>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="section-heading">예제</div>
+      <div class="io-block">
+        <div class="io-label">예제 입력 1</div>
+        <pre class="io-pre">5 6
+101010
+111111
+000001
+111111
+111111</pre>
+      </div>
+      <div class="io-block">
+        <div class="io-label">예제 출력 1</div>
+        <pre class="io-pre">10</pre>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="section-heading">제약 조건</div>
+      <ul class="constraint-list">
+        <li>2 ≤ N, M ≤ 100</li>
+        <li>시작점 (1,1)과 도착점 (N,M)은 항상 1</li>
+        <li>항상 도달 가능한 입력만 주어짐</li>
+      </ul>
+
+      <div class="divider"></div>
+
+      <div class="hint-box">
+        <div class="hint-label">💡 힌트</div>
+        <p class="hint-text">BFS는 가중치 없는 그래프에서 최단 경로를 보장합니다. Queue에 현재 위치와 이동 횟수를 함께 저장하고, 방문 배열로 중복 방문을 막으세요.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── CENTER: CODE EDITOR ── -->
+  <div class="center-panel">
+    <div class="editor-topbar">
+      <div class="editor-file-tab">
+        <div class="editor-file-dot"></div>
+        Main.java
+      </div>
+      <div class="lang-select">
+        ☕ Java
+        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M6 9l6 6 6-6"/></svg>
+      </div>
+    </div>
+
+    <div class="editor-area">
+      <div class="code-editor">
+        <div class="code-line-row"><span class="ln">1</span><span><span class="kw">import</span> java.util.*;</span></div>
+        <div class="code-line-row"><span class="ln">2</span><span></span></div>
+        <div class="code-line-row"><span class="ln">3</span><span><span class="kw">public class</span> <span class="fn">Main</span> {</span></div>
+        <div class="code-line-row"><span class="ln">4</span><span>  <span class="kw">static int</span>[] dx = {<span class="num">-1</span>, <span class="num">1</span>, <span class="num">0</span>, <span class="num">0</span>};</span></div>
+        <div class="code-line-row"><span class="ln">5</span><span>  <span class="kw">static int</span>[] dy = {<span class="num">0</span>, <span class="num">0</span>, <span class="num">-1</span>, <span class="num">1</span>};</span></div>
+        <div class="code-line-row"><span class="ln">6</span><span></span></div>
+        <div class="code-line-row"><span class="ln">7</span><span>  <span class="kw">public static void</span> <span class="fn">main</span>(<span class="fn">String</span>[] args) {</span></div>
+        <div class="code-line-row"><span class="ln">8</span><span>    <span class="fn">Scanner</span> sc = <span class="kw">new</span> <span class="fn">Scanner</span>(System.in);</span></div>
+        <div class="code-line-row"><span class="ln">9</span><span>    <span class="kw">int</span> n = sc.nextInt(), m = sc.nextInt();</span></div>
+        <div class="code-line-row"><span class="ln">10</span><span>    <span class="kw">int</span>[][] maze = <span class="kw">new int</span>[n][m];</span></div>
+        <div class="code-line-row"><span class="ln">11</span><span></span></div>
+        <div class="code-line-row"><span class="ln">12</span><span>    <span class="kw">for</span> (<span class="kw">int</span> i = <span class="num">0</span>; i &lt; n; i++) {</span></div>
+        <div class="code-line-row"><span class="ln">13</span><span>      <span class="fn">String</span> row = sc.next();</span></div>
+        <div class="code-line-row"><span class="ln">14</span><span>      <span class="kw">for</span> (<span class="kw">int</span> j = <span class="num">0</span>; j &lt; m; j++)</span></div>
+        <div class="code-line-row"><span class="ln">15</span><span>        maze[i][j] = row.charAt(j) - <span class="str">'0'</span>;</span></div>
+        <div class="code-line-row"><span class="ln">16</span><span>    }</span></div>
+        <div class="code-line-row"><span class="ln">17</span><span></span></div>
+        <div class="code-line-row active-line"><span class="ln">18</span><span>    System.out.println(<span class="fn">bfs</span>(maze, n, m));</span></div>
+        <div class="code-line-row"><span class="ln">19</span><span>  }</span></div>
+        <div class="code-line-row"><span class="ln">20</span><span></span></div>
+        <div class="code-line-row"><span class="ln">21</span><span>  <span class="kw">static int</span> <span class="fn">bfs</span>(<span class="kw">int</span>[][] maze, <span class="kw">int</span> n, <span class="kw">int</span> m) {</span></div>
+        <div class="code-line-row"><span class="ln">22</span><span>    <span class="kw">boolean</span>[][] visited = <span class="kw">new boolean</span>[n][m];</span></div>
+        <div class="code-line-row"><span class="ln">23</span><span>    <span class="fn">Queue</span>&lt;<span class="kw">int</span>[]&gt; q = <span class="kw">new</span> <span class="fn">LinkedList</span>&lt;&gt;();</span></div>
+        <div class="code-line-row"><span class="ln">24</span><span>    q.add(<span class="kw">new int</span>[]{<span class="num">0</span>, <span class="num">0</span>, <span class="num">1</span>});</span></div>
+        <div class="code-line-row"><span class="ln">25</span><span>    visited[<span class="num">0</span>][<span class="num">0</span>] = <span class="kw">true</span>;</span></div>
+        <div class="code-line-row"><span class="ln">26</span><span></span></div>
+        <div class="code-line-row"><span class="ln">27</span><span>    <span class="kw">while</span> (!q.isEmpty()) {</span></div>
+        <div class="code-line-row"><span class="ln">28</span><span>      <span class="kw">int</span>[] cur = q.poll();</span></div>
+        <div class="code-line-row"><span class="ln">29</span><span>      <span class="kw">int</span> x = cur[<span class="num">0</span>], y = cur[<span class="num">1</span>], dist = cur[<span class="num">2</span>];</span></div>
+        <div class="code-line-row"><span class="ln">30</span><span></span></div>
+        <div class="code-line-row"><span class="ln">31</span><span>      <span class="kw">if</span> (x == n - <span class="num">1</span> &amp;&amp; y == m - <span class="num">1</span>) <span class="kw">return</span> dist;</span></div>
+        <div class="code-line-row"><span class="ln">32</span><span></span></div>
+        <div class="code-line-row"><span class="ln">33</span><span>      <span class="kw">for</span> (<span class="kw">int</span> d = <span class="num">0</span>; d &lt; <span class="num">4</span>; d++) {</span></div>
+        <div class="code-line-row"><span class="ln">34</span><span>        <span class="kw">int</span> nx = x + dx[d], ny = y + dy[d];</span></div>
+        <div class="code-line-row"><span class="ln">35</span><span>        <span class="kw">if</span> (nx &lt; <span class="num">0</span> || ny &lt; <span class="num">0</span> || nx &gt;= n || ny &gt;= m) <span class="kw">continue</span>;</span></div>
+        <div class="code-line-row"><span class="ln">36</span><span>        <span class="kw">if</span> (maze[nx][ny] == <span class="num">0</span> || visited[nx][ny]) <span class="kw">continue</span>;</span></div>
+        <div class="code-line-row"><span class="ln">37</span><span>        visited[nx][ny] = <span class="kw">true</span>;</span></div>
+        <div class="code-line-row"><span class="ln">38</span><span>        q.add(<span class="kw">new int</span>[]{nx, ny, dist + <span class="num">1</span>});</span></div>
+        <div class="code-line-row"><span class="ln">39</span><span>      }</span></div>
+        <div class="code-line-row"><span class="ln">40</span><span>    }</span></div>
+        <div class="code-line-row"><span class="ln">41</span><span>    <span class="kw">return</span> <span class="num">-1</span>;</span></div>
+        <div class="code-line-row"><span class="ln">42</span><span>  }</span></div>
+        <div class="code-line-row"><span class="ln">43</span><span>}</span></div>
+      </div>
+    </div>
+
+    <!-- BOTTOM: TEST RESULTS -->
+    <div class="bottom-panel">
+      <div class="bottom-tabs">
+        <button class="btab active">테스트 결과</button>
+        <button class="btab">콘솔 출력</button>
+        <button class="btab">채점 현황</button>
+      </div>
+      <div class="test-content">
+        <div class="test-case-row pass">
+          <span class="test-status">PASS</span>
+          <div class="test-detail">
+            예제 1 — 입력: <code>5 6 / 101010 / 111111 / 000001 / 111111 / 111111</code> → 출력: <code>10</code>
+          </div>
+          <span class="test-time">12ms</span>
+        </div>
+        <div class="test-case-row pass">
+          <span class="test-status">PASS</span>
+          <div class="test-detail">
+            예제 2 — 입력: <code>3 3 / 111 / 010 / 111</code> → 출력: <code>5</code>
+          </div>
+          <span class="test-time">8ms</span>
+        </div>
+        <div class="test-case-row fail">
+          <span class="test-status">FAIL</span>
+          <div class="test-detail">
+            커스텀 케이스 — 기댓값: <code>7</code>, 실제 출력: <code>-1</code>
+          </div>
+          <span class="test-time">9ms</span>
+        </div>
+
+        <!-- Summary -->
+        <div style="display:flex;align-items:center;gap:12px;padding:6px 2px;">
+          <span style="font-size:12px;color:#4b5563;">2 / 3 통과</span>
+          <div style="flex:1;height:4px;background:rgba(255,255,255,0.06);border-radius:999px;overflow:hidden">
+            <div style="width:66%;height:100%;background:linear-gradient(90deg,var(--green),#06b6d4);border-radius:999px"></div>
+          </div>
+          <span style="font-family:var(--font-code);font-size:10px;color:var(--green)">66%</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── RIGHT: VISUALIZER ── -->
+  <div class="right-panel">
+    <div class="right-header">
+      <div class="right-title">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg>
+        실행 시각화
+      </div>
+      <span class="viz-badge">LIVE</span>
+    </div>
+
+    <div class="right-scroll">
+
+      <!-- Step Controls -->
+      <div>
+        <div class="viz-section-title">실행 단계</div>
+        <div class="step-controls">
+          <button class="step-btn" title="처음">⏮</button>
+          <button class="step-btn" title="이전">◀</button>
+          <div class="step-counter">Step <strong>18</strong> / 43</div>
+          <button class="step-btn" title="다음">▶</button>
+          <button class="step-btn" title="끝">⏭</button>
+        </div>
+      </div>
+
+      <!-- Step Note -->
+      <div>
+        <div class="viz-section-title">현재 동작</div>
+        <div class="step-note">
+          <strong>Line 18</strong> — bfs() 함수 호출. 미로 배열과 크기를 인수로 전달합니다.
+        </div>
+      </div>
+
+      <!-- Stack Frames -->
+      <div>
+        <div class="viz-section-title">스택 프레임</div>
+
+        <div class="stack-frame" style="background:rgba(139,92,246,0.06);border-color:rgba(139,92,246,0.18)">
+          <div class="frame-header" style="background:rgba(139,92,246,0.1);border-bottom-color:rgba(139,92,246,0.15)">
+            <span class="frame-name" style="color:#a78bfa">bfs()</span>
+            <span class="frame-label" style="color:rgba(139,92,246,0.5)">현재 실행 중</span>
+          </div>
+          <table class="var-table">
+            <tr><td class="vt-type">int[][]</td><td class="vt-name">maze</td><td class="vt-value">@ref_0x1a</td></tr>
+            <tr><td class="vt-type">int</td><td class="vt-name">n</td><td class="vt-value">5</td></tr>
+            <tr><td class="vt-type">int</td><td class="vt-name">m</td><td class="vt-value">6</td></tr>
+            <tr><td class="vt-type">bool[][]</td><td class="vt-name">visited</td><td class="vt-value">@ref_0x2b</td></tr>
+            <tr><td class="vt-type">Queue</td><td class="vt-name">q</td><td class="vt-value" class="highlight" style="color:#fbbf24">size=1</td></tr>
+          </table>
+        </div>
+
+        <div class="stack-frame">
+          <div class="frame-header">
+            <span class="frame-name">main()</span>
+            <span class="frame-label">대기 중</span>
+          </div>
+          <table class="var-table">
+            <tr><td class="vt-type">int</td><td class="vt-name">n</td><td class="vt-value">5</td></tr>
+            <tr><td class="vt-type">int</td><td class="vt-name">m</td><td class="vt-value">6</td></tr>
+            <tr><td class="vt-type">int[][]</td><td class="vt-name">maze</td><td class="vt-value">@ref_0x1a</td></tr>
+          </table>
+        </div>
+      </div>
+
+      <!-- Heap -->
+      <div>
+        <div class="viz-section-title">힙 (Heap)</div>
+        <div class="heap-item">
+          <span class="heap-addr">0x1a</span>
+          <span class="heap-type">int[5][6]</span>
+          <span class="heap-val">maze</span>
+        </div>
+        <div class="heap-item">
+          <span class="heap-addr">0x2b</span>
+          <span class="heap-type">bool[5][6]</span>
+          <span class="heap-val">visited</span>
+        </div>
+        <div class="heap-item">
+          <span class="heap-addr">0x3c</span>
+          <span class="heap-type">LinkedList</span>
+          <span class="heap-val">Queue q → [{0,0,1}]</span>
+        </div>
+      </div>
+
+      <!-- Output -->
+      <div>
+        <div class="viz-section-title">콘솔 출력</div>
+        <div class="viz-output">
+          <div class="viz-output-label">stdout</div>
+          <div class="viz-output-text">— (아직 출력 없음)</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+
+<!-- ── STATUS BAR ── -->
+<div class="statusbar">
+  <div style="display:flex;align-items:center;gap:16px">
+    <div class="status-item">
+      <div class="status-dot online"></div>
+      연결됨
+    </div>
+    <span>Java 17</span>
+    <span>UTF-8</span>
+    <span>Line 18, Col 35</span>
+  </div>
+  <div style="display:flex;align-items:center;gap:16px">
+    <span>CodeFlow Visual Debugger v0.9</span>
+    <span>© 2025 Dankook Univ.</span>
+  </div>
+</div>
+
+</body>
+</html>

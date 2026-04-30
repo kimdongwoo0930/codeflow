@@ -13,7 +13,6 @@ interface Problem {
   category: string;
   difficulty: Difficulty;
   description: string;
-  solvedCount: number;
 }
 
 interface Stage {
@@ -31,8 +30,8 @@ const CURATED_PROBLEMS: Problem[] = [
     title: "투 포인터 입문",
     category: "배열",
     difficulty: "쉬움",
-    description: "정렬된 배열에서 두 포인터를 이용해 합이 목표값인 쌍을 찾습니다.",
-    solvedCount: 1284,
+    description:
+      "정렬된 배열에서 두 포인터를 이용해 합이 목표값인 쌍을 찾습니다.",
   },
   {
     id: 2,
@@ -40,39 +39,38 @@ const CURATED_PROBLEMS: Problem[] = [
     category: "스택",
     difficulty: "쉬움",
     description: "스택 자료구조를 활용해 올바른 괄호 문자열인지 판별합니다.",
-    solvedCount: 983,
   },
   {
     id: 3,
     title: "BFS로 최단 경로 찾기",
     category: "그래프",
     difficulty: "보통",
-    description: "너비 우선 탐색으로 미로에서 출발지부터 목적지까지 최단 거리를 구합니다.",
-    solvedCount: 741,
+    description:
+      "너비 우선 탐색으로 미로에서 출발지부터 목적지까지 최단 거리를 구합니다.",
   },
   {
     id: 4,
     title: "DP 첫걸음 — 계단 오르기",
     category: "동적 프로그래밍",
     difficulty: "보통",
-    description: "n번째 계단에 오르는 방법의 수를 메모이제이션으로 효율적으로 계산합니다.",
-    solvedCount: 612,
+    description:
+      "n번째 계단에 오르는 방법의 수를 메모이제이션으로 효율적으로 계산합니다.",
   },
   {
     id: 5,
     title: "재귀로 구현하는 팩토리얼",
     category: "재귀",
     difficulty: "쉬움",
-    description: "재귀 함수의 기본 원리를 팩토리얼 계산으로 이해하고 Call Stack 흐름을 시각화합니다.",
-    solvedCount: 1571,
+    description:
+      "재귀 함수의 기본 원리를 팩토리얼 계산으로 이해하고 Call Stack 흐름을 시각화합니다.",
   },
   {
     id: 6,
     title: "다익스트라 기초",
     category: "그래프",
     difficulty: "어려움",
-    description: "우선순위 큐를 활용한 다익스트라 알고리즘으로 가중치 그래프의 최단 경로를 구합니다.",
-    solvedCount: 389,
+    description:
+      "우선순위 큐를 활용한 다익스트라 알고리즘으로 가중치 그래프의 최단 경로를 구합니다.",
   },
 ];
 
@@ -88,7 +86,8 @@ const STAGES: Stage[] = [
   {
     step: 2,
     title: "자료구조 입문",
-    description: "스택, 큐, 연결 리스트가 메모리에서 어떻게 동작하는지 배웁니다.",
+    description:
+      "스택, 큐, 연결 리스트가 메모리에서 어떻게 동작하는지 배웁니다.",
     problemCount: 10,
     topics: ["스택", "큐", "연결 리스트", "해시맵"],
     color: "from-blue to-cyan",
@@ -96,7 +95,8 @@ const STAGES: Stage[] = [
   {
     step: 3,
     title: "탐색과 정렬",
-    description: "이진 탐색, 버블·퀵 정렬의 단계별 동작 원리를 눈으로 확인합니다.",
+    description:
+      "이진 탐색, 버블·퀵 정렬의 단계별 동작 원리를 눈으로 확인합니다.",
     problemCount: 12,
     topics: ["이진 탐색", "버블 정렬", "퀵 정렬", "병합 정렬"],
     color: "from-purple to-indigo-500",
@@ -129,7 +129,9 @@ function ProblemCard({ problem }: { problem: Problem }) {
         <span className="rounded-full bg-blue/10 px-2.5 py-0.5 text-xs font-medium text-blue border border-blue/20">
           {problem.category}
         </span>
-        <span className={`rounded-full px-2.5 py-0.5 text-xs font-medium ${DIFFICULTY_STYLE[problem.difficulty]}`}>
+        <span
+          className={`rounded-full px-2.5 py-0.5 text-xs font-medium ${DIFFICULTY_STYLE[problem.difficulty]}`}
+        >
           {problem.difficulty}
         </span>
       </div>
@@ -139,13 +141,7 @@ function ProblemCard({ problem }: { problem: Problem }) {
       <p className="flex-1 text-sm leading-6 text-slate-400 transition group-hover:text-slate-300">
         {problem.description}
       </p>
-      <div className="mt-4 flex items-center gap-1.5 text-xs text-slate-500">
-        <svg width="13" height="13" viewBox="0 0 16 16" fill="currentColor" className="opacity-60">
-          <path d="M8 9.5a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3Z" />
-          <path d="M8 0a8 8 0 1 1 0 16A8 8 0 0 1 8 0ZM1.5 8a6.5 6.5 0 1 0 13 0 6.5 6.5 0 0 0-13 0Z" />
-        </svg>
-        {problem.solvedCount.toLocaleString()}명 풀었어요
-      </div>
+      <div className="mt-4 flex items-center gap-1.5 text-xs text-slate-500"></div>
     </Link>
   );
 }
@@ -157,10 +153,14 @@ function StageCard({ stage }: { stage: Stage }) {
       className="group panel-border relative overflow-hidden rounded-2xl bg-bg2/70 p-6 transition duration-300 hover:-translate-y-1 hover:border-blue/35 hover:bg-white/[0.05] hover:shadow-[0_12px_36px_rgba(15,23,42,0.5)]"
     >
       {/* 배경 그라데이션 */}
-      <div className={`absolute -right-6 -top-6 h-24 w-24 rounded-full bg-gradient-to-br ${stage.color} opacity-10 blur-2xl transition duration-500 group-hover:opacity-20`} />
+      <div
+        className={`absolute -right-6 -top-6 h-24 w-24 rounded-full bg-gradient-to-br ${stage.color} opacity-10 blur-2xl transition duration-500 group-hover:opacity-20`}
+      />
 
       <div className="mb-4 flex items-center gap-3">
-        <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br ${stage.color} text-sm font-bold text-white shadow-lg`}>
+        <div
+          className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br ${stage.color} text-sm font-bold text-white shadow-lg`}
+        >
           {stage.step}
         </div>
         <div>

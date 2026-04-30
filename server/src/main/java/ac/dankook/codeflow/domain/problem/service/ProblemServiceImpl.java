@@ -1,68 +1,134 @@
 package ac.dankook.codeflow.domain.problem.service;
 
+import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.MediaType;
+import java.util.Set;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestClient;
-import ac.dankook.codeflow.domain.problem.dto.GeminiResponse;
-import ac.dankook.codeflow.domain.problem.dto.MappedPromptResposeDto;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import ac.dankook.codeflow.domain.problem.dto.MyProblemDto;
+import ac.dankook.codeflow.domain.problem.dto.ProblemDetailDto;
 import ac.dankook.codeflow.domain.problem.dto.ProblemRequestDto;
+import ac.dankook.codeflow.domain.problem.dto.ProblemResponseDto;
+import ac.dankook.codeflow.domain.problem.dto.SubmitRequestDto;
+import ac.dankook.codeflow.domain.problem.dto.SubmitResponseDto;
+import ac.dankook.codeflow.domain.problem.dto.TutorRequestDto;
+import ac.dankook.codeflow.domain.problem.entity.Submission;
+import ac.dankook.codeflow.domain.problem.entity.problem;
+import ac.dankook.codeflow.domain.problem.repository.ProblemRepository;
+import ac.dankook.codeflow.domain.problem.repository.SubmissionRepository;
+import ac.dankook.codeflow.domain.visualizer.service.DockerTracker;
 import ac.dankook.codeflow.global.exception.BusinessException;
 import ac.dankook.codeflow.global.exception.ErrorCode;
+import lombok.RequiredArgsConstructor;
 
 @Service
+@RequiredArgsConstructor
 public class ProblemServiceImpl implements ProblemService {
-    private final RestClient restClient;
-
-    @Value("${GOOGLE_GEMINI_API_KEY}")
-    private String apiKey;
-
-    public ProblemServiceImpl(RestClient.Builder restClientBuilder) {
-        this.restClient = restClientBuilder
-                .baseUrl("https://generativelanguage.googleapis.com/v1beta/models").build();
-    }
-
-    private MappedPromptResposeDto mapToPrompt(ProblemRequestDto requestDto) {
-        String systemInstruction =
-                "You are a professional coding tutor. Provide structured coding problems.";
-
-        String userPrompt;
-        if ("언어 개념".equals(requestDto.studyType())) {
-            userPrompt = String.format(
-                    "언어: %s, 주제: %s, 난이도: %s, 추가 조건: %s\n위 조건으로 문법 학습용 문제를 생성하고 해설 포인트를 포함해줘.",
-                    requestDto.language(), requestDto.topic(), requestDto.difficulty(),
-                    requestDto.detail());
-        } else {
-            userPrompt = String.format(
-                    "언어: %s, 주제: %s, 난이도: %s, 추가 조건: %s\n위 조건으로 알고리즘 문제와 정답 코드를 생성해줘.",
-                    requestDto.language(), requestDto.topic(), requestDto.difficulty(),
-                    requestDto.detail());
-        }
-
-        return new MappedPromptResposeDto(systemInstruction, userPrompt);
-    }
+    private final GeminiService geminiService;
+    private final ObjectMapper objectMapper;
+    private final ProblemRepository problemRepository;
+    private final SubmissionRepository submissionRepository;
+    private final DockerTracker dockerTracker;
 
     @Override
     public String generateProblem(ProblemRequestDto requestDto) {
-        MappedPromptResposeDto mapped = mapToPrompt(requestDto);
+        ProblemResponseDto dto = geminiService.generateProblem(requestDto.studyType(),
+                requestDto.topic(), requestDto.difficulty(), requestDto.detail());
 
-        Map<String, Object> requestBody = Map.of("contents",
-                List.of(Map.of("parts", List.of(Map.of("text", mapped.userPrompt())))),
-                "system_instruction",
-                Map.of("parts", List.of(Map.of("text", mapped.systemInstruction()))));
+        problem entity = problem.of(dto, requestDto.studyType(), requestDto.topic(),
+                requestDto.difficulty(), getCurrentUserId());
+        problem saved = problemRepository.save(entity);
 
-        GeminiResponse response = restClient.post()
-                .uri(uriBuilder -> uriBuilder.path("/gemini-flash-latest:generateContent")
-                        .queryParam("key", apiKey).build())
-                .contentType(MediaType.APPLICATION_JSON).body(requestBody).retrieve()
-                .body(GeminiResponse.class);
-
-        if (response == null || response.candidates() == null || response.candidates().isEmpty()) {
+        try {
+            Map<String, Object> response = new LinkedHashMap<>();
+            response.put("id", saved.getId());
+            response.put("title", dto.title());
+            response.put("description", dto.description());
+            response.put("inputExample", dto.inputExample());
+            response.put("outputExample", dto.outputExample());
+            response.put("constraints", dto.constraints());
+            response.put("hint", dto.hint());
+            response.put("startCode", dto.startCode());
+            response.put("answerCode", dto.answerCode());
+            response.put("expectedOutput", dto.expectedOutput());
+            return objectMapper.writeValueAsString(response);
+        } catch (JsonProcessingException e) {
             throw new BusinessException(ErrorCode.AI_RESPONSE_FAILURE);
         }
+    }
 
-        return response.candidates().get(0).content().parts().get(0).text();
+    @Override
+    public String askTutor(TutorRequestDto requestDto) {
+        return geminiService.askTutor(requestDto.topic(), requestDto.difficulty(),
+                requestDto.problem(), requestDto.userCode(), requestDto.question());
+    }
+
+    @Override
+    public SubmitResponseDto submit(SubmitRequestDto requestDto) throws Exception {
+        problem p = problemRepository.findById(requestDto.problemId())
+                .orElseThrow(() -> new BusinessException(ErrorCode.AI_RESPONSE_FAILURE));
+
+        DockerTracker.TraceResult result = dockerTracker.runAndTrace(requestDto.sourceCode());
+        String actual = result.programOutput().trim();
+        String expected = p.getExpectedOutput() == null ? "" : p.getExpectedOutput().trim();
+        boolean passed = actual.equals(expected);
+
+        Long userId = getCurrentUserId();
+        if (userId != null) {
+            submissionRepository.save(
+                    Submission.of(userId, requestDto.problemId(), passed, requestDto.sourceCode()));
+        }
+
+        return new SubmitResponseDto(passed, actual, expected, result.traceJson());
+    }
+
+    @Override
+    public List<MyProblemDto> getMyProblems() {
+        Long userId = getCurrentUserId();
+        if (userId == null) return List.of();
+
+        List<problem> myProblems = problemRepository.findByUserIdOrderByCreatedAtDesc(userId);
+        Set<Long> solvedIds = submissionRepository.findSolvedProblemIds(userId);
+        Set<Long> attemptedIds = new HashSet<>(submissionRepository.findAttemptedProblemIds(userId));
+        attemptedIds.removeAll(solvedIds);
+
+        return myProblems.stream().map(p -> {
+            String status;
+            if (solvedIds.contains(p.getId())) status = "solved";
+            else if (attemptedIds.contains(p.getId())) status = "inprogress";
+            else status = "created";
+
+            String date = p.getCreatedAt() != null
+                    ? p.getCreatedAt().toLocalDate().toString()
+                    : "";
+
+            return new MyProblemDto(p.getId(), p.getTitle(), p.getTopic(),
+                    p.getDifficulty(), status, date);
+        }).toList();
+    }
+
+    @Override
+    public ProblemDetailDto getProblemDetail(Long id) {
+        problem p = problemRepository.findById(id)
+                .orElseThrow(() -> new BusinessException(ErrorCode.AI_RESPONSE_FAILURE));
+        return new ProblemDetailDto(p.getId(), p.getTitle(), p.getDescription(),
+                p.getStudyType(), p.getTopic(), p.getDifficulty(),
+                p.getInputExample(), p.getOutputExample(),
+                p.getConstraints(), p.getHint(), p.getStartCode());
+    }
+
+    private Long getCurrentUserId() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth == null || !auth.isAuthenticated()) return null;
+        try {
+            return Long.parseLong(auth.getPrincipal().toString());
+        } catch (NumberFormatException e) {
+            return null;
+        }
     }
 }

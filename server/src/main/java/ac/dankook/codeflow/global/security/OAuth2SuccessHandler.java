@@ -16,37 +16,38 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 
-    private final UserRepository userRepository;
-    private final JwtProvider jwtProvider;
+        private final UserRepository userRepository;
+        private final JwtProvider jwtProvider;
 
-    // application.properties의 app.oauth2.redirect-uri 값
-    // 로그인 성공 후 프론트엔드로 보낼 주소 (ex. http://localhost:3100/oauth/callback)
-    @Value("${app.oauth2.redirect-uri}")
-    private String redirectUri;
+        // application.properties의 app.oauth2.redirect-uri 값
+        // 로그인 성공 후 프론트엔드로 보낼 주소 (ex. http://localhost:3100/oauth/callback)
+        @Value("${app.oauth2.redirect-uri}")
+        private String redirectUri;
 
-    /**
-     * GitHub OAuth2 인증이 성공했을 때 Spring Security가 자동으로 호출하는 메서드
-     *
-     * authentication.getPrincipal() → GitHub에서 받아온 유저 정보 객체 (OAuth2User) OAuth2User.getAttributes()
-     * → GitHub API 응답 JSON을 Map으로 담고 있음
-     */
-    @Override
-    public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
-            Authentication authentication) throws IOException {
+        /**
+         * GitHub OAuth2 인증이 성공했을 때 Spring Security가 자동으로 호출하는 메서드
+         *
+         * authentication.getPrincipal() → GitHub에서 받아온 유저 정보 객체 (OAuth2User)
+         * OAuth2User.getAttributes() → GitHub API 응답 JSON을 Map으로 담고 있음
+         */
+        @Override
+        public void onAuthenticationSuccess(HttpServletRequest request,
+                        HttpServletResponse response, Authentication authentication)
+                        throws IOException {
 
-        OAuth2User oAuth2User = (OAuth2User) authentication.getPrincipal();
+                OAuth2User oAuth2User = (OAuth2User) authentication.getPrincipal();
 
-        String email = oAuth2User.getAttribute("email");
-        String nickname = oAuth2User.getAttribute("login");
-        String profileImage = oAuth2User.getAttribute("avatar_url");
+                String email = oAuth2User.getAttribute("email");
+                String nickname = oAuth2User.getAttribute("login");
+                String profileImage = oAuth2User.getAttribute("avatar_url");
 
-        User user = userRepository.findByEmail(email).orElseGet(
-                () -> userRepository.save(User.fromGithub(email, nickname, profileImage)));
+                User user = userRepository.findByEmail(email).orElseGet(() -> userRepository
+                                .save(User.fromGithub(email, nickname, profileImage)));
 
-        String accessToken = jwtProvider.generateAccessToken(user.getId(), user.getEmail(),
-                user.getRole().toString());
+                String accessToken = jwtProvider.generateAccessToken(user.getId(), user.getEmail(),
+                                user.getRole().toString());
 
-        getRedirectStrategy().sendRedirect(request, response,
-                redirectUri + "?token=" + accessToken);
-    }
+                getRedirectStrategy().sendRedirect(request, response,
+                                redirectUri + "?token=" + accessToken);
+        }
 }

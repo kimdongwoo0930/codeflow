@@ -29,5 +29,6 @@ out/
 # Local tooling
 .claude/
 CLAUDE_CODE_HANDOFF.md
+claude.md
 
 

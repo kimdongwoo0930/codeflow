@@ -41,8 +41,8 @@ class UserServiceTest {
         UserResponse response = userService.getMe(1L);
 
         // then
-        assertThat(response.getEmail()).isEqualTo("test@test.com");
-        assertThat(response.getNickname()).isEqualTo("tester");
+        assertThat(response.email()).isEqualTo("test@test.com");
+        assertThat(response.nickname()).isEqualTo("tester");
     }
 
     @Test
@@ -52,8 +52,7 @@ class UserServiceTest {
         given(userRepository.findById(999L)).willReturn(Optional.empty());
 
         // when & then
-        assertThatThrownBy(() -> userService.getMe(999L))
-                .isInstanceOf(BusinessException.class)
+        assertThatThrownBy(() -> userService.getMe(999L)).isInstanceOf(BusinessException.class)
                 .hasFieldOrPropertyWithValue("errorCode", ErrorCode.ACCOUNT_NOT_FOUND);
     }
 }

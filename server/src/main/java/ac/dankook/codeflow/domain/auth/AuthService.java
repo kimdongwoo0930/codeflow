@@ -41,17 +41,17 @@ public class AuthService {
      * User 엔티티 생성 (loginType=EMAIL, role=ROLE_USER, emailVerified=false) 4. DB 저장 완료
      */
     public SignupResponse signup(SignupRequest request) {
-        if (userRepository.existsByEmail(request.getEmail())) {
+        if (userRepository.existsByEmail(request.email())) {
             throw new BusinessException(ErrorCode.DUPLICATE_USER_EMAIL);
         }
-        String status = redisTemplate.opsForValue().get(VERIFIED_PREFIX + request.getEmail());
+        String status = redisTemplate.opsForValue().get(VERIFIED_PREFIX + request.email());
         if (!"verified".equals(status)) {
             throw new BusinessException(ErrorCode.EMAIL_CODE_EXPIRED);
         }
-        String encodedPassword = passwordEncoder.encode(request.getPassword());
+        String encodedPassword = passwordEncoder.encode(request.password());
         User user = User.from(request, encodedPassword);
         userRepository.save(user);
-        redisTemplate.delete(VERIFIED_PREFIX + request.getEmail());
+        redisTemplate.delete(VERIFIED_PREFIX + request.email());
         return SignupResponse.of(user);
     }
 
@@ -98,10 +98,10 @@ public class AuthService {
      * 1. 이메일이 먼저 DB에 있는지 확인하기 2. 있다면 가져와서 비밀번호를 암호화후 DB에 있는 암호화된 비밀번호와 비교
      */
     public LoginResponse login(LoginRequest request) {
-        User user = userRepository.findByEmail(request.getEmail())
+        User user = userRepository.findByEmail(request.email())
                 .orElseThrow(() -> new BusinessException(ErrorCode.ACCOUNT_NOT_FOUND));
 
-        if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
+        if (!passwordEncoder.matches(request.password(), user.getPassword())) {
             throw new BusinessException(ErrorCode.INVALID_PASSWORD);
         }
         String accessToken = JwtProvider.generateAccessToken(user.getId(), user.getEmail(),
