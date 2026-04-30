@@ -111,10 +111,20 @@ public class ExecutionTracker {
         Map<String, Connector.Argument> args = connector.defaultArguments();
         args.get("hostname").setValue(host);
         args.get("port").setValue(String.valueOf(port));
-        args.get("timeout").setValue("10000");
+        args.get("timeout").setValue("3000");
 
-        log.info("JVM에 JDI 연결 중: {}:{}", host, port);
-        return connector.attach(args);
+        long deadline = System.currentTimeMillis() + 15_000;
+        Exception lastException = null;
+        while (System.currentTimeMillis() < deadline) {
+            try {
+                log.info("JVM에 JDI 연결 중: {}:{}", host, port);
+                return connector.attach(args);
+            } catch (Exception e) {
+                lastException = e;
+                Thread.sleep(500);
+            }
+        }
+        throw lastException;
     }
 
     private Map<String, Object> captureStep(StepEvent event, int stepNumber) {

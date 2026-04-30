@@ -1,27 +1,33 @@
 package ac.dankook.codeflow.domain.visualizer.service;
 
-import java.io.IOException;
-import java.io.OutputStream;
-import java.net.Socket;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.io.*;
+import java.net.ServerSocket;
+import java.nio.file.*;
+
+/**
+ * Java 소스 코드를 Docker 컨테이너 안에서 실행하고,
+ * JDI(ExecutionTracker)를 통해 실행 흐름을 추적하여 JSON으로 반환한다.
+ *
+ * 실행 순서:
+ *   1. 소스 코드를 임시 파일로 저장
+ *   2. Docker 컨테이너 기동 (JDWP 포트 동적 할당)
+ *   3. 소스 파일을 컨테이너로 복사 (docker cp) — package 선언 자동 제거
+ *   4. javac로 컴파일
+ *   5. JDWP suspend=y 옵션으로 JVM 기동
+ *   6. JDWP 포트 준비 확인 후 ExecutionTracker 연결
+ *   7. 추적 완료 후 컨테이너 정리
+ */
 @Service
 public class DockerTracker {
 
     private static final Logger log = LoggerFactory.getLogger(DockerTracker.class);
 
     private static final String DOCKER_IMAGE    = "eclipse-temurin:21-jdk-jammy";
-    private static final int    JDWP_PORT       = 5005;
-    private static final int    PORT_WAIT_MS    = 15_000;
     private static final int    CONTAINER_TTL_S = 120;
-
-    @Value("${docker.network:}")
-    private String dockerNetwork;
 
     public record TraceResult(String programOutput, String traceJson) {}
 
@@ -37,12 +43,16 @@ public class DockerTracker {
 
     private TraceResult runAndTraceFile(String javaFilePath, String input) throws Exception {
         String containerName = "codeflow-" + System.currentTimeMillis();
+        int jdwpPort = findFreePort();
 
-        log.info("[DockerTracker] 컨테이너 시작: {}", containerName);
-        startContainer(containerName);
+        log.info("[DockerTracker] 컨테이너 시작: {} (JDWP 포트: {})", containerName, jdwpPort);
+        startContainer(containerName, jdwpPort);
 
         try {
+            log.info("[DockerTracker] 소스 파일 복사: {}", javaFilePath);
             copySourceToContainer(containerName, javaFilePath);
+
+            log.info("[DockerTracker] javac 컴파일");
             compileInContainer(containerName);
 
             if (input != null && !input.isEmpty()) {
@@ -53,14 +63,10 @@ public class DockerTracker {
             String programOutput = captureOutput(containerName, input);
 
             log.info("[DockerTracker] JDWP 모드로 JVM 기동");
-            runWithJdwp(containerName, input);
-
-            String containerIp = getContainerIp(containerName);
-            log.info("[DockerTracker] 컨테이너 IP: {}, JDWP 포트 대기 중...", containerIp);
-            waitForPort(containerIp, JDWP_PORT, PORT_WAIT_MS);
+            runWithJdwp(containerName, jdwpPort, input);
 
             log.info("[DockerTracker] ExecutionTracker 시작");
-            ExecutionTracker tracker = new ExecutionTracker(containerIp, JDWP_PORT);
+            ExecutionTracker tracker = new ExecutionTracker("localhost", jdwpPort);
             String traceJson = tracker.trace();
 
             return new TraceResult(programOutput, traceJson);
@@ -71,7 +77,13 @@ public class DockerTracker {
         }
     }
 
-    /** stdin 입력을 /workspace/input.txt 로 컨테이너에 복사한다. */
+    private int findFreePort() throws IOException {
+        try (ServerSocket s = new ServerSocket(0)) {
+            return s.getLocalPort();
+        }
+    }
+
+    /** input을 /workspace/input.txt로 컨테이너에 복사한다. */
     private void copyInputToContainer(String name, String input) throws Exception {
         Path tmp = Files.createTempFile("codeflow-input-", ".txt");
         try {
@@ -104,8 +116,8 @@ public class DockerTracker {
     }
 
     /** JDWP 모드 실행 — input이 있으면 input.txt 리다이렉트로 주입한다. */
-    private void runWithJdwp(String name, String input) throws Exception {
-        String jdwpOpts = "-agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=*:" + JDWP_PORT;
+    private void runWithJdwp(String name, int jdwpPort, String input) throws Exception {
+        String jdwpOpts = "-agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=*:" + jdwpPort;
         String cmd = (input != null && !input.isEmpty())
                 ? "java " + jdwpOpts + " -cp /workspace Sample < /workspace/input.txt"
                 : "java " + jdwpOpts + " -cp /workspace Sample";
@@ -113,34 +125,20 @@ public class DockerTracker {
         new ProcessBuilder("docker", "exec", "-d", name, "sh", "-c", cmd).start();
     }
 
-    private void startContainer(String name) throws Exception {
-        java.util.List<String> cmd =
-                new java.util.ArrayList<>(java.util.Arrays.asList("docker", "run", "-d"));
-        if (dockerNetwork != null && !dockerNetwork.isBlank()) {
-            cmd.addAll(java.util.Arrays.asList("--network", dockerNetwork));
-        }
-        cmd.addAll(java.util.Arrays.asList("--name", name, DOCKER_IMAGE, "sleep",
-                String.valueOf(CONTAINER_TTL_S)));
+    private void startContainer(String name, int jdwpPort) throws Exception {
+        Process p = new ProcessBuilder(
+                "docker", "run", "-d",
+                "-p", jdwpPort + ":" + jdwpPort,
+                "--name", name,
+                DOCKER_IMAGE,
+                "sleep", String.valueOf(CONTAINER_TTL_S)
+        ).redirectErrorStream(true).start();
 
-        Process p = new ProcessBuilder(cmd).redirectErrorStream(true).start();
         String output = new String(p.getInputStream().readAllBytes());
         int exit = p.waitFor();
         if (exit != 0) {
             throw new RuntimeException("컨테이너 기동 실패:\n" + output);
         }
-    }
-
-    private String getContainerIp(String name) throws Exception {
-        Process p = new ProcessBuilder(
-                "docker", "inspect", "-f",
-                "{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}", name
-        ).start();
-        String ip = new String(p.getInputStream().readAllBytes()).trim();
-        p.waitFor();
-        if (ip.isEmpty()) {
-            throw new RuntimeException("컨테이너 IP를 가져오지 못했습니다: " + name);
-        }
-        return ip;
     }
 
     private void copySourceToContainer(String name, String javaFilePath) throws Exception {
@@ -169,7 +167,9 @@ public class DockerTracker {
     private void compileInContainer(String name) throws Exception {
         Process p = new ProcessBuilder(
                 "docker", "exec", name,
-                "javac", "-g", "-cp", "/workspace", "/workspace/Sample.java"
+                "javac", "-g",
+                "-cp", "/workspace",
+                "/workspace/Sample.java"
         ).redirectErrorStream(true).start();
 
         String output = new String(p.getInputStream().readAllBytes());
@@ -186,20 +186,6 @@ public class DockerTracker {
         } catch (Exception e) {
             log.warn("[DockerTracker] 컨테이너 정리 실패 ({}): {}", name, e.getMessage());
         }
-    }
-
-    private void waitForPort(String host, int port, int timeoutMs) throws Exception {
-        long deadline = System.currentTimeMillis() + timeoutMs;
-        while (System.currentTimeMillis() < deadline) {
-            try (Socket ignored = new Socket(host, port)) {
-                log.info("[DockerTracker] JDWP 포트 {}:{} 준비 완료", host, port);
-                return;
-            } catch (IOException e) {
-                //noinspection BusyWait
-                Thread.sleep(300);
-            }
-        }
-        throw new RuntimeException("JDWP 포트가 " + timeoutMs + "ms 내에 열리지 않았습니다. host=" + host);
     }
 
     private void exec(String containerName, String... command) throws Exception {
