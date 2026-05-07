@@ -30,11 +30,13 @@ public class ExecutionTracker {
 
     private final String host;
     private final int port;
+    private final String className;
     private final ObjectMapper objectMapper = new ObjectMapper();
 
-    public ExecutionTracker(String host, int port) {
+    public ExecutionTracker(String host, int port, String className) {
         this.host = host;
         this.port = port;
+        this.className = className;
     }
 
     /**
@@ -50,7 +52,7 @@ public class ExecutionTracker {
             EventRequestManager erm = vm.eventRequestManager();
 
             ClassPrepareRequest cpr = erm.createClassPrepareRequest();
-            cpr.addClassFilter("Sample");
+            cpr.addClassFilter(className);
             cpr.enable();
 
             vm.resume();
@@ -73,7 +75,7 @@ public class ExecutionTracker {
                                 StepRequest.STEP_LINE,
                                 StepRequest.STEP_INTO
                         );
-                        sr.addClassFilter("Sample");
+                        sr.addClassFilter(className);
                         sr.enable();
 
                     } else if (event instanceof StepEvent se) {

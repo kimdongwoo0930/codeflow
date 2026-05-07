@@ -7,18 +7,19 @@ import org.springframework.stereotype.Service;
 import java.io.*;
 import java.net.ServerSocket;
 import java.nio.file.*;
+import java.util.regex.*;
 
 /**
  * Java 소스 코드를 Docker 컨테이너 안에서 실행하고,
  * JDI(ExecutionTracker)를 통해 실행 흐름을 추적하여 JSON으로 반환한다.
  *
  * 실행 순서:
- *   1. 소스 코드를 임시 파일로 저장
+ *   1. 소스 코드에서 클래스명 추출
  *   2. Docker 컨테이너 기동 (JDWP 포트 동적 할당)
  *   3. 소스 파일을 컨테이너로 복사 (docker cp) — package 선언 자동 제거
  *   4. javac로 컴파일
  *   5. JDWP suspend=y 옵션으로 JVM 기동
- *   6. JDWP 포트 준비 확인 후 ExecutionTracker 연결
+ *   6. ExecutionTracker 연결
  *   7. 추적 완료 후 컨테이너 정리
  */
 @Service
@@ -42,31 +43,33 @@ public class DockerTracker {
     }
 
     private TraceResult runAndTraceFile(String javaFilePath, String input) throws Exception {
+        String sourceCode = Files.readString(Path.of(javaFilePath));
+        String className  = extractClassName(sourceCode);
         String containerName = "codeflow-" + System.currentTimeMillis();
         int jdwpPort = findFreePort();
 
-        log.info("[DockerTracker] 컨테이너 시작: {} (JDWP 포트: {})", containerName, jdwpPort);
+        log.info("[DockerTracker] 컨테이너 시작: {} (클래스: {}, JDWP 포트: {})", containerName, className, jdwpPort);
         startContainer(containerName, jdwpPort);
 
         try {
-            log.info("[DockerTracker] 소스 파일 복사: {}", javaFilePath);
-            copySourceToContainer(containerName, javaFilePath);
+            log.info("[DockerTracker] 소스 파일 복사");
+            copySourceToContainer(containerName, sourceCode, className);
 
             log.info("[DockerTracker] javac 컴파일");
-            compileInContainer(containerName);
+            compileInContainer(containerName, className);
 
             if (input != null && !input.isEmpty()) {
                 copyInputToContainer(containerName, input);
             }
 
             log.info("[DockerTracker] 프로그램 실행 (stdout 캡처)");
-            String programOutput = captureOutput(containerName, input);
+            String programOutput = captureOutput(containerName, className, input);
 
             log.info("[DockerTracker] JDWP 모드로 JVM 기동");
-            runWithJdwp(containerName, jdwpPort, input);
+            runWithJdwp(containerName, jdwpPort, className, input);
 
             log.info("[DockerTracker] ExecutionTracker 시작");
-            ExecutionTracker tracker = new ExecutionTracker("localhost", jdwpPort);
+            ExecutionTracker tracker = new ExecutionTracker("localhost", jdwpPort, className);
             String traceJson = tracker.trace();
 
             return new TraceResult(programOutput, traceJson);
@@ -77,13 +80,18 @@ public class DockerTracker {
         }
     }
 
+    /** 소스코드에서 public class 명을 추출한다. 없으면 "Main"을 반환한다. */
+    private String extractClassName(String source) {
+        Matcher m = Pattern.compile("public\\s+class\\s+(\\w+)").matcher(source);
+        return m.find() ? m.group(1) : "Main";
+    }
+
     private int findFreePort() throws IOException {
         try (ServerSocket s = new ServerSocket(0)) {
             return s.getLocalPort();
         }
     }
 
-    /** input을 /workspace/input.txt로 컨테이너에 복사한다. */
     private void copyInputToContainer(String name, String input) throws Exception {
         Path tmp = Files.createTempFile("codeflow-input-", ".txt");
         try {
@@ -97,11 +105,10 @@ public class DockerTracker {
         }
     }
 
-    /** 일반 실행 — input이 있으면 stdin으로 주입한다. */
-    private String captureOutput(String name, String input) throws Exception {
+    private String captureOutput(String name, String className, String input) throws Exception {
         Process p = new ProcessBuilder(
                 "docker", "exec", "-i", name,
-                "java", "-cp", "/workspace", "Sample"
+                "java", "-cp", "/workspace", className
         ).redirectErrorStream(true).start();
 
         if (input != null && !input.isEmpty()) {
@@ -115,12 +122,11 @@ public class DockerTracker {
         return output.trim();
     }
 
-    /** JDWP 모드 실행 — input이 있으면 input.txt 리다이렉트로 주입한다. */
-    private void runWithJdwp(String name, int jdwpPort, String input) throws Exception {
+    private void runWithJdwp(String name, int jdwpPort, String className, String input) throws Exception {
         String jdwpOpts = "-agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=*:" + jdwpPort;
         String cmd = (input != null && !input.isEmpty())
-                ? "java " + jdwpOpts + " -cp /workspace Sample < /workspace/input.txt"
-                : "java " + jdwpOpts + " -cp /workspace Sample";
+                ? "java " + jdwpOpts + " -cp /workspace " + className + " < /workspace/input.txt"
+                : "java " + jdwpOpts + " -cp /workspace " + className;
 
         new ProcessBuilder("docker", "exec", "-d", name, "sh", "-c", cmd).start();
     }
@@ -141,17 +147,17 @@ public class DockerTracker {
         }
     }
 
-    private void copySourceToContainer(String name, String javaFilePath) throws Exception {
-        String source = Files.readString(Path.of(javaFilePath));
-        String stripped = stripPackageDeclaration(source);
+    private void copySourceToContainer(String name, String sourceCode, String className) throws Exception {
+        String stripped = stripPackageDeclaration(sourceCode);
+        String fileName = className + ".java";
 
-        Path tmp = Files.createTempFile("codeflow-", "-Sample.java");
+        Path tmp = Files.createTempFile("codeflow-", "-" + fileName);
         try {
             Files.writeString(tmp, stripped);
             exec(name, "mkdir", "-p", "/workspace");
 
             Process p = new ProcessBuilder(
-                    "docker", "cp", tmp.toString(), name + ":/workspace/Sample.java"
+                    "docker", "cp", tmp.toString(), name + ":/workspace/" + fileName
             ).redirectErrorStream(true).start();
 
             String output = new String(p.getInputStream().readAllBytes());
@@ -164,12 +170,12 @@ public class DockerTracker {
         }
     }
 
-    private void compileInContainer(String name) throws Exception {
+    private void compileInContainer(String name, String className) throws Exception {
         Process p = new ProcessBuilder(
                 "docker", "exec", name,
                 "javac", "-g",
                 "-cp", "/workspace",
-                "/workspace/Sample.java"
+                "/workspace/" + className + ".java"
         ).redirectErrorStream(true).start();
 
         String output = new String(p.getInputStream().readAllBytes());
