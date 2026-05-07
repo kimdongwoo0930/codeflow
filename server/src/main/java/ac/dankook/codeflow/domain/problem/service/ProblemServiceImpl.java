@@ -73,7 +73,7 @@ public class ProblemServiceImpl implements ProblemService {
         problem p = problemRepository.findById(requestDto.problemId())
                 .orElseThrow(() -> new BusinessException(ErrorCode.AI_RESPONSE_FAILURE));
 
-        DockerTracker.TraceResult result = dockerTracker.runAndTrace(requestDto.sourceCode());
+        DockerTracker.TraceResult result = dockerTracker.runAndTrace(requestDto.sourceCode(), p.getInputExample());
         String actual = result.programOutput().trim();
         String expected = p.getExpectedOutput() == null ? "" : p.getExpectedOutput().trim();
         boolean passed = actual.equals(expected);
