@@ -32,7 +32,6 @@ public class GeminiService {
         this.objectMapper = objectMapper;
     }
 
-
     // 문제 생성 부분
     public ProblemResponseDto generateProblem(String studyType, String topic, String difficulty,
             String detail) {
@@ -50,8 +49,6 @@ public class GeminiService {
         }
     }
 
-
-
     // AI 튜터 부분
     public String askTutor(String topic, String difficulty, String problem, String userCode,
             String question) {
@@ -60,6 +57,11 @@ public class GeminiService {
                 defaultString(problem), "userCode",
                 defaultString(userCode).isBlank() ? "아직 코드를 작성하지 않았습니다." : defaultString(userCode),
                 "question", defaultString(question)));
+        return callGemini(prompt);
+    }
+
+    // 피드백 생성
+    public String callGeminiFeedback(String prompt) {
         return callGemini(prompt);
     }
 
