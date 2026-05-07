@@ -19,11 +19,15 @@ class VisualizerControllerTest {
     void trace_목데이터_반환() throws Exception {
         // DockerTracker 목 생성
         DockerTracker mockTracker = mock(DockerTracker.class);
+        String mockTraceJson = "["
+                + "{\"step\":1,\"line\":3,\"method\":\"main\",\"variables\":{\"args\":[]},\"stack\":[\"Main.main:3\"]},"
+                + "{\"step\":2,\"line\":4,\"method\":\"main\",\"variables\":{\"args\":[],\"n\":4},\"stack\":[\"Main.main:4\"]},"
+                + "{\"step\":3,\"line\":5,\"method\":\"main\",\"variables\":{\"args\":[],\"n\":4,\"arr\":[]},\"stack\":[\"Main.main:5\"]},"
+                + "{\"step\":4,\"line\":9,\"method\":\"main\",\"variables\":{\"args\":[],\"n\":4,\"arr\":[3,9,1,7],\"max\":3},\"stack\":[\"Main.main:9\"]}"
+                + "]";
+
         when(mockTracker.runAndTrace(anyString(), anyString()))
-                .thenReturn(new DockerTracker.TraceResult(
-                        "9",
-                        "[{\"step\":1,\"line\":5,\"method\":\"main\"}]"
-                ));
+                .thenReturn(new DockerTracker.TraceResult("9", mockTraceJson));
 
         // TraceRequest 생성 (Jackson으로 필드 주입)
         TraceRequest request = new ObjectMapper().readValue(
