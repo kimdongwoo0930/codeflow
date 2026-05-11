@@ -27,6 +27,69 @@ type Snapshot = {
   ai: string;
 };
 type ChatMessage = { role: "ai" | "user"; content: string };
+type JdiStep = {
+  step: number;
+  line: number;
+  method: string;
+  class: string;
+  variables: Record<string, unknown>;
+  stack: string[];
+};
+
+function transformJdiTrace(steps: JdiStep[], programOutput: string): Snapshot[] {
+  const addrMap = new Map<string, string>();
+  let addrCounter = 0xA1;
+
+  function getAddr(key: string): string {
+    if (!addrMap.has(key)) {
+      addrMap.set(key, `0x${addrCounter.toString(16).toUpperCase()}`);
+      addrCounter++;
+    }
+    return addrMap.get(key)!;
+  }
+
+  return steps.map((step, idx) => {
+    const heap: HeapEntry[] = [];
+    const vars: VarEntry[] = [];
+
+    for (const [name, value] of Object.entries(step.variables)) {
+      if (name.startsWith("_")) continue;
+
+      if (Array.isArray(value)) {
+        const addr = getAddr(`${name}_array`);
+        const elemType = value.length > 0 && typeof value[0] === "number" ? "int" : "Object";
+        heap.push({ addr, typeLabel: `${elemType}[${value.length}]`, rawValues: value.join(", ") });
+        vars.push({ name, type: `${elemType}[]`, value: `→ ${addr}` });
+      } else if (typeof value === "string" && value.includes("@")) {
+        const typeName = value.split("@")[0];
+        const addr = getAddr(`${name}_${value}`);
+        heap.push({ addr, typeLabel: typeName, rawValues: "" });
+        vars.push({ name, type: typeName, value: `→ ${addr}` });
+      } else if (value === null || value === undefined) {
+        vars.push({ name, type: "Object", value: "null" });
+      } else {
+        const type =
+          typeof value === "number"
+            ? Number.isInteger(value) ? "int" : "double"
+            : typeof value === "boolean" ? "boolean" : "String";
+        vars.push({ name, type, value: String(value) });
+      }
+    }
+
+    const frameLabel = step.stack[0] ?? `${step.class}.${step.method}:${step.line}`;
+    const isLast = idx === steps.length - 1;
+
+    return {
+      step: step.step,
+      line: step.line,
+      frames: [{ label: frameLabel, vars }],
+      heap,
+      output: isLast ? programOutput : "",
+      note: "",
+      ai: "",
+    };
+  });
+}
 
 // ─── Code ─────────────────────────────────────────────────
 const CODE_LINES = [
@@ -240,6 +303,8 @@ export default function VisualizationPage() {
   const [stepIndex, setStepIndex] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
   const [speed, setSpeed] = useState(1200);
+  const [snapshots, setSnapshots] = useState<Snapshot[]>(SNAPSHOTS);
+  const [codeLines, setCodeLines] = useState<string[]>(CODE_LINES);
   const [chatMessages, setChatMessages] = useState<ChatMessage[]>([
     {
       role: "ai",
@@ -271,6 +336,34 @@ export default function VisualizationPage() {
     if (!centerRef.current) return;
     const w = centerRef.current.getBoundingClientRect().width;
     if (w > 0) setStackPanelWidth(Math.floor((w - DIVIDER_W) / 2));
+  }, []);
+
+  // 제출 결과에서 JDI trace 읽어서 동적으로 업데이트
+  useEffect(() => {
+    try {
+      const raw = sessionStorage.getItem("visualizationData");
+      if (!raw) return;
+      const data = JSON.parse(raw) as {
+        sourceCode: string;
+        trace: JdiStep[] | string;
+        programOutput: string;
+        title: string;
+      };
+      const traceSteps: JdiStep[] = typeof data.trace === "string"
+        ? JSON.parse(data.trace)
+        : data.trace;
+      if (!Array.isArray(traceSteps) || traceSteps.length === 0) return;
+      const transformed = transformJdiTrace(traceSteps, data.programOutput ?? "");
+      setSnapshots(transformed);
+      setCodeLines(data.sourceCode.split("\n"));
+      setStepIndex(0);
+      setChatMessages([{
+        role: "ai",
+        content: `"${data.title}" 문제의 실행 과정을 단계별로 확인할 수 있어요. 스택과 힙 메모리가 어떻게 변하는지 살펴보세요!`,
+      }]);
+    } catch {
+      // sessionStorage 없거나 파싱 실패 시 기본 더미 데이터 유지
+    }
   }, []);
 
   const startResize =
@@ -318,8 +411,8 @@ export default function VisualizationPage() {
     document.body.style.userSelect = "";
   }, []);
 
-  const snap = SNAPSHOTS[stepIndex];
-  const prevSnap = stepIndex > 0 ? SNAPSHOTS[stepIndex - 1] : null;
+  const snap = snapshots[stepIndex] ?? snapshots[0];
+  const prevSnap = stepIndex > 0 ? snapshots[stepIndex - 1] : null;
   const changedVars = getChangedVars(snap, prevSnap);
   const newVars = getNewVars(snap, prevSnap);
   const allVars = snap.frames.flatMap((f) => f.vars);
@@ -329,13 +422,13 @@ export default function VisualizationPage() {
   // Auto-play
   useEffect(() => {
     if (!isPlaying) return;
-    if (stepIndex >= SNAPSHOTS.length - 1) {
+    if (stepIndex >= snapshots.length - 1) {
       setIsPlaying(false);
       return;
     }
     const id = setTimeout(() => setStepIndex((p) => p + 1), speed);
     return () => clearTimeout(id);
-  }, [isPlaying, stepIndex, speed]);
+  }, [isPlaying, stepIndex, speed, snapshots.length]);
 
   // Scroll code to active line
   useEffect(() => {
@@ -350,11 +443,11 @@ export default function VisualizationPage() {
 
   const goStep = (index: number) => {
     setIsPlaying(false);
-    setStepIndex(Math.max(0, Math.min(SNAPSHOTS.length - 1, index)));
+    setStepIndex(Math.max(0, Math.min(snapshots.length - 1, index)));
   };
 
   const togglePlay = () => {
-    if (stepIndex >= SNAPSHOTS.length - 1) {
+    if (stepIndex >= snapshots.length - 1) {
       setStepIndex(0);
       setIsPlaying(true);
     } else {
@@ -401,7 +494,7 @@ export default function VisualizationPage() {
 
           <div className="flex items-center gap-2">
             <span className="rounded-full border border-cyan/30 bg-cyan/10 px-3 py-1 font-mono text-[11px] text-cyan">
-              {snap.step} / {SNAPSHOTS.length}
+              {snap.step} / {snapshots.length}
             </span>
             <Link
               href="/study/records"
@@ -433,7 +526,7 @@ export default function VisualizationPage() {
 
           {/* Code lines */}
           <div className="flex-1 overflow-y-auto py-2 font-mono text-[13px]">
-            {CODE_LINES.map((line, index) => {
+            {codeLines.map((line, index) => {
               const lineNo = index + 1;
               const isActive = lineNo === snap.line;
               return (
@@ -914,7 +1007,7 @@ export default function VisualizationPage() {
         <div className="flex items-center gap-4">
           {/* Step dots / timeline */}
           <div className="flex items-center gap-1.5">
-            {SNAPSHOTS.map((s, idx) => (
+            {snapshots.map((s, idx) => (
               <button
                 key={s.step}
                 onClick={() => goStep(idx)}
@@ -964,15 +1057,15 @@ export default function VisualizationPage() {
             </button>
             <button
               onClick={() => goStep(stepIndex + 1)}
-              disabled={stepIndex === SNAPSHOTS.length - 1}
+              disabled={stepIndex === snapshots.length - 1}
               title="다음 단계"
               className="flex h-8 w-8 items-center justify-center rounded-lg border border-white/15 text-sm text-slate-400 transition hover:border-blue/40 hover:text-white disabled:cursor-not-allowed disabled:opacity-30"
             >
               ►
             </button>
             <button
-              onClick={() => goStep(SNAPSHOTS.length - 1)}
-              disabled={stepIndex === SNAPSHOTS.length - 1}
+              onClick={() => goStep(snapshots.length - 1)}
+              disabled={stepIndex === snapshots.length - 1}
               title="마지막으로"
               className="flex h-8 w-8 items-center justify-center rounded-lg border border-white/15 text-sm text-slate-400 transition hover:border-blue/40 hover:text-white disabled:cursor-not-allowed disabled:opacity-30"
             >
@@ -1005,7 +1098,7 @@ export default function VisualizationPage() {
             <span className="font-mono text-[12px] text-slate-300">
               {stepIndex + 1}{" "}
               <span className="text-slate-600">/</span>{" "}
-              {SNAPSHOTS.length}
+              {snapshots.length}
             </span>
           </div>
         </div>

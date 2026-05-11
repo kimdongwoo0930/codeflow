@@ -42,7 +42,6 @@ type SubmissionReview = {
   passed: boolean;
   title: string;
   feedback: string;
-  nextHint: string;
 };
 type Problem = {
   title: string;
@@ -54,6 +53,7 @@ type Problem = {
   constraints: string[];
   hint?: string;
   startCode?: string;
+  lastCode?: string;
   expectedOutput?: string;
   answerCode?: string;
   problemId?: number | null;
@@ -1243,7 +1243,7 @@ export function TestLab({
 
   const [phase, setPhase] = useState<"editor" | "loading" | "result">("editor");
   const [editorCode, setEditorCode] = useState(
-    () => problemProp?.startCode ?? JAVA_DEFAULT_CODE,
+    () => problemProp?.lastCode ?? problemProp?.startCode ?? JAVA_DEFAULT_CODE,
   );
   const [trace, setTrace] = useState<Trace | null>(null);
 
@@ -1445,13 +1445,34 @@ export function TestLab({
     window.addEventListener("pointerup", stopResize);
   };
 
+  const saveCodeToServer = (code: string) => {
+    const problemId = DUMMY_PROBLEM.problemId;
+    if (!problemId) return;
+    const token = localStorage.getItem("accessToken");
+    fetch(`/api/v1/problems/${problemId}/code`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      },
+      body: JSON.stringify({ problemId, sourceCode: code }),
+    }).catch(() => {});
+  };
+
   const handleSubmit = async () => {
+    saveCodeToServer(editorCode);
     setSubmissionReview(null);
     setPhase("loading");
     try {
+      const token = typeof window !== "undefined"
+        ? localStorage.getItem("accessToken")
+        : null;
       const res = await fetch("/api/v1/problems/submit", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
         body: JSON.stringify({
           problemId: DUMMY_PROBLEM.problemId,
           sourceCode: editorCode,
@@ -1462,6 +1483,7 @@ export function TestLab({
       const passed: boolean = result?.passed ?? false;
       const output: string = result?.programOutput ?? "";
       const expected: string = result?.expectedOutput ?? "";
+      const aiFeedback: string = result?.aiFeedback ?? "";
 
       setTestResults([
         {
@@ -1478,17 +1500,24 @@ export function TestLab({
               title: "정답이에요",
               feedback:
                 "코드가 예상 출력과 일치합니다. 시각화로 실행 흐름을 확인해보세요.",
-              nextHint: "",
             }
           : {
               passed: false,
               title: "아직 한 단계만 더",
-              feedback: `예상 출력: "${expected}" / 실제 출력: "${output}"`,
-              nextHint: "출력 형식을 다시 확인해보세요.",
+              feedback: aiFeedback || `예상 출력: "${expected}" / 실제 출력: "${output}"`,
             },
       );
       if (passed) {
         setTrace(generateTrace(editorCode, "java"));
+        sessionStorage.setItem(
+          "visualizationData",
+          JSON.stringify({
+            sourceCode: editorCode,
+            trace: result?.trace ?? [],
+            programOutput: output,
+            title: DUMMY_PROBLEM.title,
+          }),
+        );
       }
       setPhase("result");
     } catch {
@@ -1563,6 +1592,7 @@ export function TestLab({
   };
 
   const handleRunPreview = async () => {
+    saveCodeToServer(editorCode);
     setEditorStatus("running");
     setEditorOutput("실행 중...");
 
@@ -1570,7 +1600,10 @@ export function TestLab({
       const res = await fetch("/api/dockertracker/trace", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ sourceCode: editorCode }),
+        body: JSON.stringify({
+          sourceCode: editorCode,
+          input: DUMMY_PROBLEM.examples[0]?.input ?? "",
+        }),
       });
       const json = await res.json();
       const output: string = json?.data?.answerCheck?.programOutput ?? "";
@@ -2396,10 +2429,9 @@ export function TestLab({
               <h2 className="mt-2 text-xl font-bold text-white">
                 {review.title}
               </h2>
-              <p className="mt-2 max-w-2xl text-sm leading-7 text-slate-300">
+              <p className="mt-2 max-w-2xl whitespace-pre-wrap text-sm leading-7 text-slate-300">
                 {review.feedback}
               </p>
-              <p className="mt-3 text-xs text-slate-500">{review.nextHint}</p>
             </div>
             <div className="flex shrink-0 flex-wrap gap-2">
               <Link

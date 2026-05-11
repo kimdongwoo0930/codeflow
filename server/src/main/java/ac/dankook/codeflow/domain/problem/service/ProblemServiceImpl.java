@@ -30,6 +30,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class ProblemServiceImpl implements ProblemService {
     private final GeminiService geminiService;
+    private final FeedbackService feedbackService;
     private final ObjectMapper objectMapper;
     private final ProblemRepository problemRepository;
     private final SubmissionRepository submissionRepository;
@@ -73,10 +74,21 @@ public class ProblemServiceImpl implements ProblemService {
         problem p = problemRepository.findById(requestDto.problemId())
                 .orElseThrow(() -> new BusinessException(ErrorCode.AI_RESPONSE_FAILURE));
 
-        DockerTracker.TraceResult result = dockerTracker.runAndTrace(requestDto.sourceCode(), p.getInputExample());
+        DockerTracker.TraceResult result;
+        try {
+            result = dockerTracker.runAndTrace(requestDto.sourceCode(), p.getInputExample());
+        } catch (RuntimeException e) {
+            String msg = e.getMessage() != null ? e.getMessage() : "실행 중 오류가 발생했습니다.";
+            String compileError = msg.startsWith("컴파일 오류:\n") ? msg.substring("컴파일 오류:\n".length()) : msg;
+            return new SubmitResponseDto(false, "", "", null, "컴파일 오류가 있어요.\n\n" + compileError);
+        }
+
         String actual = result.programOutput().trim();
         String expected = p.getExpectedOutput() == null ? "" : p.getExpectedOutput().trim();
         boolean passed = actual.equals(expected);
+
+        p.updateLastCode(requestDto.sourceCode());
+        problemRepository.save(p);
 
         Long userId = getCurrentUserId();
         if (userId != null) {
@@ -84,7 +96,10 @@ public class ProblemServiceImpl implements ProblemService {
                     Submission.of(userId, requestDto.problemId(), passed, requestDto.sourceCode()));
         }
 
-        return new SubmitResponseDto(passed, actual, expected, result.traceJson());
+        String aiFeedback = passed ? null
+                : feedbackService.generateFeedback(p, requestDto.sourceCode(), p.getDifficulty(), actual, expected);
+
+        return new SubmitResponseDto(passed, actual, expected, result.traceJson(), aiFeedback);
     }
 
     @Override
@@ -119,7 +134,15 @@ public class ProblemServiceImpl implements ProblemService {
         return new ProblemDetailDto(p.getId(), p.getTitle(), p.getDescription(),
                 p.getStudyType(), p.getTopic(), p.getDifficulty(),
                 p.getInputExample(), p.getOutputExample(),
-                p.getConstraints(), p.getHint(), p.getStartCode());
+                p.getConstraints(), p.getHint(), p.getStartCode(), p.getLastCode());
+    }
+
+    @Override
+    public void saveLastCode(Long problemId, String sourceCode) {
+        problem p = problemRepository.findById(problemId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.AI_RESPONSE_FAILURE));
+        p.updateLastCode(sourceCode);
+        problemRepository.save(p);
     }
 
     private Long getCurrentUserId() {

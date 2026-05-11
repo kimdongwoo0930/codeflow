@@ -14,4 +14,5 @@ public interface ProblemService {
     SubmitResponseDto submit(SubmitRequestDto requestDto) throws Exception;
     List<MyProblemDto> getMyProblems();
     ProblemDetailDto getProblemDetail(Long id);
+    void saveLastCode(Long problemId, String sourceCode);
 }

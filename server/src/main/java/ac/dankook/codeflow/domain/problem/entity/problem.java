@@ -64,6 +64,13 @@ public class problem extends BaseTimeEntity {
     @Column(columnDefinition = "TEXT")
     private String expectedOutput;
 
+    @Column(columnDefinition = "TEXT")
+    private String lastCode;
+
+    public void updateLastCode(String code) {
+        this.lastCode = code;
+    }
+
     public static problem of(ProblemResponseDto dto, String studyType, String topic,
             String difficulty, Long userId) {
         problem p = new problem();

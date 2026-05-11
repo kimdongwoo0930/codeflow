@@ -7,6 +7,8 @@ import org.springframework.stereotype.Service;
 import java.io.*;
 import java.net.ServerSocket;
 import java.nio.file.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.*;
 
 /**
@@ -69,7 +71,8 @@ public class DockerTracker {
             runWithJdwp(containerName, jdwpPort, className, input);
 
             log.info("[DockerTracker] ExecutionTracker 시작");
-            ExecutionTracker tracker = new ExecutionTracker("localhost", jdwpPort, className);
+            String jdiHost = isDockerNetwork() ? containerName : "localhost";
+            ExecutionTracker tracker = new ExecutionTracker(jdiHost, jdwpPort, className);
             String traceJson = tracker.trace();
 
             return new TraceResult(programOutput, traceJson);
@@ -131,15 +134,22 @@ public class DockerTracker {
         new ProcessBuilder("docker", "exec", "-d", name, "sh", "-c", cmd).start();
     }
 
-    private void startContainer(String name, int jdwpPort) throws Exception {
-        Process p = new ProcessBuilder(
-                "docker", "run", "-d",
-                "-p", jdwpPort + ":" + jdwpPort,
-                "--name", name,
-                DOCKER_IMAGE,
-                "sleep", String.valueOf(CONTAINER_TTL_S)
-        ).redirectErrorStream(true).start();
+    private boolean isDockerNetwork() {
+        String net = System.getenv("DOCKER_NETWORK");
+        return net != null && !net.isBlank();
+    }
 
+    private void startContainer(String name, int jdwpPort) throws Exception {
+        List<String> cmd = new ArrayList<>(List.of("docker", "run", "-d"));
+        String dockerNetwork = System.getenv("DOCKER_NETWORK");
+        if (dockerNetwork != null && !dockerNetwork.isBlank()) {
+            cmd.addAll(List.of("--network", dockerNetwork));
+        } else {
+            cmd.addAll(List.of("-p", jdwpPort + ":" + jdwpPort));
+        }
+        cmd.addAll(List.of("--name", name, DOCKER_IMAGE, "sleep", String.valueOf(CONTAINER_TTL_S)));
+
+        Process p = new ProcessBuilder(cmd).redirectErrorStream(true).start();
         String output = new String(p.getInputStream().readAllBytes());
         int exit = p.waitFor();
         if (exit != 0) {
