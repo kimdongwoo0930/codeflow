@@ -4,5 +4,6 @@ public record SubmitResponseDto(
     boolean passed,
     String programOutput,
     String expectedOutput,
-    Object trace
+    Object trace,
+    String aiFeedback
 ) {}

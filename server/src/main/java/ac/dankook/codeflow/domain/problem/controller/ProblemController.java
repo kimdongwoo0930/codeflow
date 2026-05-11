@@ -3,6 +3,7 @@ package ac.dankook.codeflow.domain.problem.controller;
 import java.util.List;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -48,5 +49,13 @@ public class ProblemController {
     @GetMapping("/{id}")
     public ResponseEntity<CommonResponse<ProblemDetailDto>> getProblem(@PathVariable Long id) {
         return ResponseEntity.ok(CommonResponse.success(problemService.getProblemDetail(id)));
+    }
+
+    @PatchMapping("/{id}/code")
+    public ResponseEntity<CommonResponse<Void>> saveCode(
+            @PathVariable Long id,
+            @RequestBody SubmitRequestDto requestDto) {
+        problemService.saveLastCode(id, requestDto.sourceCode());
+        return ResponseEntity.ok(CommonResponse.success(null));
     }
 }

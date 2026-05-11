@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, Suspense } from "react";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { TestLab } from "@/components/TestLab";
 
 type GeneratedProblem = {
@@ -35,6 +35,7 @@ type ProblemDetail = {
   constraints: string[];
   hint?: string;
   startCode?: string;
+  lastCode?: string;
 };
 
 type Problem = {
@@ -47,6 +48,7 @@ type Problem = {
   constraints: string[];
   hint?: string;
   startCode?: string;
+  lastCode?: string;
   expectedOutput?: string;
   answerCode?: string;
   problemId?: number | null;
@@ -80,6 +82,7 @@ function mapDetailToProblem(data: ProblemDetail): Problem {
     constraints: data.constraints ?? [],
     hint: data.hint,
     startCode: data.startCode,
+    lastCode: data.lastCode,
     expectedOutput: undefined,
     answerCode: undefined,
     problemId: data.id,
@@ -87,6 +90,7 @@ function mapDetailToProblem(data: ProblemDetail): Problem {
 }
 
 function StudyPageInner() {
+  const router = useRouter();
   const searchParams = useSearchParams();
   const problemIdParam = searchParams.get("problemId");
 
@@ -123,6 +127,11 @@ function StudyPageInner() {
       try {
         const data: GeneratedProblem = JSON.parse(raw);
         const meta: Meta = JSON.parse(rawMeta);
+        // problemId가 있으면 URL에 반영 → 재마운트 시 API fetch로 lastCode 복원
+        if (meta.problemId) {
+          router.replace(`/study?problemId=${meta.problemId}`);
+          return;
+        }
         setProblem(mapToProblem(data, meta));
         setIsAlgorithm(meta.studyType === "알고리즘");
       } catch {
@@ -130,10 +139,10 @@ function StudyPageInner() {
       }
     }
     setFetchDone(true);
-  }, [problemIdParam]);
+  }, [problemIdParam, router]);
 
-  // problemId 로딩 중엔 TestLab 마운트를 막아서 editorCode 초기화 문제 방지
-  if (problemIdParam && !fetchDone) {
+  // problem이 확정되기 전에 TestLab이 마운트되면 editorCode 초기화가 틀림 — 항상 대기
+  if (!fetchDone) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-[#0b0f1a]">
         <div className="flex gap-1.5">

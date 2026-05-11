@@ -13,5 +13,6 @@ public record ProblemDetailDto(
         String outputExample,
         List<String> constraints,
         String hint,
-        String startCode) {
+        String startCode,
+        String lastCode) {
 }
