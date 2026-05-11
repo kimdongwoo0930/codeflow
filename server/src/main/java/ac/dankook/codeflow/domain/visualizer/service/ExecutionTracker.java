@@ -30,11 +30,13 @@ public class ExecutionTracker {
 
     private final String host;
     private final int port;
+    private final String className;
     private final ObjectMapper objectMapper = new ObjectMapper();
 
-    public ExecutionTracker(String host, int port) {
+    public ExecutionTracker(String host, int port, String className) {
         this.host = host;
         this.port = port;
+        this.className = className;
     }
 
     /**
@@ -50,7 +52,7 @@ public class ExecutionTracker {
             EventRequestManager erm = vm.eventRequestManager();
 
             ClassPrepareRequest cpr = erm.createClassPrepareRequest();
-            cpr.addClassFilter("Sample");
+            cpr.addClassFilter(className);
             cpr.enable();
 
             vm.resume();
@@ -73,7 +75,7 @@ public class ExecutionTracker {
                                 StepRequest.STEP_LINE,
                                 StepRequest.STEP_INTO
                         );
-                        sr.addClassFilter("Sample");
+                        sr.addClassFilter(className);
                         sr.enable();
 
                     } else if (event instanceof StepEvent se) {
@@ -111,10 +113,20 @@ public class ExecutionTracker {
         Map<String, Connector.Argument> args = connector.defaultArguments();
         args.get("hostname").setValue(host);
         args.get("port").setValue(String.valueOf(port));
-        args.get("timeout").setValue("10000");
+        args.get("timeout").setValue("3000");
 
-        log.info("JVM에 JDI 연결 중: {}:{}", host, port);
-        return connector.attach(args);
+        long deadline = System.currentTimeMillis() + 15_000;
+        Exception lastException = null;
+        while (System.currentTimeMillis() < deadline) {
+            try {
+                log.info("JVM에 JDI 연결 중: {}:{}", host, port);
+                return connector.attach(args);
+            } catch (Exception e) {
+                lastException = e;
+                Thread.sleep(500);
+            }
+        }
+        throw lastException;
     }
 
     private Map<String, Object> captureStep(StepEvent event, int stepNumber) {

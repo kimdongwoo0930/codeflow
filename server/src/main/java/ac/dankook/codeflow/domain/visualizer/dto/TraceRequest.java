@@ -11,7 +11,13 @@ public class TraceRequest {
     @NotBlank
     private String sourceCode;
 
+    private String input;
+
     public String getSourceCode() {
         return sourceCode;
+    }
+
+    public String getInput() {
+        return input;
     }
 }

@@ -34,7 +34,7 @@ public class VisualizerController {
     @PostMapping("/trace")
     public ResponseEntity<CommonResponse<TraceResponse>> trace(
             @RequestBody @Valid TraceRequest request) throws Exception {
-        DockerTracker.TraceResult result = dockerTracker.runAndTrace(request.getSourceCode());
+        DockerTracker.TraceResult result = dockerTracker.runAndTrace(request.getSourceCode(), request.getInput());
 
         TraceResponse response = new TraceResponse(
                 new AnswerCheckResponse(result.programOutput()),
