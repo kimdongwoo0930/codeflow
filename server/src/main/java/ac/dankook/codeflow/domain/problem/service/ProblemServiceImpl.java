@@ -1,10 +1,12 @@
 package ac.dankook.codeflow.domain.problem.service;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -107,15 +109,28 @@ public class ProblemServiceImpl implements ProblemService {
         Long userId = getCurrentUserId();
         if (userId == null) return List.of();
 
-        List<problem> myProblems = problemRepository.findByUserIdOrderByCreatedAtDesc(userId);
         Set<Long> solvedIds = submissionRepository.findSolvedProblemIds(userId);
-        Set<Long> attemptedIds = new HashSet<>(submissionRepository.findAttemptedProblemIds(userId));
-        attemptedIds.removeAll(solvedIds);
+        Set<Long> allAttemptedIds = submissionRepository.findAttemptedProblemIds(userId);
+        Set<Long> inProgressIds = new HashSet<>(allAttemptedIds);
+        inProgressIds.removeAll(solvedIds);
+
+        // 내가 생성한 문제
+        List<problem> myProblems = new ArrayList<>(
+                problemRepository.findByUserIdOrderByCreatedAtDesc(userId));
+        Set<Long> myProblemIds = myProblems.stream()
+                .map(problem::getId).collect(Collectors.toSet());
+
+        // 내가 생성하지 않았지만 제출한 문제 추가
+        Set<Long> submittedElsewhereIds = new HashSet<>(allAttemptedIds);
+        submittedElsewhereIds.removeAll(myProblemIds);
+        if (!submittedElsewhereIds.isEmpty()) {
+            myProblems.addAll(problemRepository.findAllById(submittedElsewhereIds));
+        }
 
         return myProblems.stream().map(p -> {
             String status;
             if (solvedIds.contains(p.getId())) status = "solved";
-            else if (attemptedIds.contains(p.getId())) status = "inprogress";
+            else if (inProgressIds.contains(p.getId())) status = "inprogress";
             else status = "created";
 
             String date = p.getCreatedAt() != null
