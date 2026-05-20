@@ -6,7 +6,7 @@ const nextConfig: NextConfig = {
     return [
       {
         source: "/api/:path*",
-        destination: "https://test.dong02.com/api/:path*",
+        destination: "https://codeflow.dong02.com/api/:path*",
       },
     ];
   },

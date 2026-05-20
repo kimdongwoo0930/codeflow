@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 
-const API_BASE = process.env.NEXT_PUBLIC_API_URL ?? 'https://test.dong02.com';
+const API_BASE = process.env.NEXT_PUBLIC_API_URL ?? 'https://codeflow.dong02.com';
 const TIMER_SECONDS = 3 * 60;
 
 type Mode = 'login' | 'signup';
