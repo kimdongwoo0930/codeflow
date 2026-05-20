@@ -1,88 +1,33 @@
+# codeflow/docker-compose.yml
 services:
-  spring:
-    build:
-      context: ./server
-      dockerfile: Dockerfile
-    container_name: codeflow-spring
-    ports:
-      - "8000:8000"
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-    environment:
-      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/${MYSQL_DATABASE}?useSSL=false&allowPublicKeyRetrieval=true&characterEncoding=UTF-8&serverTimezone=Asia/Seoul
-      SPRING_DATASOURCE_USERNAME: ${MYSQL_USER}
-      SPRING_DATASOURCE_PASSWORD: ${MYSQL_PASSWORD}
-      SPRING_DATA_REDIS_HOST: redis
-      SPRING_DATA_REDIS_PORT: 6379
-      SPRING_MAIL_USERNAME: ${MAIL_USERNAME}
-      SPRING_MAIL_PASSWORD: ${MAIL_PASSWORD}
-      JWT_SECRET: ${JWT_SECRET}
-      GITHUB_CLIENT_ID: ${GITHUB_CLIENT_ID}
-      GITHUB_CLIENT_SECRET: ${GITHUB_CLIENT_SECRET}
-      OAUTH2_REDIRECT_URI: ${OAUTH2_REDIRECT_URI}
-      GOOGLE_GEMINI_API_KEY: ${GOOGLE_GEMINI_API_KEY}
-      DOCKER_NETWORK: codeflow-net
-    depends_on:
-      mysql:
-        condition: service_healthy
-      redis:
-        condition: service_healthy
-    restart: unless-stopped
-    networks:
-      - codeflow-net
-
-  mysql:
-    image: mysql:8.0
-    container_name: codeflow-mysql
-    expose:
-      - "3307"
-    environment:
-      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
-      MYSQL_DATABASE: ${MYSQL_DATABASE}
-      MYSQL_USER: ${MYSQL_USER}
-      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
-      TZ: Asia/Seoul
-      MYSQL_CHARACTER_SET_SERVER: utf8mb4
-      MYSQL_COLLATION_SERVER: utf8mb4_unicode_ci
-    volumes:
-      - mysql-data:/var/lib/mysql
-    healthcheck:
-      test:
-        [
-          "CMD",
-          "mysqladmin",
-          "ping",
-          "-h",
-          "localhost",
-          "-u",
-          "root",
-          "-p${MYSQL_ROOT_PASSWORD}",
-        ]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-    restart: unless-stopped
-    networks:
-      - codeflow-net
-
-  redis:
-    image: redis:alpine
-    container_name: codeflow-redis
-    expose:
-      - "6379"
-    healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
-      interval: 10s
-      timeout: 3s
-      retries: 5
-    restart: unless-stopped
-    networks:
-      - codeflow-net
-
-volumes:
-  mysql-data:
+    spring:
+        build:
+            context: ./server
+            dockerfile: Dockerfile
+        container_name: codeflow-spring
+        expose:
+            - "8001"
+        volumes:
+            - /var/run/docker.sock:/var/run/docker.sock
+        environment:
+            SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/${MYSQL_DATABASE}?useSSL=false&allowPublicKeyRetrieval=true&characterEncoding=UTF-8&serverTimezone=Asia/Seoul
+            SPRING_DATASOURCE_USERNAME: ${MYSQL_USER}
+            SPRING_DATASOURCE_PASSWORD: ${MYSQL_PASSWORD}
+            SPRING_DATA_REDIS_HOST: redis
+            SPRING_DATA_REDIS_PORT: 6379
+            SPRING_MAIL_USERNAME: ${MAIL_USERNAME}
+            SPRING_MAIL_PASSWORD: ${MAIL_PASSWORD}
+            JWT_SECRET: ${JWT_SECRET}
+            GITHUB_CLIENT_ID: ${GITHUB_CLIENT_ID}
+            GITHUB_CLIENT_SECRET: ${GITHUB_CLIENT_SECRET}
+            OAUTH2_REDIRECT_URI: ${OAUTH2_REDIRECT_URI}
+            GOOGLE_GEMINI_API_KEY: ${GOOGLE_GEMINI_API_KEY}
+            DOCKER_NETWORK: proxy
+        restart: unless-stopped
+        networks:
+            - proxy
 
 networks:
-  codeflow-net:
-    driver: bridge
-    name: codeflow-net
+    proxy:
+        external: true
+        name: proxy
