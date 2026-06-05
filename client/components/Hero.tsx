@@ -48,12 +48,18 @@ export function Hero() {
                         AI와 질의응답을 주고받으며 문제를 함께 풀고, 막히는 지점마다 힌트와 설명을 받아보세요.
                     </p>
 
-                    <div className="reveal-up reveal-delay-3 mt-10 flex justify-center">
+                    <div className="reveal-up reveal-delay-3 mt-10 flex flex-col items-center justify-center gap-3 sm:flex-row">
                         <Link
                             href="/create"
                             className="inline-flex h-14 items-center justify-center rounded-xl bg-gradient-to-r from-blue to-purple px-10 text-base font-semibold text-white transition hover:-translate-y-0.5 hover:opacity-90"
                         >
                             AI 문제 만들기
+                        </Link>
+                        <Link
+                            href="/stages"
+                            className="inline-flex h-14 items-center justify-center rounded-xl border border-white/15 bg-white/5 px-10 text-base font-semibold text-slate-100 transition hover:-translate-y-0.5 hover:border-blue/40 hover:bg-white/10"
+                        >
+                            단계별 문제 풀기
                         </Link>
                     </div>
 

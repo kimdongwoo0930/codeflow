@@ -1,0 +1,902 @@
+[
+  {
+    "topic": "출력문",
+    "title": "문자열 출력하기",
+    "description": "문자열 str 이 주어질 때 str을 출력하는 코드를 작성해 보세요",
+    "constraints": "1 <= str 의 길이 <= 1,000,000. str에는 공백이 없으며, 첫째 줄에 한 줄로만 주어집니다.",
+    "input_example": "HelloWorld!",
+    "output_example": "HelloWorld!",
+    "starter_code": "import java.util.Scanner;\npublic class Solution {\npublic static void main(String[] args) {\nScanner sc = new Scanner(System.in);\nString a = sc.next();\n}\n}"
+  },
+  {
+    "topic": "출력문",
+    "title": "a와 b 출력하기",
+    "description": "정수 a와 b가 주어집니다. 각 수를 입력받아 입출력 예와 같은 형식으로 출력하는 코드를 작성해 보세요.",
+    "constraints": "-100,000 <= a, b <= 100,000",
+    "input_example": "4 5",
+    "output_example": "a = 4\nb = 5",
+    "starter_code": "import java.util.Scanner;\npublic class Solution {\npublic static void main(String[] args) {\nScanner sc = new Scanner(System.in);\nint a = sc.nextInt();\nint b = sc.nextInt();\nSystem.out.println(\"a = \" + a + \"\\nb = \" + b);\n}\n}"
+  },
+  {
+    "topic": "반복문",
+    "title": "문자열 반복해서 출력하기",
+    "description": "문자열 str 과 정수 n이 주어집니다. str이 n번 반복된 문자열을 만들어 출력하는 코드를 작성해 보세요.",
+    "constraints": "1 <= str 의 길이 <= 10, 1 <= n <= 5",
+    "input_example": "string 5",
+    "output_example": "stringstringstringstringstring",
+    "starter_code": "import java.util.Scanner;\npublic class Solution {\npublic static void main(String[] args) {\nScanner sc = new Scanner(System.in);\nString str = sc.next();\nint n = sc.nextInt();\n}\n}"
+  },
+  {
+    "topic": "문자열",
+    "title": "대소문자 바꿔서 출력하기",
+    "description": "영어 알파벳으로 이루어진 문자열 str 이 주어집니다. 각 알파벳을 대문자는 소문자로 소문자는 대문자로 변환해서 출력하는 코드를 작성해 보세요.",
+    "constraints": "1 <= str 의 길이 <= 20. str은 알파벳으로 이루어진 문자열입니다.",
+    "input_example": "aBcDeFg",
+    "output_example": "AbCdEfG",
+    "starter_code": "import java.util.Scanner;\npublic class Solution {\npublic static void main(String[] args) {\nScanner sc = new Scanner(System.in);\nString a = sc.next();\n}\n}"
+  },
+  {
+    "topic": "출력문",
+    "title": "특수문자 출력하기",
+    "description": "다음과 같이 출력하도록 코드를 작성해 주세요.",
+    "constraints": "없음",
+    "input_example": "없음",
+    "output_example": "!@#$%^&*(\\'\"<>?:;",
+    "starter_code": "import java.util.Scanner;\npublic class Solution {\npublic static void main(String[] args) {\n}\n}"
+  },
+  {
+    "topic": "연산",
+    "title": "덧셈식 출력하기",
+    "description": "두 정수 a, b가 주어질 때 다음과 같은 형태의 계산식을 출력하는 코드를 작성해 보세요. a + b = c",
+    "constraints": "1 <= a, b <= 100",
+    "input_example": "4 5",
+    "output_example": "4 + 5 = 9",
+    "starter_code": "import java.util.Scanner;\npublic class Solution {\npublic static void main(String[] args) {\nScanner sc = new Scanner(System.in);\nint a = sc.nextInt();\nint b = sc.nextInt();\nSystem.out.println(a + \" + \" + b + \" = \" + (a + b));\n}\n}"
+  },
+  {
+    "topic": "문자열",
+    "title": "문자열 붙여서 출력하기",
+    "description": "두 개의 문자열 str1, str2가 공백으로 구분되어 입력으로 주어집니다. 입출력 예와 같이 str1과 str2을 이어서 출력하는 코드를 작성해 보세요.",
+    "constraints": "1 <= str1, str2의 길이 <= 10",
+    "input_example": "apple pen",
+    "output_example": "applepen",
+    "starter_code": "import java.util.Scanner;\npublic class Solution {\npublic static void main(String[] args) {\nScanner sc = new Scanner(System.in);\nString a = sc.next();\nString b = sc.next();\n}\n}"
+  },
+  {
+    "topic": "문자열",
+    "title": "문자열 돌리기",
+    "description": "문자열 str이 주어집니다. 문자열을 시계방향으로 90도 돌려서 출력하는 코드를 작성해 보세요.",
+    "constraints": "1 <= str 의 길이 <= 10",
+    "input_example": "abcde",
+    "output_example": "a\nb\nc\nd\ne",
+    "starter_code": "import java.util.Scanner;\npublic class Solution {\npublic static void main(String[] args) {\nScanner sc = new Scanner(System.in);\nString a = sc.next();\n}\n}"
+  },
+  {
+    "topic": "조건문",
+    "title": "홀짝 구분하기",
+    "description": "자연수 n이 입력으로 주어졌을 때 n이 짝수이면 n is even, 홀수이면 n is odd를 출력하는 코드를 작성해 보세요.",
+    "constraints": "1 <= n <= 1,000",
+    "input_example": "100",
+    "output_example": "100 is even",
+    "starter_code": "import java.util.Scanner;\npublic class Solution {\npublic static void main(String[] args) {\nScanner sc = new Scanner(System.in);\nint n = sc.nextInt();\n}\n}"
+  },
+  {
+    "topic": "문자열",
+    "title": "문자열 겹쳐쓰기",
+    "description": "문자열 my_string, overwrite_string 과 정수 s가 주어집니다. 인덱스 s부터 overwrite_string의 길이만큼을 바꾼 문자열을 return 하는 함수를 작성해 주세요.",
+    "constraints": "1 <= overwrite_string 길이 <= my_string 길이 <= 1,000. 0 <= s <= my_string 길이 - overwrite_string 길이",
+    "input_example": "my_string: He110W0r1d, overwrite_string: lloWorl, s: 2",
+    "output_example": "HelloWorld!",
+    "starter_code": "class Solution {\npublic String solution(String my_string, String overwrite_string, int s) {\nString answer = \"\";\nreturn answer;\n}\n}"
+  },
+  {
+    "topic": "문자열",
+    "title": "문자열 섞기",
+    "description": "길이가 같은 두 문자열 str1 과 str2 가 주어집니다. 두 문자열의 각 문자가 앞에서부터 번갈아가면서 한 번씩 등장하는 문자열을 return 하는 함수를 완성해 주세요.",
+    "constraints": "1 <= str1 의 길이 = str2 의 길이 <= 10. 소문자로만 이루어짐.",
+    "input_example": "str1: aaaaa, str2: bbbbb",
+    "output_example": "ababababab",
+    "starter_code": "class Solution {\npublic String solution(String str1, String str2) {\nString answer = \"\";\nreturn answer;\n}\n}"
+  },
+  {
+    "topic": "문자열",
+    "title": "문자 리스트를 문자열로 변환하기",
+    "description": "문자들이 담겨있는 배열 arr 가 주어집니다. arr 의 원소들을 순서대로 이어 붙인 문자열을 return 하는 함수를 작성해 주세요.",
+    "constraints": "1 <= arr 의 길이 <= 200",
+    "input_example": "[\"a\",\"b\",\"c\"]",
+    "output_example": "abc",
+    "starter_code": "class Solution {\npublic String solution(String[] arr) {\nString answer = \"\";\nreturn answer;\n}\n}"
+  },
+  {
+    "topic": "문자열",
+    "title": "문자열 곱하기",
+    "description": "문자열 my_string 과 정수 k가 주어질 때 my_string을 k번 반복한 문자열을 return 하는 함수를 작성해 주세요.",
+    "constraints": "1 <= my_string 의 길이 <= 100, 1 <= k <= 100",
+    "input_example": "my_string: string, k: 3",
+    "output_example": "stringstringstring",
+    "starter_code": "class Solution {\npublic String solution(String my_string, int k) {\nString answer = \"\";\nreturn answer;\n}\n}"
+  },
+  {
+    "topic": "연산",
+    "title": "더 크게 합치기",
+    "description": "두 정수 a, b가 주어졌을 때 a⊕b와 b⊕a 중 더 큰 값을 return 하는 함수를 완성해 주세요.",
+    "constraints": "1 <= a, b < 10,000",
+    "input_example": "a: 9, b: 91",
+    "output_example": "991",
+    "starter_code": "class Solution {\npublic int solution(int a, int b) {\nint answer = 0;\nreturn answer;\n}\n}"
+  },
+  {
+    "topic": "연산",
+    "title": "두 수의 연산값 비교하기",
+    "description": "두 정수 a, b가 주어졌을 때 a⊕b와 2*a*b 중 더 큰 값을 return 하는 함수를 완성해 주세요.",
+    "constraints": "1 <= a, b < 10,000",
+    "input_example": "a: 2, b: 91",
+    "output_example": "364",
+    "starter_code": "class Solution {\npublic int solution(int a, int b) {\nint answer = 0;\nreturn answer;\n}\n}"
+  },
+  {
+    "topic": "연산",
+    "title": "n의 배수",
+    "description": "정수 num과 n이 매개 변수로 주어질 때, num이 n의 배수이면 1, 아니면 0을 return 하도록 함수를 완성해 주세요.",
+    "constraints": "2 <= num <= 100, 2 <= n <= 9",
+    "input_example": "num: 98, n: 2",
+    "output_example": "1",
+    "starter_code": "class Solution {\npublic int solution(int num, int n) {\nint answer = 0;\nreturn answer;\n}\n}"
+  },
+  {
+    "topic": "연산",
+    "title": "공배수",
+    "description": "정수 number 와 n, m이 주어집니다. number 가 n의 배수이면서 m의 배수이면 1, 아니라면 0을 return 하도록 함수를 완성해 주세요.",
+    "constraints": "10 <= number <= 100, 2 <= n, m <= 10",
+    "input_example": "number: 60, n: 2, m: 3",
+    "output_example": "1",
+    "starter_code": "class Solution {\npublic int solution(int number, int n, int m) {\nint answer = 0;\nreturn answer;\n}\n}"
+  },
+  {
+    "topic": "조건문",
+    "title": "n에 따라 다른 값 반환하기",
+    "description": "정수 n이 홀수라면 이하의 홀수들의 합을, 짝수라면 이하의 짝수들의 제곱의 합을 return 하는 함수를 작성해 주세요.",
+    "constraints": "1 <= n <= 100",
+    "input_example": "n: 7",
+    "output_example": "16",
+    "starter_code": "class Solution {\npublic int solution(int n) {\nint answer = 0;\nreturn answer;\n}\n}"
+  },
+  {
+    "topic": "조건문",
+    "title": "조건 문자열",
+    "description": "문자열 ineq, eq 와 정수 n, m이 주어집니다. n과 m이 ineq와 eq의 조건에 맞으면 1을 아니면 0을 return 하도록 함수를 완성해 주세요.",
+    "constraints": "1 <= n, m <= 100",
+    "input_example": "ineq: <, eq: =, n: 20, m: 50",
+    "output_example": "1",
+    "starter_code": "class Solution {\npublic int solution(String ineq, String eq, int n, int m) {\nint answer = 0;\nreturn answer;\n}\n}"
+  },
+  {
+    "topic": "조건문",
+    "title": "flag에 따라 다른 값 반환하기",
+    "description": "두 정수 a, b와 boolean 변수 flag 가 매개변수로 주어질 때, flag 가 true면 a+b, false면 a-b를 return 하는 함수를 작성해 주세요.",
+    "constraints": "-1,000 <= a, b <= 1,000",
+    "input_example": "a: -4, b: 7, flag: true",
+    "output_example": "3",
+    "starter_code": "class Solution {\npublic int solution(int a, int b, boolean flag) {\nint answer = 0;\nreturn answer;\n}\n}"
+  },
+  {
+    "topic": "반복문",
+    "title": "등차수열의 특정한 항만 더하기",
+    "description": "첫째항 a, 공차 d인 등차수열에서 included 가 true인 항들만 더한 값을 return 하는 함수를 작성해 주세요.",
+    "constraints": "1 <= a, d <= 100. 1 <= included 의 길이 <= 100",
+    "input_example": "a: 3, d: 4, included: [true, false, false, true, true]",
+    "output_example": "37",
+    "starter_code": "class Solution {\npublic int solution(int a, int d, boolean[] included) {\nint answer = 0;\nreturn answer;\n}\n}"
+  },
+  {
+    "topic": "조건문",
+    "title": "주사위 게임 2",
+    "description": "세 주사위 숫자 a, b, c에 대해 모두 다르면 a+b+c, 두 개만 같으면 (a+b+c)*(a²+b²+c²), 모두 같으면 (a+b+c)*(a²+b²+c²)*(a³+b³+c³) 점수를 return 합니다.",
+    "constraints": "1 <= a, b, c <= 6",
+    "input_example": "a: 2, b: 6, c: 1",
+    "output_example": "9",
+    "starter_code": "class Solution {\npublic int solution(int a, int b, int c) {\nint answer = 0;\nreturn answer;\n}\n}"
+  },
+  {
+    "topic": "리스트",
+    "title": "원소들의 곱과 합",
+    "description": "모든 원소들의 곱이 모든 원소들의 합의 제곱보다 작으면 1을, 크면 0을 return 하도록 함수를 완성해주세요.",
+    "constraints": "2 <= num_list 길이 <= 10, 1 <= 원소 <= 9",
+    "input_example": "[3, 4, 5, 2, 1]",
+    "output_example": "1",
+    "starter_code": "class Solution {\npublic int solution(int[] num_list) {\nint answer = 0;\nreturn answer;\n}\n}"
+  },
+  {
+    "topic": "반복문",
+    "title": "이어 붙인 수",
+    "description": "정수가 담긴 리스트 num_list 가 주어집니다. 홀수만 이어 붙인 수와 짝수만 이어 붙인 수의 합을 return 하도록 함수를 완성해주세요.",
+    "constraints": "2 <= num_list 길이 <= 10. 1 <= 원소 <= 9",
+    "input_example": "[3, 4, 5, 2, 1]",
+    "output_example": "393",
+    "starter_code": "class Solution {\npublic int solution(int[] num_list) {\nint answer = 0;\nreturn answer;\n}\n}"
+  },
+  {
+    "topic": "리스트",
+    "title": "마지막 두 원소",
+    "description": "마지막 원소가 그전 원소보다 크면 뺀 값을, 크지 않다면 두 배한 값을 추가하여 return 하도록 함수를 완성해주세요.",
+    "constraints": "2 <= num_list 길이 <= 10. 1 <= 원소 <= 9",
+    "input_example": "[2, 1, 6]",
+    "output_example": "[2, 1, 6, 5]",
+    "starter_code": "class Solution {\npublic int[] solution(int[] num_list) {\nint[] answer = {};\nreturn answer;\n}\n}"
+  },
+  {
+    "topic": "조건문",
+    "title": "수 조작하기 1",
+    "description": "문자열 control 의 문자에 따라 n의 값을 바꾼 후의 결과값을 return 하는 함수를 완성해 주세요. (w: +1, s: -1, d: +10, a: -10)",
+    "constraints": "-100,000 <= n <= 100,000. 1 <= control 길이 <= 100,000",
+    "input_example": "n: 0, control: \"wsdawsdassw\"",
+    "output_example": "-1",
+    "starter_code": "class Solution {\npublic int solution(int n, String control) {\nint answer = 0;\nreturn answer;\n}\n}"
+  },
+  {
+    "topic": "2차원 리스트",
+    "title": "수열과 구간 쿼리 3",
+    "description": "각 query [i, j] 마다 arr[i]와 arr[j] 의 값을 바꾼 후의 arr를 return 하는 함수를 완성해 주세요.",
+    "constraints": "1 <= arr 길이 <= 1,000, 1 <= queries 길이 <= 1,000",
+    "input_example": "arr: [0, 1, 2, 3, 4], queries: [[0, 3],[1, 2],[1, 4]]",
+    "output_example": "[3, 4, 1, 0, 2]",
+    "starter_code": "class Solution {\npublic int[] solution(int[] arr, int[][] queries) {\nint[] answer = {};\nreturn answer;\n}\n}"
+  },
+  {
+    "topic": "2차원 리스트",
+    "title": "수열과 구간 쿼리 2",
+    "description": "각 query [s, e, k] 에 대해 s <= i <= e 인 모든 i 중 k보다 크면서 가장 작은 arr[i]를 찾는 함수를 완성해 주세요.",
+    "constraints": "1 <= arr 길이 <= 1,000, 1 <= queries 길이 <= 1,000",
+    "input_example": "arr: [0, 1, 2, 4, 3], queries: [[0, 4, 2], [0, 3, 2], [0, 2, 2]]",
+    "output_example": "[3, 4, -1]",
+    "starter_code": "class Solution {\npublic int[] solution(int[] arr, int[][] queries) {\nint[] answer = {};\nreturn answer;\n}\n}"
+  },
+  {
+    "topic": "2차원 리스트",
+    "title": "수열과 구간 쿼리 4",
+    "description": "각 query [s, e, k] 에 대해 s <= i <= e 인 i가 k의 배수이면 arr[i]에 1을 더합니다. 처리 후의 arr를 return 해주세요.",
+    "constraints": "1 <= arr 길이 <= 1,000, 1 <= queries 길이 <= 1,000",
+    "input_example": "arr: [0, 1, 2, 4, 3], queries: [[0, 4, 1],[0, 3, 2],[0, 3, 3]]",
+    "output_example": "[3, 2, 4, 6, 4]",
+    "starter_code": "class Solution {\npublic int[] solution(int[] arr, int[][] queries) {\nint[] answer = {};\nreturn answer;\n}\n}"
+  },
+  {
+    "topic": "리스트",
+    "title": "배열 만들기 2",
+    "description": "l 이상 r 이하의 정수 중에서 숫자 0과 5로만 이루어진 모든 정수를 오름차순으로 저장한 배열을 return 해 주세요.",
+    "constraints": "1 <= l <= r <= 1,000,000",
+    "input_example": "l: 5, r: 555",
+    "output_example": "[5, 50, 55, 500, 505, 550, 555]",
+    "starter_code": "class Solution {\npublic int[] solution(int l, int r) {\nint[] answer = {};\nreturn answer;\n}\n}"
+  },
+  {
+    "topic": "반복문",
+    "title": "카운트 업",
+    "description": "start_num부터 end_num 까지의 숫자를 차례로 담은 리스트를 return 하도록 함수를 완성해주세요.",
+    "constraints": "0 <= start_num <= end_num <= 50",
+    "input_example": "start_num: 3, end_num: 10",
+    "output_example": "[3, 4, 5, 6, 7, 8, 9, 10]",
+    "starter_code": "class Solution {\npublic int[] solution(int start_num, int end_num) {\nint[] answer = {};\nreturn answer;\n}\n}"
+  },
+  {
+    "topic": "반복문",
+    "title": "콜라츠 수열 만들기",
+    "description": "초기값이 n인 콜라츠 수열(짝수면 2로 나누고 홀수면 3*x+1 반복)을 return 하는 함수를 완성해 주세요.",
+    "constraints": "1 <= n <= 1,000",
+    "input_example": "10",
+    "output_example": "[10, 5, 16, 8, 4, 2, 1]",
+    "starter_code": "class Solution {\npublic int[] solution(int n) {\nint[] answer = {};\nreturn answer;\n}\n}"
+  },
+  {
+    "topic": "리스트",
+    "title": "배열 만들기 4",
+    "description": "arr를 순회하며 조건에 맞춰 stk를 조작합니다. 완성된 stk를 return 하는 함수를 완성해 주세요.",
+    "constraints": "1 <= arr 길이 <= 100,000",
+    "input_example": "arr: [1, 4, 2, 5, 3]",
+    "output_example": "[1, 2, 3]",
+    "starter_code": "class Solution {\npublic int[] solution(int[] arr) {\nint[] stk = {};\nreturn stk;\n}\n}"
+  },
+  {
+    "topic": "연산",
+    "title": "간단한 논리 연산",
+    "description": "boolean 변수 x1, x2, x3, x4 가 주어질 때 (x1 ∨ x2) ∧ (x3 ∨ x4) 식의 true/false 값을 return 해 주세요.",
+    "constraints": "없음",
+    "input_example": "x1: false, x2: true, x3: true, x4: true",
+    "output_example": "true",
+    "starter_code": "class Solution {\npublic boolean solution(boolean x1, boolean x2, boolean x3, boolean x4) {\nboolean answer = true;\nreturn answer;\n}\n}"
+  },
+  {
+    "topic": "조건문",
+    "title": "주사위 게임 3",
+    "description": "네 주사위를 굴려 나온 숫자에 따른 복합적인 득점 규칙을 계산하여 점수를 return 하는 함수를 작성해 주세요.",
+    "constraints": "a, b, c, d는 1 이상 6 이하의 정수",
+    "input_example": "a: 2, b: 2, c: 2, d: 2",
+    "output_example": "2222",
+    "starter_code": "class Solution {\npublic int solution(int a, int b, int c, int d) {\nint answer = 0;\nreturn answer;\n}\n}"
+  },
+  {
+    "topic": "문자열",
+    "title": "글자 이어 붙여 문자열 만들기",
+    "description": "my_string 의 index_list 원소들에 해당하는 인덱스의 글자들을 순서대로 이어 붙인 문자열을 return 하세요.",
+    "constraints": "1 <= my_string 길이 <= 1,000. 1 <= index_list 길이 <= 1,000",
+    "input_example": "my_string: cvsgiorszzzmrpaqpe, index_list: [16, 6, 5, 3, 12, 14, 11, 11, 17, 12, 7]",
+    "output_example": "programmers",
+    "starter_code": "class Solution {\npublic String solution(String my_string, int[] index_list) {\nString answer = \"\";\nreturn answer;\n}\n}"
+  },
+  {
+    "topic": "연산",
+    "title": "9로 나눈 나머지",
+    "description": "음이 아닌 정수가 문자열 number로 주어질 때, 각 자리 숫자의 합을 9로 나눈 나머지를 return 하는 함수를 작성해주세요.",
+    "constraints": "1 <= number 길이 <= 100,000",
+    "input_example": "123",
+    "output_example": "6",
+    "starter_code": "class Solution {\npublic int solution(String number) {\nint answer = 0;\nreturn answer;\n}\n}"
+  },
+  {
+    "topic": "2차원 리스트",
+    "title": "문자열 여러 번 뒤집기",
+    "description": "queries [s, e] 형태로 my_string 의 s부터 e까지를 뒤집는 명령을 순서대로 처리한 문자열을 return 해 주세요.",
+    "constraints": "1 <= my_string 길이 <= 1,000. 1 <= queries 길이 <= 1,000",
+    "input_example": "my_string: rermgorpsam, queries: [[2, 3], [0, 7], [5, 9], [6, 10]]",
+    "output_example": "programmers",
+    "starter_code": "class Solution {\npublic String solution(String my_string, int[][] queries) {\nString answer = \"\";\nreturn answer;\n}\n}"
+  },
+  {
+    "topic": "리스트",
+    "title": "배열 만들기 5",
+    "description": "배열 intStrs 의 각 원소마다 s번 인덱스에서 시작하는 길이 l 짜리 부분 문자열을 잘라 정수로 변환 후 k보다 큰 값만 배열에 담아 return 하세요.",
+    "constraints": "0 <= k <= 100,000. 1 <= intStrs 길이 <= 10,000",
+    "input_example": "intStrs: [\"0123456789\",\"9876543210\",\"9999999999999\"], k: 50000, s: 5, l: 5",
+    "output_example": "[56789, 99999]",
+    "starter_code": "class Solution {\npublic int[] solution(String[] intStrs, int k, int s, int l) {\nint[] answer = {};\nreturn answer;\n}\n}"
+  },
+  {
+    "topic": "2차원 리스트",
+    "title": "부분문자열 이어 붙여 문자열 만들기",
+    "description": "각 my_strings의 원소의 parts[i]에 해당하는 부분 문자열을 순서대로 이어 붙인 문자열을 return 해 주세요.",
+    "constraints": "1 <= my_strings 길이 = parts 길이 <= 100",
+    "input_example": "my_strings: [\"progressive\", \"hamburger\", \"hammer\", \"ahocorasick\"], parts: [[0, 4], [1, 2], [3, 5], [7, 7]]",
+    "output_example": "programmers",
+    "starter_code": "class Solution {\npublic String solution(String[] my_strings, int[][] parts) {\nString answer = \"\";\nreturn answer;\n}\n}"
+  },
+  {
+    "topic": "문자열",
+    "title": "문자열의 뒤의 글자",
+    "description": "my_string 의 뒤의 n글자로 이루어진 문자열을 return 하는 함수를 작성해 주세요.",
+    "constraints": "1 <= my_string 길이 <= 1,000, 1 <= n <= my_string 길이",
+    "input_example": "my_string: ProgrammerS123, n: 11",
+    "output_example": "grammerS123",
+    "starter_code": "class Solution {\npublic String solution(String my_string, int n) {\nString answer = \"\";\nreturn answer;\n}\n}"
+  },
+  {
+    "topic": "문자열",
+    "title": "접미사 배열",
+    "description": "my_string 의 모든 접미사를 사전순으로 정렬한 문자열 배열을 return 하는 함수를 작성해 주세요.",
+    "constraints": "1 <= my_string 길이 <= 100",
+    "input_example": "banana",
+    "output_example": "[\"a\", \"ana\", \"anana\", \"banana\", \"na\", \"nana\"]",
+    "starter_code": "class Solution {\npublic String[] solution(String my_string) {\nString[] answer = {};\nreturn answer;\n}\n}"
+  },
+  {
+    "topic": "문자열",
+    "title": "접미사인지 확인하기",
+    "description": "is_suffix 가 my_string의 접미사라면 1을, 아니면 0을 return 하는 함수를 작성해 주세요.",
+    "constraints": "1 <= my_string 길이 <= 100, 1 <= is_suffix 길이 <= 100",
+    "input_example": "my_string: banana, is_suffix: ana",
+    "output_example": "1",
+    "starter_code": "class Solution {\npublic int solution(String my_string, String is_suffix) {\nint answer = 0;\nreturn answer;\n}\n}"
+  },
+  {
+    "topic": "문자열",
+    "title": "문자열의 앞의 글자",
+    "description": "my_string 의 앞의 n글자로 이루어진 문자열을 return 하는 함수를 작성해 주세요.",
+    "constraints": "1 <= my_string 길이 <= 1,000, 1 <= n <= my_string 길이",
+    "input_example": "my_string: ProgrammerS123, n: 11",
+    "output_example": "Programmers",
+    "starter_code": "class Solution {\npublic String solution(String my_string, int n) {\nString answer = \"\";\nreturn answer;\n}\n}"
+  },
+  {
+    "topic": "문자열",
+    "title": "접두사인지 확인하기",
+    "description": "is_prefix 가 my_string 의 접두사라면 1을, 아니면 0을 return 하는 함수를 작성해 주세요.",
+    "constraints": "1 <= my_string 길이 <= 100, 1 <= is_prefix 길이 <= 100",
+    "input_example": "my_string: banana, is_prefix: ban",
+    "output_example": "1",
+    "starter_code": "class Solution {\npublic int solution(String my_string, String is_prefix) {\nint answer = 0;\nreturn answer;\n}\n}"
+  },
+  {
+    "topic": "문자열",
+    "title": "문자열 뒤집기",
+    "description": "my_string 에서 인덱스 s부터 인덱스 e까지를 뒤집은 문자열을 return 하는 함수를 작성해 주세요.",
+    "constraints": "1 <= my_string 길이 <= 1,000. 0 <= s <= e < my_string 길이",
+    "input_example": "my_string: Progra21Sremm3, s: 6, e: 12",
+    "output_example": "ProgrammerS123",
+    "starter_code": "class Solution {\npublic String solution(String my_string, int s, int e) {\nString answer = \"\";\nreturn answer;\n}\n}"
+  },
+  {
+    "topic": "문자열",
+    "title": "세로 읽기",
+    "description": "my_string 을 한 줄에 m글자씩 적었을 때 세로로 c번째 열에 적힌 글자들을 문자열로 return 해 주세요.",
+    "constraints": "1 <= m <= my_string 길이 <= 1,000. 1 <= c <= m",
+    "input_example": "my_string: ihhbakrfpndopijhygo, m: 4, c: 2",
+    "output_example": "happy",
+    "starter_code": "class Solution {\npublic String solution(String my_string, int m, int c) {\nString answer = \"\";\nreturn answer;\n}\n}"
+  },
+  {
+    "topic": "문자열",
+    "title": "qr code",
+    "description": "code의 각 인덱스를 q로 나누었을 때 나머지가 r인 위치의 문자를 순서대로 이어 붙인 문자열을 return 해 주세요.",
+    "constraints": "0 <= r < q <= 20. 1 <= code 길이 <= 1,000",
+    "input_example": "q: 3, r: 1, code: qjnwezgrpiridywt",
+    "output_example": "jerry",
+    "starter_code": "class Solution {\npublic String solution(int q, int r, String code) {\nString answer = \"\";\nreturn answer;\n}\n}"
+  },
+  {
+    "topic": "문자열",
+    "title": "문자 개수 세기",
+    "description": "알파벳 대소문자로 이루어진 문자열에서 A-Z, a-z의 개수를 순서대로 담은 길이 52의 배열을 return 해 주세요.",
+    "constraints": "1 <= my_string 길이 <= 1,000",
+    "input_example": "Programmers",
+    "output_example": "[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 2, 0, 1, 0, 0, 3, 1, 0, 0, 0, 0, 0, 0, 0]",
+    "starter_code": "class Solution {\npublic int[] solution(String my_string) {\nint[] answer = {};\nreturn answer;\n}\n}"
+  },
+  {
+    "topic": "리스트",
+    "title": "배열 만들기 1",
+    "description": "1 이상 n 이하의 정수 중에서 k의 배수를 오름차순으로 저장한 배열을 return 해 주세요.",
+    "constraints": "1 <= n <= 1,000,000. 1 <= k <= min(1,000, n)",
+    "input_example": "n: 10, k: 3",
+    "output_example": "[3, 6, 9]",
+    "starter_code": "class Solution {\npublic int[] solution(int n, int k) {\nint[] answer = {};\nreturn answer;\n}\n}"
+  },
+  {
+    "topic": "문자열",
+    "title": "글자 지우기",
+    "description": "my_string 에서 indices 원소에 해당하는 인덱스의 글자를 지우고 이어 붙인 문자열을 return 해 주세요.",
+    "constraints": "1 <= indices 길이 < my_string 길이 <= 100",
+    "input_example": "my_string: apporoograpemmemprs, indices: [1, 16, 6, 15, 0, 10, 11, 3]",
+    "output_example": "programmers",
+    "starter_code": "class Solution {\npublic String solution(String my_string, int[] indices) {\nString answer = \"\";\nreturn answer;\n}\n}"
+  },
+  {
+    "topic": "반복문",
+    "title": "카운트 다운",
+    "description": "start_num 에서 end_num 까지 1씩 감소하는 수들을 담은 리스트를 return 하도록 함수를 완성해주세요.",
+    "constraints": "0 <= end_num <= start_num <= 50",
+    "input_example": "start_num: 10, end_num: 3",
+    "output_example": "[10, 9, 8, 7, 6, 5, 4, 3]",
+    "starter_code": "class Solution {\npublic int[] solution(int start_num, int end_num) {\nint[] answer = {};\nreturn answer;\n}\n}"
+  },
+  {
+    "topic": "리스트",
+    "title": "가까운 1 찾기",
+    "description": "정수 idx 가 주어졌을 때, idx 보다 크거나 같으면서 배열 값이 1인 가장 작은 인덱스를 반환해 주세요.",
+    "constraints": "3 <= arr 길이 <= 100,000. arr 원소는 전부 1 또는 0",
+    "input_example": "arr: [0, 0, 0, 1], idx: 1",
+    "output_example": "3",
+    "starter_code": "class Solution {\npublic int solution(int[] arr, int idx) {\nint answer = 0;\nreturn answer;\n}\n}"
+  },
+  {
+    "topic": "리스트",
+    "title": "리스트 자르기",
+    "description": "n값에 따라 num_list 를 슬라이싱한 리스트를 return 하도록 함수를 완성해주세요.",
+    "constraints": "n은 1,2,3,4 중 하나. slicer의 길이 = 3",
+    "input_example": "n: 3, slicer: [1, 5, 2], num_list: [1, 2, 3, 4, 5, 6, 7, 8, 9]",
+    "output_example": "[2, 3, 4, 5, 6]",
+    "starter_code": "class Solution {\npublic int[] solution(int n, int[] slicer, int[] num_list) {\nint[] answer = {};\nreturn answer;\n}\n}"
+  },
+  {
+    "topic": "리스트",
+    "title": "첫 번째로 나오는 음수",
+    "description": "정수 리스트 num_list 가 주어질 때, 첫 번째로 나오는 음수의 인덱스를 return 하도록 함수를 작성해주세요. 없다면 -1",
+    "constraints": "5 <= num_list 길이 <= 100",
+    "input_example": "[12, 4, 15, 46, 38, -2, 15]",
+    "output_example": "5",
+    "starter_code": "class Solution {\npublic int solution(int[] num_list) {\nint answer = 0;\nreturn answer;\n}\n}"
+  },
+  {
+    "topic": "2차원 리스트",
+    "title": "배열 만들기 3",
+    "description": "배열 arr 의 두 구간에 해당하는 배열을 앞뒤로 붙여 새로운 배열을 return 하는 함수를 완성해 주세요.",
+    "constraints": "1 <= arr 길이 <= 100,000",
+    "input_example": "arr: [1, 2, 3, 4, 5], intervals: [[1, 3], [0, 4]]",
+    "output_example": "[2, 3, 4, 1, 2, 3, 4, 5]",
+    "starter_code": "class Solution {\npublic int[] solution(int[] arr, int[][] intervals) {\nint[] answer = {};\nreturn answer;\n}\n}"
+  },
+  {
+    "topic": "리스트",
+    "title": "2의 영역",
+    "description": "배열 안의 2가 모두 포함된 가장 작은 연속된 부분 배열을 return 하는 함수를 완성해 주세요.",
+    "constraints": "1 <= arr 길이 <= 100,000",
+    "input_example": "[1, 2, 1, 4, 5, 2, 9]",
+    "output_example": "[2, 1, 4, 5, 2]",
+    "starter_code": "class Solution {\npublic int[] solution(int[] arr) {\nint[] answer = {};\nreturn answer;\n}\n}"
+  },
+  {
+    "topic": "리스트",
+    "title": "배열 조각하기",
+    "description": "query를 순회하며 짝수/홀수 인덱스에 따라 배열을 자른 후 남은 arr의 부분 배열을 return 하는 함수를 작성하세요.",
+    "constraints": "5 <= arr 길이 <= 100,000",
+    "input_example": "arr: [0, 1, 2, 3, 4, 5], query: [4, 1, 2]",
+    "output_example": "[1, 2, 3]",
+    "starter_code": "class Solution {\npublic int[] solution(int[] arr, int[] query) {\nint[] answer = {};\nreturn answer;\n}\n}"
+  },
+  {
+    "topic": "리스트",
+    "title": "n 번째 원소부터",
+    "description": "num_list 의 n번째 원소부터 마지막 원소까지의 모든 원소를 담은 리스트를 return 하도록 함수를 완성해주세요.",
+    "constraints": "2 <= num_list 길이 <= 30. 1 <= n <= num_list 길이",
+    "input_example": "num_list: [2, 1, 6], n: 3",
+    "output_example": "[6]",
+    "starter_code": "class Solution {\npublic int[] solution(int[] num_list, int n) {\nint[] answer = {};\nreturn answer;\n}\n}"
+  },
+  {
+    "topic": "리스트",
+    "title": "순서 바꾸기",
+    "description": "num_list 의 n번째 이후의 원소들을 n번째까지의 원소들 앞에 붙인 리스트를 return 하도록 함수를 완성해주세요.",
+    "constraints": "2 <= num_list 길이 <= 30",
+    "input_example": "num_list: [2, 1, 6], n: 1",
+    "output_example": "[1, 6, 2]",
+    "starter_code": "class Solution {\npublic int[] solution(int[] num_list, int n) {\nint[] answer = {};\nreturn answer;\n}\n}"
+  },
+  {
+    "topic": "리스트",
+    "title": "왼쪽 오른쪽",
+    "description": "str_list 에서 l과 r 중 먼저 나오는 문자열이 l이면 왼쪽 문자열을, r이면 오른쪽 문자열을 return 하세요.",
+    "constraints": "1 <= str_list 길이 <= 20",
+    "input_example": "[\"u\", \"u\", \"l\", \"r\"]",
+    "output_example": "[\"u\", \"u\"]",
+    "starter_code": "class Solution {\npublic String[] solution(String[] str_list) {\nString[] answer = {};\nreturn answer;\n}\n}"
+  },
+  {
+    "topic": "리스트",
+    "title": "n 번째 원소까지",
+    "description": "num_list 의 첫 번째 원소부터 n번째 원소까지의 모든 원소를 담은 리스트를 return 하도록 함수를 완성해주세요.",
+    "constraints": "2 <= num_list 길이 <= 30",
+    "input_example": "num_list: [2, 1, 6], n: 1",
+    "output_example": "[2]",
+    "starter_code": "class Solution {\npublic int[] solution(int[] num_list, int n) {\nint[] answer = {};\nreturn answer;\n}\n}"
+  },
+  {
+    "topic": "리스트",
+    "title": "n개 간격의 원소들",
+    "description": "num_list 의 첫 번째 원소부터 마지막 원소까지 n개 간격으로 저장된 원소들을 차례로 담은 리스트를 return 하세요.",
+    "constraints": "5 <= num_list 길이 <= 20, 1 <= n <= 4",
+    "input_example": "num_list: [4, 2, 6, 1, 7, 6], n: 2",
+    "output_example": "[4, 6, 7]",
+    "starter_code": "class Solution {\npublic int[] solution(int[] num_list, int n) {\nint[] answer = {};\nreturn answer;\n}\n}"
+  },
+  {
+    "topic": "리스트",
+    "title": "홀수 vs 짝수",
+    "description": "홀수 번째 원소들의 합과 짝수 번째 원소들의 합 중 큰 값을 return 하도록 함수를 완성해주세요.",
+    "constraints": "5 <= num_list 길이 <= 50",
+    "input_example": "[4, 2, 6, 1, 7, 6]",
+    "output_example": "17",
+    "starter_code": "class Solution {\npublic int solution(int[] num_list) {\nint answer = 0;\nreturn answer;\n}\n}"
+  },
+  {
+    "topic": "리스트",
+    "title": "5명씩",
+    "description": "앞에서 부터 5명씩 묶은 그룹의 가장 앞에 서있는 사람들의 이름을 담은 리스트를 return 하도록 함수를 완성해주세요.",
+    "constraints": "5 <= names 길이 <= 30",
+    "input_example": "[\"nami\", \"ahri\", \"jayce\", \"garen\", \"ivern\", \"vex\", \"jinx\"]",
+    "output_example": "[\"nami\", \"vex\"]",
+    "starter_code": "class Solution {\npublic String[] solution(String[] names) {\nString[] answer = {};\nreturn answer;\n}\n}"
+  },
+  {
+    "topic": "리스트",
+    "title": "할 일 목록",
+    "description": "todo_list 에서 아직 마치지 못한 일들(finished 가 false인 항목)을 순서대로 담은 문자열 배열을 return 하세요.",
+    "constraints": "1 <= todo_list 길이 <= 100",
+    "input_example": "todo_list: [\"problemsolving\", \"practiceguitar\", \"swim\", \"studygraph\"], finished: [true, false, true, false]",
+    "output_example": "[\"practiceguitar\", \"studygraph\"]",
+    "starter_code": "class Solution {\npublic String[] solution(String[] todo_list, boolean[] finished) {\nString[] answer = {};\nreturn answer;\n}\n}"
+  },
+  {
+    "topic": "반복문",
+    "title": "n보다 커질 때까지 더하기",
+    "description": "numbers 의 원소를 하나씩 더하다가 합이 n보다 커지는 순간 이때까지 더했던 합을 return 하세요.",
+    "constraints": "1 <= numbers 길이 <= 100",
+    "input_example": "numbers: [34, 5, 71, 29, 100, 34], n: 123",
+    "output_example": "139",
+    "starter_code": "class Solution {\npublic int solution(int[] numbers, int n) {\nint answer = 0;\nreturn answer;\n}\n}"
+  },
+  {
+    "topic": "2차원 리스트",
+    "title": "수열과 구간 쿼리 1",
+    "description": "각 query [s, e] 마다 s <= i <= e 인 모든 i에 대해 arr[i] 에 1을 더한 결과를 return 하세요.",
+    "constraints": "1 <= arr 길이 <= 1,000. 1 <= queries 길이 <= 1,000",
+    "input_example": "arr: [0, 1, 2, 3, 4], queries: [[0, 1], [1, 2], [2, 3]]",
+    "output_example": "[1, 3, 4, 4, 4]",
+    "starter_code": "class Solution {\npublic int[] solution(int[] arr, int[][] queries) {\nint[] answer = {};\nreturn answer;\n}\n}"
+  },
+  {
+    "topic": "조건문",
+    "title": "조건에 맞게 수열 변환하기 1",
+    "description": "arr 의 원소가 50 이상인 짝수면 2로 나누고, 50 미만인 홀수면 2를 곱한 배열을 return 하세요.",
+    "constraints": "1 <= arr 길이 <= 1,000,000",
+    "input_example": "[1, 2, 3, 100, 99, 98]",
+    "output_example": "[2, 2, 6, 50, 99, 49]",
+    "starter_code": "class Solution {\npublic int[] solution(int[] arr) {\nint[] answer = {};\nreturn answer;\n}\n}"
+  },
+  {
+    "topic": "반복문",
+    "title": "조건에 맞게 수열 변환하기 2",
+    "description": "수열 변환 1의 규칙(단, 홀수엔 2를 곱하고 1 더함)을 반복해 arr(x) = arr(x+1) 이 되는 가장 작은 x를 return 하세요.",
+    "constraints": "1 <= arr 길이 <= 1,000,000",
+    "input_example": "[1, 2, 3, 100, 99, 98]",
+    "output_example": "5",
+    "starter_code": "class Solution {\npublic int solution(int[] arr) {\nint answer = 0;\nreturn answer;\n}\n}"
+  },
+  {
+    "topic": "연산",
+    "title": "1로 만들기",
+    "description": "num_list 의 모든 원소를 1로 만들기 위해 짝수는 /2, 홀수는 -1 후 /2 하는 과정을 반복할 때의 총 연산 횟수를 return 하세요.",
+    "constraints": "3 <= num_list 길이 <= 15",
+    "input_example": "[12, 4, 15, 1, 14]",
+    "output_example": "11",
+    "starter_code": "class Solution {\npublic int solution(int[] num_list) {\nint answer = 0;\nreturn answer;\n}\n}"
+  },
+  {
+    "topic": "조건문",
+    "title": "길이에 따른 연산",
+    "description": "num_list 길이가 11 이상이면 합을, 10 이하라면 모든 원소의 곱을 return 하도록 함수를 완성해주세요.",
+    "constraints": "2 <= num_list 길이 <= 20",
+    "input_example": "[3, 4, 5, 2, 5, 4, 6, 7, 3, 7, 2, 2, 1]",
+    "output_example": "51",
+    "starter_code": "class Solution {\npublic int solution(int[] num_list) {\nint answer = 0;\nreturn answer;\n}\n}"
+  },
+  {
+    "topic": "문자열",
+    "title": "원하는 문자열 찾기",
+    "description": "myString 의 연속된 부분 문자열 중 대소문자 구분 없이 pat 이 존재하면 1, 아니면 0을 return 하세요.",
+    "constraints": "1 <= myString 길이 <= 100,000. 1 <= pat 길이 <= 300",
+    "input_example": "myString: AbCdEfG, pat: aBc",
+    "output_example": "1",
+    "starter_code": "class Solution {\npublic int solution(String myString, String pat) {\nint answer = 0;\nreturn answer;\n}\n}"
+  },
+  {
+    "topic": "문자열",
+    "title": "대문자로 바꾸기",
+    "description": "모든 알파벳을 대문자로 변환하여 return 하는 함수를 완성해 주세요.",
+    "constraints": "1 <= myString 길이 <= 100,000",
+    "input_example": "aBcDeFg",
+    "output_example": "ABCDEFG",
+    "starter_code": "class Solution {\npublic String solution(String myString) {\nString answer = \"\";\nreturn answer;\n}\n}"
+  },
+  {
+    "topic": "문자열",
+    "title": "소문자로 바꾸기",
+    "description": "모든 알파벳을 소문자로 변환하여 return 하는 함수를 완성해 주세요.",
+    "constraints": "1 <= myString 길이 <= 100,000",
+    "input_example": "aBcDeFg",
+    "output_example": "abcdefg",
+    "starter_code": "class Solution {\npublic String solution(String myString) {\nString answer = \"\";\nreturn answer;\n}\n}"
+  },
+  {
+    "topic": "문자열",
+    "title": "배열에서 문자열 대소문자 변환하기",
+    "description": "strArr 의 홀수번째 인덱스 문자열은 대문자로, 짝수번째는 소문자로 바꿔서 반환하는 함수를 완성해 주세요.",
+    "constraints": "1 <= strArr <= 20",
+    "input_example": "[\"AAA\",\"BBB\",\"CCC\",\"DDD\"]",
+    "output_example": "[\"aaa\",\"BBB\",\"ccc\",\"DDD\"]",
+    "starter_code": "class Solution {\npublic String[] solution(String[] strArr) {\nString[] answer = {};\nreturn answer;\n}\n}"
+  },
+  {
+    "topic": "문자열",
+    "title": "A 강조하기",
+    "description": "myString 에서 'a'는 'A'로 변환하고, 'A'가 아닌 대문자는 소문자로 변환하여 return 하세요.",
+    "constraints": "1 <= myString 길이 <= 20",
+    "input_example": "abstract algebra",
+    "output_example": "Abstract AlgebrA",
+    "starter_code": "class Solution {\npublic String solution(String myString) {\nString answer = \"\";\nreturn answer;\n}\n}"
+  },
+  {
+    "topic": "문자열",
+    "title": "특정한 문자를 대문자로 바꾸기",
+    "description": "my_string 에서 alp 에 해당하는 글자를 대문자로 바꾼 문자열을 return 하세요.",
+    "constraints": "1 <= my_string 길이 <= 1,000",
+    "input_example": "my_string: programmers, alp: p",
+    "output_example": "Programmers",
+    "starter_code": "class Solution {\npublic String solution(String my_string, String alp) {\nString answer = \"\";\nreturn answer;\n}\n}"
+  },
+  {
+    "topic": "문자열",
+    "title": "특정 문자열로 끝나는 가장 긴 부분 문자열 찾기",
+    "description": "myString 의 부분 문자열 중 pat 로 끝나는 가장 긴 부분 문자열을 찾아 return 하세요.",
+    "constraints": "5 <= myString <= 20, 1 <= pat <= 5",
+    "input_example": "myString: AbCdEFG, pat: dE",
+    "output_example": "AbCdE",
+    "starter_code": "class Solution {\npublic String solution(String myString, String pat) {\nString answer = \"\";\nreturn answer;\n}\n}"
+  },
+  {
+    "topic": "문자열",
+    "title": "문자열이 몇 번 등장하는지 세기",
+    "description": "myString 에서 pat 이 등장하는 횟수를 return 하는 함수를 완성해 주세요.",
+    "constraints": "1 <= myString <= 1000",
+    "input_example": "myString: banana, pat: ana",
+    "output_example": "2",
+    "starter_code": "class Solution {\npublic int solution(String myString, String pat) {\nint answer = 0;\nreturn answer;\n}\n}"
+  },
+  {
+    "topic": "문자열",
+    "title": "ad 제거하기",
+    "description": "배열 내 문자열 중 ad 를 포함하고 있는 문자열을 제거하고 남은 문자열을 순서를 유지하여 배열로 return 하세요.",
+    "constraints": "1 <= strArr 길이 <= 1,000",
+    "input_example": "[\"and\",\"notad\",\"abcd\"]",
+    "output_example": "[\"and\",\"abcd\"]",
+    "starter_code": "class Solution {\npublic String[] solution(String[] strArr) {\nString[] answer = {};\nreturn answer;\n}\n}"
+  },
+  {
+    "topic": "문자열",
+    "title": "공백으로 구분하기 1",
+    "description": "공백 한 개로 구분되어 있는 문자열 my_string 의 단어를 순서대로 담은 문자열 배열을 return 해 주세요.",
+    "constraints": "1 <= my_string 길이 <= 1,000",
+    "input_example": "i love you",
+    "output_example": "[\"i\", \"love\", \"you\"]",
+    "starter_code": "class Solution {\npublic String[] solution(String my_string) {\nString[] answer = {};\nreturn answer;\n}\n}"
+  },
+  {
+    "topic": "문자열",
+    "title": "공백으로 구분하기 2",
+    "description": "공백 한 개 이상으로 구분된 문자열 my_string 의 단어를 순서대로 담은 문자열 배열을 return 해 주세요.",
+    "constraints": "1 <= my_string 길이 <= 1,000",
+    "input_example": " i    love  you",
+    "output_example": "[\"i\", \"love\", \"you\"]",
+    "starter_code": "class Solution {\npublic String[] solution(String my_string) {\nString[] answer = {};\nreturn answer;\n}\n}"
+  },
+  {
+    "topic": "문자열",
+    "title": "x 사이의 개수",
+    "description": "myString 을 x 문자를 기준으로 나눴을 때 각각의 길이를 순서대로 저장한 배열을 return 하세요.",
+    "constraints": "1 <= myString 길이 <= 100,000",
+    "input_example": "oxooxoxxox",
+    "output_example": "[1, 2, 1, 0, 1, 0]",
+    "starter_code": "class Solution {\npublic int[] solution(String myString) {\nint[] answer = {};\nreturn answer;\n}\n}"
+  },
+  {
+    "topic": "문자열",
+    "title": "문자열 잘라서 정렬하기",
+    "description": "myString 을 x 를 기준으로 잘라내 빈 문자열을 제외하고 사전순 정렬한 배열을 return 하세요.",
+    "constraints": "1 <= myString <= 100,000",
+    "input_example": "axbxcxdx",
+    "output_example": "[\"a\",\"b\",\"c\",\"d\"]",
+    "starter_code": "class Solution {\npublic String[] solution(String myString) {\nString[] answer = {};\nreturn answer;\n}\n}"
+  },
+  {
+    "topic": "연산",
+    "title": "간단한 식 계산하기",
+    "description": "a op b 형태의 이항식 문자열 binomial 이 주어질 때 식을 계산한 정수를 return 하는 함수를 작성해 주세요.",
+    "constraints": "0 <= a, b <= 40,000",
+    "input_example": "43 + 12",
+    "output_example": "55",
+    "starter_code": "class Solution {\npublic int solution(String binomial) {\nint answer = 0;\nreturn answer;\n}\n}"
+  },
+  {
+    "topic": "문자열",
+    "title": "문자열 바꿔서 찾기",
+    "description": "myString 의 A를 B로, B를 A로 바꾼 문자열의 연속하는 부분문자열 중 pat 이 있으면 1 아니면 0을 return 하세요.",
+    "constraints": "1 <= myString 길이 <= 100. 1 <= pat 길이 <= 10",
+    "input_example": "myString: ABBAA, pat: AABB",
+    "output_example": "1",
+    "starter_code": "class Solution {\npublic int solution(String myString, String pat) {\nint answer = 0;\nreturn answer;\n}\n}"
+  },
+  {
+    "topic": "문자열",
+    "title": "rny_string",
+    "description": "문자열 rny_string 의 모든 m을 rn으로 바꾼 문자열을 return 하세요.",
+    "constraints": "1 <= rny_string 길이 <= 100",
+    "input_example": "masterpiece",
+    "output_example": "rnasterpiece",
+    "starter_code": "class Solution {\npublic String solution(String rny_string) {\nString answer = \"\";\nreturn answer;\n}\n}"
+  },
+  {
+    "topic": "문자열",
+    "title": "세 개의 구분자",
+    "description": "a, b, c를 구분자로 사용해 나눠진 문자열을 배열로 return 하세요. 모두 비었다면 [\"EMPTY\"] 반환.",
+    "constraints": "1 <= myStr 길이 <= 1,000,000",
+    "input_example": "baconlettucetomato",
+    "output_example": "[\"onlettu\", \"etom\", \"to\"]",
+    "starter_code": "class Solution {\npublic String[] solution(String myStr) {\nString[] answer = {};\nreturn answer;\n}\n}"
+  },
+  {
+    "topic": "리스트",
+    "title": "배열의 원소만큼 추가하기",
+    "description": "배열 arr 를 순회하며 원소가 a 라면 빈 배열 X의 뒤에 a를 a번 추가한 배열 X를 return 하세요.",
+    "constraints": "1 <= arr 길이 <= 100, 1 <= arr 의 원소 <= 100",
+    "input_example": "[5, 1, 4]",
+    "output_example": "[5, 5, 5, 5, 5, 1, 4, 4, 4, 4]",
+    "starter_code": "class Solution {\npublic int[] solution(int[] arr) {\nint[] answer = {};\nreturn answer;\n}\n}"
+  },
+  {
+    "topic": "리스트",
+    "title": "빈 배열에 추가, 삭제하기",
+    "description": "flag[i] 가 true라면 배열 뒤에 arr[i]를 arr[i]*2번 추가하고, false라면 마지막 arr[i]개의 원소를 제거한 뒤 return 하세요.",
+    "constraints": "arr 길이 = flag 길이 <= 100",
+    "input_example": "arr: [3, 2, 4, 1, 3], flag: [true, false, true, false, false]",
+    "output_example": "[3, 3, 3, 3, 4, 4, 4, 4]",
+    "starter_code": "class Solution {\npublic int[] solution(int[] arr, boolean[] flag) {\nint[] answer = {};\nreturn answer;\n}\n}"
+  },
+  {
+    "topic": "리스트",
+    "title": "배열 만들기 6",
+    "description": "0과 1로 구성된 arr를 순회하며 빈 배열이면 i추가, 마지막과 같으면 마지막 제거, 다르면 끝에 추가한 stk를 return 하세요.",
+    "constraints": "1 <= arr 길이 <= 1,000,000",
+    "input_example": "[0, 1, 1, 1, 0]",
+    "output_example": "[0, 1, 0]",
+    "starter_code": "class Solution {\npublic int[] solution(int[] arr) {\nint[] answer = {};\nreturn answer;\n}\n}"
+  },
+  {
+    "topic": "리스트",
+    "title": "무작위로 k개의 수 뽑기",
+    "description": "배열 arr를 돌며 처음 나오는 서로 다른 수를 최대 k개 담고, k개보다 적으면 -1로 채워서 return 하세요.",
+    "constraints": "1 <= arr 길이 <= 100,000, 1 <= k <= 1,000",
+    "input_example": "arr: [0, 1, 1, 2, 2, 3], k: 3",
+    "output_example": "[0, 1, 2]",
+    "starter_code": "class Solution {\npublic int[] solution(int[] arr, int k) {\nint[] answer = {};\nreturn answer;\n}\n}"
+  },
+  {
+    "topic": "리스트",
+    "title": "배열의 길이를 2의 거듭제곱으로 만들기",
+    "description": "arr 의 길이가 2의 정수 거듭제곱이 되도록 최소한의 개수로 0을 추가한 배열을 return 해 주세요.",
+    "constraints": "1 <= arr 길이 <= 1,000",
+    "input_example": "[1, 2, 3, 4, 5, 6]",
+    "output_example": "[1, 2, 3, 4, 5, 6, 0, 0]",
+    "starter_code": "class Solution {\npublic int[] solution(int[] arr) {\nint[] answer = {};\nreturn answer;\n}\n}"
+  },
+  {
+    "topic": "리스트",
+    "title": "배열 비교하기",
+    "description": "두 배열의 길이를 비교해 긴 쪽이 크고, 같으면 원소 합으로 비교하여 arr2가 크면 -1, arr1이 크면 1, 같으면 0을 return 하세요.",
+    "constraints": "1 <= arr1, arr2 길이 <= 100",
+    "input_example": "arr1: [49, 13], arr2: [70, 11, 2]",
+    "output_example": "-1",
+    "starter_code": "class Solution {\npublic int solution(int[] arr1, int[] arr2) {\nint answer = 0;\nreturn answer;\n}\n}"
+  },
+  {
+    "topic": "문자열",
+    "title": "문자열 묶기",
+    "description": "strArr 원소들을 길이가 같은 문자열끼리 묶었을 때 가장 개수가 많은 그룹의 크기를 return 하세요.",
+    "constraints": "1 <= strArr 길이 <= 100,000",
+    "input_example": "[\"a\",\"bc\",\"d\",\"efg\",\"hi\"]",
+    "output_example": "2",
+    "starter_code": "class Solution {\npublic int solution(String[] strArr) {\nint answer = 0;\nreturn answer;\n}\n}"
+  },
+  {
+    "topic": "조건문",
+    "title": "배열의 길이에 따라 다른 연산하기",
+    "description": "arr 의 길이가 홀수라면 모든 짝수 인덱스에 n을, 짝수라면 홀수 인덱스에 n을 더한 배열을 return 하세요.",
+    "constraints": "1 <= arr 길이 <= 1,000",
+    "input_example": "arr: [49, 12, 100, 276, 33], n: 27",
+    "output_example": "[76, 12, 127, 276, 60]",
+    "starter_code": "class Solution {\npublic int[] solution(int[] arr, int n) {\nint[] answer = {};\nreturn answer;\n}\n}"
+  },
+  {
+    "topic": "리스트",
+    "title": "뒤에서 5등까지",
+    "description": "num_list 에서 가장 작은 5개의 수를 오름차순으로 담은 리스트를 return 하도록 함수를 완성해주세요.",
+    "constraints": "6 <= num_list 길이 <= 30",
+    "input_example": "[12, 4, 15, 46, 38, 1, 14]",
+    "output_example": "[1, 4, 12, 14, 15]",
+    "starter_code": "class Solution {\npublic int[] solution(int[] num_list) {\nint[] answer = {};\nreturn answer;\n}\n}"
+  },
+  {
+    "topic": "리스트",
+    "title": "뒤에서 5등 위로",
+    "description": "num_list 에서 가장 작은 5개의 수를 제외한 수들을 오름차순으로 담은 리스트를 return 하도록 함수를 완성해주세요.",
+    "constraints": "6 <= num_list 길이 <= 30",
+    "input_example": "[12, 4, 15, 46, 38, 1, 14, 56, 32, 10]",
+    "output_example": "[15, 32, 38, 46, 56]",
+    "starter_code": "class Solution {\npublic int[] solution(int[] num_list) {\nint[] answer = {};\nreturn answer;\n}\n}"
+  },
+  {
+    "topic": "조건문",
+    "title": "전국 대회 선발 고사",
+    "description": "attendance 가 true인 학생 중 rank 가 높은 3명의 번호를 a, b, c라 할 때 10000*a + 100*b + c 를 return 하세요.",
+    "constraints": "3 <= rank 길이 <= 100",
+    "input_example": "rank: [3, 7, 2, 5, 4, 6, 1], attendance: [false, true, true, true, true, false, false]",
+    "output_example": "20403",
+    "starter_code": "class Solution {\npublic int solution(int[] rank, boolean[] attendance) {\nint answer = 0;\nreturn answer;\n}\n}"
+  }
+]

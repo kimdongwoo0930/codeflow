@@ -6,6 +6,7 @@ import type { CSSProperties, PointerEvent as ReactPointerEvent } from "react";
 import type * as Monaco from "monaco-editor";
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
+import { STAGE_SECTIONS } from "@/data/stageProblems";
 
 const MonacoEditor = dynamic(() => import("@monaco-editor/react"), {
   ssr: false,
@@ -97,6 +98,15 @@ const DUMMY_PROBLEM_ALGORITHM: Problem = {
 };
 
 const CONCEPT_PROBLEMS: Record<string, Problem> = {
+  출력문: {
+    title: "Hello, Java!",
+    difficulty: "입문",
+    description: "화면에 Hello, Java!를 출력하는 프로그램을 작성하시오.",
+    inputFormat: "없음",
+    outputFormat: "Hello, Java!",
+    examples: [{ input: "", expected: "Hello, Java!" }],
+    constraints: [],
+  },
   출력: {
     title: "Hello, Java!",
     difficulty: "입문",
@@ -114,6 +124,16 @@ const CONCEPT_PROBLEMS: Record<string, Problem> = {
     inputFormat: "없음",
     outputFormat: "이름: Java, 나이: 20",
     examples: [{ input: "", expected: "이름: Java, 나이: 20" }],
+    constraints: [],
+  },
+  연산: {
+    title: "사칙연산 결과 출력",
+    difficulty: "입문",
+    description:
+      "두 정수 a=17, b=5를 선언하고 a+b, a-b, a*b, a/b, a%b를 각각 한 줄씩 출력하시오.",
+    inputFormat: "없음",
+    outputFormat: "22\n12\n85\n3\n2",
+    examples: [{ input: "", expected: "22\n12\n85\n3\n2" }],
     constraints: [],
   },
   "산술·연산자": {
@@ -164,6 +184,18 @@ const CONCEPT_PROBLEMS: Record<string, Problem> = {
     ],
     constraints: ["1 ≤ N ≤ 1,000"],
   },
+  리스트: {
+    title: "리스트 역순 출력",
+    difficulty: "보통",
+    description: "N개의 정수를 입력받아 역순으로 공백으로 구분하여 출력하시오.",
+    inputFormat: "첫째 줄에 N, 둘째 줄에 N개의 정수",
+    outputFormat: "역순으로 정렬된 정수들",
+    examples: [
+      { input: "5\n1 2 3 4 5", expected: "5 4 3 2 1" },
+      { input: "3\n10 20 30", expected: "30 20 10" },
+    ],
+    constraints: ["1 ≤ N ≤ 100"],
+  },
   배열: {
     title: "배열 역순 출력",
     difficulty: "보통",
@@ -175,6 +207,19 @@ const CONCEPT_PROBLEMS: Record<string, Problem> = {
       { input: "3\n10 20 30", expected: "30 20 10" },
     ],
     constraints: ["1 ≤ N ≤ 100"],
+  },
+  "2차원 리스트": {
+    title: "2차원 리스트 합계",
+    difficulty: "보통",
+    description:
+      "N x M 크기의 정수 표가 주어진다. 모든 칸의 값을 더해 출력하시오.",
+    inputFormat: "첫째 줄에 N M, 다음 N줄에 M개의 정수",
+    outputFormat: "모든 칸의 합계",
+    examples: [
+      { input: "2 3\n1 2 3\n4 5 6", expected: "21" },
+      { input: "2 2\n-1 3\n5 -2", expected: "5" },
+    ],
+    constraints: ["1 ≤ N, M ≤ 20", "−1,000 ≤ 각 칸의 값 ≤ 1,000"],
   },
   함수: {
     title: "두 수 중 최댓값",
@@ -1232,13 +1277,16 @@ function VsCodeWindow({
 export function TestLab({
   problem: problemProp,
   isAlgorithm = false,
+  conceptTopic,
 }: {
   problem?: Problem;
   isAlgorithm?: boolean;
+  conceptTopic?: string;
 }) {
   const router = useRouter();
   const DUMMY_PROBLEM =
     problemProp ??
+    (!isAlgorithm && conceptTopic ? CONCEPT_PROBLEMS[conceptTopic] : undefined) ??
     (isAlgorithm ? DUMMY_PROBLEM_ALGORITHM : DUMMY_PROBLEM_ALGORITHM);
 
   const [phase, setPhase] = useState<"editor" | "loading" | "result">("editor");
@@ -1265,6 +1313,24 @@ export function TestLab({
   const [submissionReview, setSubmissionReview] =
     useState<SubmissionReview | null>(null);
   const [showExitModal, setShowExitModal] = useState(false);
+
+  // 떠 있는 AI 튜터 채팅창 열림 상태
+  const [isTutorOpen, setIsTutorOpen] = useState(false);
+  // 단계별 문제 리스트에서 펼쳐진 topic (기본: 현재 문제가 속한 topic)
+  const [openStageTopics, setOpenStageTopics] = useState<string[]>(() => {
+    const current = STAGE_SECTIONS.find((section) =>
+      section.problems.some((p) => p.title === problemProp?.title),
+    );
+    return current ? [current.topic] : [STAGE_SECTIONS[0]?.topic];
+  });
+
+  const toggleStageTopic = (topic: string) => {
+    setOpenStageTopics((current) =>
+      current.includes(topic)
+        ? current.filter((t) => t !== topic)
+        : [...current, topic],
+    );
+  };
 
   // Visualizer state
   const [snapshotIndex, setSnapshotIndex] = useState(0);
@@ -2244,89 +2310,171 @@ export function TestLab({
             <aside className="flex min-h-0 h-full flex-col overflow-hidden bg-[#0b0f1a]/80">
               <div className="flex h-11 items-center justify-between border-b border-white/10 bg-[#1f2937] px-4">
                 <span className="text-[11px] uppercase tracking-[0.24em] text-slate-500">
-                  AI 튜터
+                  단계별 문제
                 </span>
-                <span className="text-[11px] text-emerald-400">● Gemini</span>
               </div>
 
-              <div className="flex min-h-0 flex-1 flex-col overflow-hidden">
-                <div className="flex-1 space-y-3 overflow-y-auto px-4 py-4">
-                  {chatMessages.map((message, index) => (
+              <div className="min-h-0 flex-1 space-y-2 overflow-y-auto p-3">
+                {STAGE_SECTIONS.map((section, index) => {
+                  const isOpen = openStageTopics.includes(section.topic);
+
+                  return (
                     <div
-                      key={`${message.role}-${index}`}
-                      className={`flex gap-2 ${message.role === "user" ? "flex-row-reverse" : ""}`}
+                      key={section.topic}
+                      className="overflow-hidden rounded-lg border border-white/10 bg-white/[0.02]"
                     >
-                      <div
-                        className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-[11px] font-bold ${message.role === "ai" ? "bg-blue/20 text-blue" : "bg-purple/20 text-purple-300"}`}
-                      >
-                        {message.role === "ai" ? "AI" : "나"}
-                      </div>
-                      <div
-                        className={`max-w-[88%] whitespace-pre-wrap rounded-2xl px-3 py-2 text-sm leading-6 ${message.role === "ai" ? "rounded-bl-md bg-[#1f2937] text-slate-100" : "rounded-br-md border border-blue/20 bg-blue/10 text-slate-100"}`}
-                      >
-                        {message.content}
-                      </div>
-                    </div>
-                  ))}
-                  {isTutorLoading && (
-                    <div className="flex gap-2">
-                      <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-blue/20 text-[11px] font-bold text-blue">
-                        AI
-                      </div>
-                      <div className="flex items-center gap-1 rounded-2xl rounded-bl-md bg-[#1f2937] px-4 py-3">
-                        <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-slate-400 [animation-delay:0ms]" />
-                        <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-slate-400 [animation-delay:150ms]" />
-                        <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-slate-400 [animation-delay:300ms]" />
-                      </div>
-                    </div>
-                  )}
-                </div>
-
-                <div className="px-4 pb-3">
-                  <div className="flex flex-wrap gap-2">
-                    {QUICK_PROMPTS.map((prompt) => (
                       <button
-                        key={prompt}
-                        onClick={() => handleSendMessage(prompt)}
-                        className="rounded-full border border-white/15 px-3 py-1 text-[11px] text-slate-400 transition hover:border-blue/35 hover:text-blue"
+                        type="button"
+                        onClick={() => toggleStageTopic(section.topic)}
+                        className="flex w-full items-center gap-2.5 px-3 py-2.5 text-left transition hover:bg-white/[0.04]"
+                        aria-expanded={isOpen}
                       >
-                        {prompt}
+                        <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-md border border-blue/25 bg-blue/10 text-[11px] font-semibold text-blue">
+                          {index + 1}
+                        </span>
+                        <span className="min-w-0 flex-1 truncate text-sm font-medium text-slate-200">
+                          {section.topic}
+                        </span>
+                        <span className="shrink-0 text-[11px] text-slate-500">
+                          {section.problems.length} · {isOpen ? "−" : "+"}
+                        </span>
                       </button>
-                    ))}
-                  </div>
-                </div>
 
-                <div className="border-t border-white/10 p-4">
-                  <div className="flex gap-2">
-                    <textarea
-                      rows={1}
-                      value={chatInput}
-                      disabled={isTutorLoading}
-                      onChange={(event) => setChatInput(event.target.value)}
-                      onKeyDown={(event) => {
-                        if (event.key === "Enter" && !event.shiftKey) {
-                          event.preventDefault();
-                          handleSendMessage();
-                        }
-                      }}
-                      placeholder={
-                        isTutorLoading
-                          ? "AI가 생각 중이에요..."
-                          : "코드 작성 중 막히면 물어보세요..."
-                      }
-                      className="min-h-[42px] flex-1 resize-none rounded-xl border border-white/15 bg-[#1f2937] px-3 py-2 text-sm text-white outline-none transition placeholder:text-slate-500 focus:border-blue/40 disabled:opacity-50"
-                    />
-                    <button
-                      onClick={() => handleSendMessage()}
-                      disabled={isTutorLoading}
-                      className="flex h-[42px] w-[42px] items-center justify-center rounded-xl bg-blue text-sm font-semibold text-white transition hover:opacity-90 disabled:opacity-40"
-                    >
-                      ↑
-                    </button>
-                  </div>
-                </div>
+                      {isOpen && (
+                        <div className="space-y-1 border-t border-white/5 px-2 py-2">
+                          {section.problems.map((problem) => {
+                            const isCurrent =
+                              problem.title === DUMMY_PROBLEM.title;
+
+                            return (
+                              <Link
+                                key={problem.id}
+                                href={`/study?stageId=${problem.id}`}
+                                className={`block truncate rounded-md px-2.5 py-1.5 text-xs transition ${
+                                  isCurrent
+                                    ? "bg-blue/15 font-medium text-blue"
+                                    : "text-slate-400 hover:bg-white/[0.05] hover:text-slate-200"
+                                }`}
+                                title={problem.title}
+                              >
+                                {problem.title}
+                              </Link>
+                            );
+                          })}
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
               </div>
             </aside>
+          </div>
+
+          {/* 떠 있는 AI 튜터 채팅 위젯 */}
+          <div className="fixed bottom-6 right-6 z-30 flex flex-col items-end">
+            {isTutorOpen && (
+              <div className="mb-3 flex h-[460px] w-[340px] max-w-[calc(100vw-3rem)] flex-col overflow-hidden rounded-2xl border border-white/10 bg-[#0b0f1a] shadow-2xl shadow-black/50">
+                <div className="flex h-11 shrink-0 items-center justify-between border-b border-white/10 bg-[#1f2937] px-4">
+                  <span className="flex items-center gap-2 text-sm font-medium text-slate-200">
+                    AI 튜터
+                    <span className="text-[11px] text-emerald-400">● Gemini</span>
+                  </span>
+                  <button
+                    onClick={() => setIsTutorOpen(false)}
+                    className="flex h-6 w-6 items-center justify-center rounded-md text-slate-400 transition hover:bg-white/10 hover:text-slate-200"
+                    aria-label="AI 튜터 닫기"
+                  >
+                    ✕
+                  </button>
+                </div>
+
+                <div className="flex min-h-0 flex-1 flex-col overflow-hidden">
+                  <div className="flex-1 space-y-3 overflow-y-auto px-4 py-4">
+                    {chatMessages.map((message, index) => (
+                      <div
+                        key={`${message.role}-${index}`}
+                        className={`flex gap-2 ${message.role === "user" ? "flex-row-reverse" : ""}`}
+                      >
+                        <div
+                          className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-[11px] font-bold ${message.role === "ai" ? "bg-blue/20 text-blue" : "bg-purple/20 text-purple-300"}`}
+                        >
+                          {message.role === "ai" ? "AI" : "나"}
+                        </div>
+                        <div
+                          className={`max-w-[88%] whitespace-pre-wrap rounded-2xl px-3 py-2 text-sm leading-6 ${message.role === "ai" ? "rounded-bl-md bg-[#1f2937] text-slate-100" : "rounded-br-md border border-blue/20 bg-blue/10 text-slate-100"}`}
+                        >
+                          {message.content}
+                        </div>
+                      </div>
+                    ))}
+                    {isTutorLoading && (
+                      <div className="flex gap-2">
+                        <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-blue/20 text-[11px] font-bold text-blue">
+                          AI
+                        </div>
+                        <div className="flex items-center gap-1 rounded-2xl rounded-bl-md bg-[#1f2937] px-4 py-3">
+                          <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-slate-400 [animation-delay:0ms]" />
+                          <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-slate-400 [animation-delay:150ms]" />
+                          <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-slate-400 [animation-delay:300ms]" />
+                        </div>
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="px-4 pb-3">
+                    <div className="flex flex-wrap gap-2">
+                      {QUICK_PROMPTS.map((prompt) => (
+                        <button
+                          key={prompt}
+                          onClick={() => handleSendMessage(prompt)}
+                          className="rounded-full border border-white/15 px-3 py-1 text-[11px] text-slate-400 transition hover:border-blue/35 hover:text-blue"
+                        >
+                          {prompt}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="border-t border-white/10 p-3">
+                    <div className="flex gap-2">
+                      <textarea
+                        rows={1}
+                        value={chatInput}
+                        disabled={isTutorLoading}
+                        onChange={(event) => setChatInput(event.target.value)}
+                        onKeyDown={(event) => {
+                          if (event.key === "Enter" && !event.shiftKey) {
+                            event.preventDefault();
+                            handleSendMessage();
+                          }
+                        }}
+                        placeholder={
+                          isTutorLoading
+                            ? "AI가 생각 중이에요..."
+                            : "코드 작성 중 막히면 물어보세요..."
+                        }
+                        className="min-h-[42px] flex-1 resize-none rounded-xl border border-white/15 bg-[#1f2937] px-3 py-2 text-sm text-white outline-none transition placeholder:text-slate-500 focus:border-blue/40 disabled:opacity-50"
+                      />
+                      <button
+                        onClick={() => handleSendMessage()}
+                        disabled={isTutorLoading}
+                        className="flex h-[42px] w-[42px] items-center justify-center rounded-xl bg-blue text-sm font-semibold text-white transition hover:opacity-90 disabled:opacity-40"
+                      >
+                        ↑
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            <button
+              onClick={() => setIsTutorOpen((open) => !open)}
+              className="flex h-14 w-14 items-center justify-center rounded-full bg-gradient-to-br from-blue to-indigo-500 text-xl shadow-lg shadow-blue/30 transition hover:scale-105 hover:opacity-95"
+              aria-label={isTutorOpen ? "AI 튜터 닫기" : "AI 튜터 열기"}
+            >
+              {isTutorOpen ? "✕" : "💬"}
+            </button>
           </div>
 
           <div className="relative z-10 flex h-10 items-center justify-between border-t border-white/10 px-4 font-mono text-xs text-slate-500 sm:px-6">

@@ -38,7 +38,7 @@ const STUDY_TYPES = [
   {
     key: "언어 개념",
     icon: "🔬",
-    description: "for문, 클래스 같은 문법을\n문제로 익혀요",
+    description: "출력문, 반복문 같은 문법을\n문제로 익혀요",
     badge: {
       label: "실행 과정 시각화 지원",
       color: "text-emerald-400 border-emerald-400/30 bg-emerald-400/10",
@@ -67,15 +67,6 @@ const LANGUAGE_STAGES = [
   { stage: 9,  key: "문자열",       desc: "String 메서드" },
   { stage: 10, key: "재귀",         desc: "팩토리얼·피보나치·콜스택" },
   { stage: 11, key: "컬렉션 기초",  desc: "ArrayList·HashMap" },
-];
-
-const OOP_STAGES = [
-  { stage: 12, key: "클래스·객체",        desc: "class, new, 인스턴스" },
-  { stage: 13, key: "생성자·접근제어자",  desc: "public, private, this" },
-  { stage: 14, key: "상속",               desc: "extends, super, override" },
-  { stage: 15, key: "인터페이스·추상클래스", desc: "interface, abstract" },
-  { stage: 16, key: "예외처리",           desc: "try-catch, throws" },
-  { stage: 17, key: "제네릭·컬렉션 심화", desc: "List<T>, Map<K,V>" },
 ];
 
 // 알고리즘 분야 (언어 무관)
@@ -327,33 +318,6 @@ function StageList({
                 </span>
                 <span className="ml-auto text-xs text-slate-600">{s.desc}</span>
               </button>
-            ))}
-          </div>
-        </div>
-
-        {/* OOP 트랙 */}
-        <div className="bg-[#0b0f1a] px-4 pb-3 pt-3">
-          <div className="mb-2 flex items-center justify-between">
-            <p className="text-xs font-semibold uppercase tracking-widest text-slate-700">
-              OOP 트랙
-            </p>
-            <span className="rounded-full border border-slate-700/60 bg-slate-800/60 px-2 py-0.5 text-[10px] text-slate-600">
-              서비스 준비 중
-            </span>
-          </div>
-          <div className="space-y-0.5 opacity-30">
-            {OOP_STAGES.map((s) => (
-              <div
-                key={s.stage}
-                className="flex w-full items-center gap-3 rounded-xl px-3 py-2"
-              >
-                <span className="w-7 shrink-0 font-mono text-xs text-slate-600">
-                  {String(s.stage).padStart(2, "0")}
-                </span>
-                <span className="font-medium text-slate-400">{s.key}</span>
-                <span className="ml-auto text-xs text-slate-600">{s.desc}</span>
-                <span className="text-[11px]">🔒</span>
-              </div>
             ))}
           </div>
         </div>

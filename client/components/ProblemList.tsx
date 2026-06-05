@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
 
 // ─── 더미 데이터 ────────────────────────────────────────────
 
@@ -13,15 +12,6 @@ interface Problem {
   category: string;
   difficulty: Difficulty;
   description: string;
-}
-
-interface Stage {
-  step: number;
-  title: string;
-  description: string;
-  problemCount: number;
-  topics: string[];
-  color: string;
 }
 
 const CURATED_PROBLEMS: Problem[] = [
@@ -74,43 +64,6 @@ const CURATED_PROBLEMS: Problem[] = [
   },
 ];
 
-const STAGES: Stage[] = [
-  {
-    step: 1,
-    title: "프로그래밍 기초",
-    description: "변수, 조건문, 반복문의 실행 흐름을 시각화로 익힙니다.",
-    problemCount: 8,
-    topics: ["변수", "조건문", "반복문", "함수"],
-    color: "from-emerald-500 to-teal-500",
-  },
-  {
-    step: 2,
-    title: "자료구조 입문",
-    description:
-      "스택, 큐, 연결 리스트가 메모리에서 어떻게 동작하는지 배웁니다.",
-    problemCount: 10,
-    topics: ["스택", "큐", "연결 리스트", "해시맵"],
-    color: "from-blue to-cyan",
-  },
-  {
-    step: 3,
-    title: "탐색과 정렬",
-    description:
-      "이진 탐색, 버블·퀵 정렬의 단계별 동작 원리를 눈으로 확인합니다.",
-    problemCount: 12,
-    topics: ["이진 탐색", "버블 정렬", "퀵 정렬", "병합 정렬"],
-    color: "from-purple to-indigo-500",
-  },
-  {
-    step: 4,
-    title: "그래프와 트리",
-    description: "BFS, DFS, 그리고 트리 순회를 시각화로 완전히 이해합니다.",
-    problemCount: 14,
-    topics: ["BFS", "DFS", "트리 순회", "최단 경로"],
-    color: "from-orange-500 to-rose-500",
-  },
-];
-
 // ─── 서브 컴포넌트 ──────────────────────────────────────────
 
 const DIFFICULTY_STYLE: Record<Difficulty, string> = {
@@ -146,56 +99,9 @@ function ProblemCard({ problem }: { problem: Problem }) {
   );
 }
 
-function StageCard({ stage }: { stage: Stage }) {
-  return (
-    <Link
-      href={`/study?stage=${stage.step}`}
-      className="group panel-border relative overflow-hidden rounded-2xl bg-bg2/70 p-6 transition duration-300 hover:-translate-y-1 hover:border-blue/35 hover:bg-white/[0.05] hover:shadow-[0_12px_36px_rgba(15,23,42,0.5)]"
-    >
-      {/* 배경 그라데이션 */}
-      <div
-        className={`absolute -right-6 -top-6 h-24 w-24 rounded-full bg-gradient-to-br ${stage.color} opacity-10 blur-2xl transition duration-500 group-hover:opacity-20`}
-      />
-
-      <div className="mb-4 flex items-center gap-3">
-        <div
-          className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br ${stage.color} text-sm font-bold text-white shadow-lg`}
-        >
-          {stage.step}
-        </div>
-        <div>
-          <h3 className="font-semibold text-slate-100 transition group-hover:text-white">
-            {stage.title}
-          </h3>
-          <p className="text-xs text-slate-500">{stage.problemCount}개 문제</p>
-        </div>
-      </div>
-
-      <p className="mb-4 text-sm leading-6 text-slate-400 transition group-hover:text-slate-300">
-        {stage.description}
-      </p>
-
-      <div className="flex flex-wrap gap-1.5">
-        {stage.topics.map((topic) => (
-          <span
-            key={topic}
-            className="rounded-full border border-white/10 bg-white/5 px-2.5 py-0.5 text-xs text-slate-400"
-          >
-            {topic}
-          </span>
-        ))}
-      </div>
-    </Link>
-  );
-}
-
 // ─── 메인 컴포넌트 ──────────────────────────────────────────
 
-type Tab = "curated" | "stages";
-
 export function ProblemList() {
-  const [tab, setTab] = useState<Tab>("curated");
-
   return (
     <section className="px-5 py-20 sm:px-8 sm:py-24">
       <div className="mx-auto max-w-7xl">
@@ -209,50 +115,23 @@ export function ProblemList() {
               지금 바로 풀어보세요
             </h2>
             <p className="mt-3 text-base leading-7 text-slate-300">
-              엄선된 문제로 빠르게 시작하거나, 단계별 커리큘럼을 따라가 보세요.
+              엄선된 문제로 빠르게 시작하거나, 단계별 커리큘럼으로 이동해 보세요.
             </p>
           </div>
 
-          {/* 탭 */}
-          <div className="flex shrink-0 rounded-xl border border-white/10 bg-white/5 p-1">
-            <button
-              onClick={() => setTab("curated")}
-              className={`rounded-lg px-4 py-2 text-sm font-medium transition ${
-                tab === "curated"
-                  ? "bg-gradient-to-r from-blue to-purple text-white shadow"
-                  : "text-slate-400 hover:text-slate-200"
-              }`}
-            >
-              큐레이션 문제
-            </button>
-            <button
-              onClick={() => setTab("stages")}
-              className={`rounded-lg px-4 py-2 text-sm font-medium transition ${
-                tab === "stages"
-                  ? "bg-gradient-to-r from-blue to-purple text-white shadow"
-                  : "text-slate-400 hover:text-slate-200"
-              }`}
-            >
-              단계별 풀기
-            </button>
-          </div>
+          <Link
+            href="/stages"
+            className="inline-flex h-10 shrink-0 items-center justify-center rounded-lg border border-white/15 px-4 text-sm font-medium text-slate-300 transition hover:border-blue/40 hover:text-blue"
+          >
+            단계별 풀기
+          </Link>
         </div>
 
         {/* 콘텐츠 */}
-        <div className="mt-10">
-          {tab === "curated" ? (
-            <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
-              {CURATED_PROBLEMS.map((problem) => (
-                <ProblemCard key={problem.id} problem={problem} />
-              ))}
-            </div>
-          ) : (
-            <div className="grid gap-4 sm:grid-cols-2">
-              {STAGES.map((stage) => (
-                <StageCard key={stage.step} stage={stage} />
-              ))}
-            </div>
-          )}
+        <div className="mt-10 grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+          {CURATED_PROBLEMS.map((problem) => (
+            <ProblemCard key={problem.id} problem={problem} />
+          ))}
         </div>
       </div>
     </section>

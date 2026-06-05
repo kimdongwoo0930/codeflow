@@ -1,3 +1,5 @@
+import { STAGE_SECTIONS } from "@/data/stageProblems";
+
 const previewMessages = [
   {
     role: "ai",
@@ -12,8 +14,6 @@ const previewMessages = [
     content: "맞아요. 현재 값이 더 클 때만 max를 바꾸면 됩니다.",
   },
 ] as const;
-
-const previewTemplates = ["배열 최댓값", "선형 탐색", "버블 정렬"] as const;
 
 const previewCode = [
   "public class Main {",
@@ -34,7 +34,7 @@ export function VisualizerPreview() {
   return (
     <div
       id="visualizer"
-      className="panel-border w-full max-w-6xl overflow-hidden rounded-[28px] border border-white/10 bg-[#0b0f1a]/90 shadow-[0_30px_80px_rgba(2,8,23,0.45)] transition-transform duration-500 hover:-translate-y-1"
+      className="panel-border relative w-full max-w-6xl overflow-hidden rounded-[28px] border border-white/10 bg-[#0b0f1a]/90 shadow-[0_30px_80px_rgba(2,8,23,0.45)] transition-transform duration-500 hover:-translate-y-1"
     >
       <div className="flex items-center justify-between border-b border-white/10 bg-[#0b0f1a]/95 px-5 py-4">
         <div className="flex items-center gap-5">
@@ -123,19 +123,6 @@ export function VisualizerPreview() {
             </div>
           </div>
 
-          <div className="border-b border-white/10 px-4 py-2">
-            <div className="flex flex-wrap gap-2">
-              {previewTemplates.map((template, index) => (
-                <span
-                  key={template}
-                  className={`rounded-full border px-3 py-1 text-[11px] ${index === 0 ? "border-blue/40 bg-blue/10 text-blue" : "border-white/10 text-slate-500"}`}
-                >
-                  {template}
-                </span>
-              ))}
-            </div>
-          </div>
-
           <div className="bg-[#111827] px-4 py-4 font-mono text-[13px] leading-7 text-slate-200">
             {previewCode.map((line, index) => {
               const active = index === 6;
@@ -162,46 +149,88 @@ export function VisualizerPreview() {
         </section>
 
         <aside className="flex flex-col bg-[#0b0f1a]/80">
-          <div className="flex h-11 items-center justify-between border-b border-white/10 bg-[#1f2937] px-4">
-            <span className="text-[11px] uppercase tracking-[0.24em] text-slate-500">AI 튜터</span>
-            <span className="text-[11px] text-emerald-400">● Gemini</span>
+          <div className="flex h-11 items-center border-b border-white/10 bg-[#1f2937] px-4">
+            <span className="text-[11px] uppercase tracking-[0.24em] text-slate-500">단계별 문제</span>
           </div>
 
-          <div className="flex-1 space-y-3 px-4 py-4">
+          <div className="space-y-2 p-3">
+            {STAGE_SECTIONS.slice(0, 4).map((section, index) => {
+              const isOpen = index === 0;
+              return (
+                <div
+                  key={section.topic}
+                  className="overflow-hidden rounded-lg border border-white/10 bg-white/[0.02]"
+                >
+                  <div className="flex items-center gap-2.5 px-3 py-2.5">
+                    <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-md border border-blue/25 bg-blue/10 text-[11px] font-semibold text-blue">
+                      {index + 1}
+                    </span>
+                    <span className="min-w-0 flex-1 truncate text-sm font-medium text-slate-200">
+                      {section.topic}
+                    </span>
+                    <span className="shrink-0 text-[11px] text-slate-500">
+                      {section.problems.length} · {isOpen ? "−" : "+"}
+                    </span>
+                  </div>
+
+                  {isOpen && (
+                    <div className="space-y-1 border-t border-white/5 px-2 py-2">
+                      {section.problems.slice(0, 3).map((problem, pIndex) => (
+                        <div
+                          key={problem.id}
+                          className={`truncate rounded-md px-2.5 py-1.5 text-xs ${pIndex === 0 ? "bg-blue/15 font-medium text-blue" : "text-slate-400"}`}
+                        >
+                          {problem.title}
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        </aside>
+      </div>
+
+      {/* 떠 있는 AI 튜터 채팅 (우하단) */}
+      <div className="pointer-events-none absolute bottom-5 right-5 hidden flex-col items-end md:flex">
+        <div className="mb-3 flex w-[300px] flex-col overflow-hidden rounded-2xl border border-white/10 bg-[#0b0f1a] shadow-2xl shadow-black/50">
+          <div className="flex h-10 items-center justify-between border-b border-white/10 bg-[#1f2937] px-4">
+            <span className="flex items-center gap-2 text-sm font-medium text-slate-200">
+              AI 튜터
+              <span className="text-[11px] text-emerald-400">● Gemini</span>
+            </span>
+            <span className="text-slate-500">✕</span>
+          </div>
+
+          <div className="space-y-3 px-4 py-4">
             {previewMessages.map((message, index) => (
               <div key={`${message.role}-${index}`} className={`flex gap-2 ${message.role === "user" ? "flex-row-reverse" : ""}`}>
                 <div className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-[11px] font-bold ${message.role === "ai" ? "bg-blue/20 text-blue" : "bg-purple/20 text-purple-300"}`}>
                   {message.role === "ai" ? "AI" : "나"}
                 </div>
-                <div className={`max-w-[88%] rounded-2xl px-3 py-2 text-sm leading-6 ${message.role === "ai" ? "rounded-bl-md bg-[#1f2937] text-slate-100" : "rounded-br-md border border-blue/20 bg-blue/10 text-slate-100"}`}>
+                <div className={`max-w-[88%] rounded-2xl px-3 py-2 text-xs leading-6 ${message.role === "ai" ? "rounded-bl-md bg-[#1f2937] text-slate-100" : "rounded-br-md border border-blue/20 bg-blue/10 text-slate-100"}`}>
                   {message.content}
                 </div>
               </div>
             ))}
           </div>
 
-          <div className="border-t border-white/10 p-4">
-            <div className="mb-3 flex flex-wrap gap-2">
-              {["어떻게 시작해요?", "조건문 힌트", "시간복잡도?"].map((prompt) => (
-                <span
-                  key={prompt}
-                  className="rounded-full border border-white/15 px-3 py-1 text-[11px] text-slate-400"
-                >
-                  {prompt}
-                </span>
-              ))}
-            </div>
-
+          <div className="border-t border-white/10 p-3">
             <div className="flex gap-2">
-              <div className="min-h-[42px] flex-1 rounded-xl border border-white/15 bg-[#1f2937] px-3 py-2 text-sm text-slate-500">
+              <div className="min-h-[38px] flex-1 rounded-xl border border-white/15 bg-[#1f2937] px-3 py-2 text-xs text-slate-500">
                 코드 작성 중 막히면 물어보세요...
               </div>
-              <div className="flex h-[42px] w-[42px] items-center justify-center rounded-xl bg-blue text-sm font-semibold text-white">
+              <div className="flex h-[38px] w-[38px] items-center justify-center rounded-xl bg-blue text-sm font-semibold text-white">
                 ↑
               </div>
             </div>
           </div>
-        </aside>
+        </div>
+
+        <div className="flex h-12 w-12 items-center justify-center self-end rounded-full bg-gradient-to-br from-blue to-indigo-500 text-lg shadow-lg shadow-blue/30">
+          💬
+        </div>
       </div>
 
       <div className="flex items-center justify-between border-t border-white/10 px-5 py-3 font-mono text-xs text-slate-500">

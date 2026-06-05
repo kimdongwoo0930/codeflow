@@ -3,6 +3,7 @@
 import { useEffect, useState, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { TestLab } from "@/components/TestLab";
+import { getStageProblem, type StageProblem as StageData } from "@/data/stageProblems";
 
 type GeneratedProblem = {
   title: string;
@@ -71,6 +72,20 @@ function mapToProblem(data: GeneratedProblem, meta: Meta): Problem {
   };
 }
 
+function mapStageToProblem(data: StageData): Problem {
+  return {
+    title: data.title,
+    difficulty: data.difficulty,
+    description: data.description,
+    inputFormat: data.inputExample,
+    outputFormat: data.outputExample,
+    examples: [{ input: data.inputExample, expected: data.outputExample }],
+    constraints: data.constraints ? [data.constraints] : [],
+    startCode: data.starterCode,
+    problemId: null,
+  };
+}
+
 function mapDetailToProblem(data: ProblemDetail): Problem {
   return {
     title: data.title,
@@ -93,12 +108,25 @@ function StudyPageInner() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const problemIdParam = searchParams.get("problemId");
+  const conceptParam = searchParams.get("concept");
+  const stageIdParam = searchParams.get("stageId");
 
   const [problem, setProblem] = useState<Problem | undefined>(undefined);
   const [isAlgorithm, setIsAlgorithm] = useState(false);
   const [fetchDone, setFetchDone] = useState(false);
 
   useEffect(() => {
+    // 단계별 문제(JSON 더미데이터)는 stageId로 로컬에서 직접 로드
+    if (stageIdParam) {
+      const stage = getStageProblem(Number(stageIdParam));
+      if (stage) {
+        setProblem(mapStageToProblem(stage));
+        setIsAlgorithm(false);
+      }
+      setFetchDone(true);
+      return;
+    }
+
     // URL에 problemId가 있으면 API에서 직접 fetch
     if (problemIdParam) {
       const token = localStorage.getItem("accessToken");
@@ -139,7 +167,7 @@ function StudyPageInner() {
       }
     }
     setFetchDone(true);
-  }, [problemIdParam, router]);
+  }, [problemIdParam, stageIdParam, router]);
 
   // problem이 확정되기 전에 TestLab이 마운트되면 editorCode 초기화가 틀림 — 항상 대기
   if (!fetchDone) {
@@ -158,7 +186,13 @@ function StudyPageInner() {
     );
   }
 
-  return <TestLab problem={problem} isAlgorithm={isAlgorithm} />;
+  return (
+    <TestLab
+      problem={problem}
+      isAlgorithm={isAlgorithm}
+      conceptTopic={conceptParam ?? undefined}
+    />
+  );
 }
 
 export default function StudyPage() {
