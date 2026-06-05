@@ -1,6 +1,9 @@
 "use client";
 
 import Link from "next/link";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { AuthModal } from "@/components/AuthModal";
 
 // ─── 더미 데이터 ────────────────────────────────────────────
 
@@ -72,10 +75,21 @@ const DIFFICULTY_STYLE: Record<Difficulty, string> = {
   어려움: "bg-rose-400/10 text-rose-400 border border-rose-400/20",
 };
 
-function ProblemCard({ problem }: { problem: Problem }) {
+function ProblemCard({
+  problem,
+  onProtectedClick,
+}: {
+  problem: Problem;
+  onProtectedClick: (
+    event: React.MouseEvent<HTMLAnchorElement>,
+    href: string,
+  ) => void;
+}) {
+  const href = `/study?id=${problem.id}`;
   return (
     <Link
-      href={`/study?id=${problem.id}`}
+      href={href}
+      onClick={(event) => onProtectedClick(event, href)}
       className="group panel-border flex flex-col rounded-2xl bg-bg2/70 p-5 transition duration-300 hover:-translate-y-1 hover:border-blue/35 hover:bg-white/[0.05] hover:shadow-[0_12px_36px_rgba(15,23,42,0.5)]"
     >
       <div className="mb-3 flex items-center justify-between">
@@ -102,6 +116,21 @@ function ProblemCard({ problem }: { problem: Problem }) {
 // ─── 메인 컴포넌트 ──────────────────────────────────────────
 
 export function ProblemList() {
+  const router = useRouter();
+  // 로그인 안 된 상태에서 누른 문제의 이동 경로 (로그인 성공 시 이동)
+  const [pendingHref, setPendingHref] = useState<string | null>(null);
+
+  const handleProtectedClick = (
+    event: React.MouseEvent<HTMLAnchorElement>,
+    href: string,
+  ) => {
+    const token = localStorage.getItem("accessToken");
+    if (!token) {
+      event.preventDefault();
+      setPendingHref(href);
+    }
+  };
+
   return (
     <section className="px-5 py-20 sm:px-8 sm:py-24">
       <div className="mx-auto max-w-7xl">
@@ -130,10 +159,26 @@ export function ProblemList() {
         {/* 콘텐츠 */}
         <div className="mt-10 grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
           {CURATED_PROBLEMS.map((problem) => (
-            <ProblemCard key={problem.id} problem={problem} />
+            <ProblemCard
+              key={problem.id}
+              problem={problem}
+              onProtectedClick={handleProtectedClick}
+            />
           ))}
         </div>
       </div>
+
+      {pendingHref && (
+        <AuthModal
+          initialMode="login"
+          onClose={() => setPendingHref(null)}
+          onSuccess={() => {
+            const href = pendingHref;
+            setPendingHref(null);
+            if (href) router.push(href);
+          }}
+        />
+      )}
     </section>
   );
 }

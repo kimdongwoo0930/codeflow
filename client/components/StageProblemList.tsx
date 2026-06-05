@@ -2,12 +2,17 @@
 
 import Link from "next/link";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { STAGE_SECTIONS } from "@/data/stageProblems";
+import { AuthModal } from "@/components/AuthModal";
 
 export function StageProblemList() {
+  const router = useRouter();
   const [openTopics, setOpenTopics] = useState<string[]>([
     STAGE_SECTIONS[0]?.topic,
   ]);
+  // 로그인 안 된 상태에서 누른 문제의 이동 경로 (로그인 성공 시 이동)
+  const [pendingHref, setPendingHref] = useState<string | null>(null);
 
   const toggleSection = (topic: string) => {
     setOpenTopics((current) =>
@@ -15,6 +20,17 @@ export function StageProblemList() {
         ? current.filter((openTopic) => openTopic !== topic)
         : [...current, topic],
     );
+  };
+
+  const handleProblemClick = (
+    event: React.MouseEvent<HTMLAnchorElement>,
+    href: string,
+  ) => {
+    const token = localStorage.getItem("accessToken");
+    if (!token) {
+      event.preventDefault();
+      setPendingHref(href);
+    }
   };
 
   return (
@@ -70,6 +86,12 @@ export function StageProblemList() {
                         <Link
                           key={problem.id}
                           href={`/study?stageId=${problem.id}`}
+                          onClick={(event) =>
+                            handleProblemClick(
+                              event,
+                              `/study?stageId=${problem.id}`,
+                            )
+                          }
                           className="group flex flex-col gap-2 rounded-lg border border-white/10 bg-white/[0.03] p-4 transition hover:border-blue/40 hover:bg-white/[0.06]"
                         >
                           <span className="min-w-0">
@@ -90,6 +112,18 @@ export function StageProblemList() {
           })}
         </div>
       </div>
+
+      {pendingHref && (
+        <AuthModal
+          initialMode="login"
+          onClose={() => setPendingHref(null)}
+          onSuccess={() => {
+            const href = pendingHref;
+            setPendingHref(null);
+            if (href) router.push(href);
+          }}
+        />
+      )}
     </section>
   );
 }
