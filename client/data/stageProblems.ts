@@ -1,4 +1,4 @@
-import rawProblems from "./programmers_100ps.json";
+import rawProblems from "./problems.json";
 
 export type StageDifficulty = "입문" | "쉬움" | "보통" | "어려움";
 

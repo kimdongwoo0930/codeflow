@@ -1,23 +1,79 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { STAGE_SECTIONS } from "@/data/stageProblems";
 import { AuthModal } from "@/components/AuthModal";
+
+// ─── 타입 ────────────────────────────────────────────────────
+
+type ProblemSummary = {
+  id: number;
+  title: string;
+  topic: string;
+  difficulty: string;
+  description: string;
+  status: "IN_PROGRESS" | "SOLVED" | null;
+};
+
+type Section = {
+  topic: string;
+  description: string;
+  totalCount: number;
+  solvedCount: number;
+  problems: ProblemSummary[];
+};
+
+// ─── 유틸 ────────────────────────────────────────────────────
+
+function authHeaders(): Record<string, string> {
+  const token =
+    typeof window !== "undefined" ? localStorage.getItem("accessToken") : null;
+  return token ? { Authorization: `Bearer ${token}` } : {};
+}
+
+function StatusBadge({ status }: { status: ProblemSummary["status"] }) {
+  if (status === "SOLVED")
+    return (
+      <span className="rounded-full border border-emerald-400/30 bg-emerald-400/10 px-2 py-0.5 text-[10px] font-semibold text-emerald-400">
+        완료
+      </span>
+    );
+  if (status === "IN_PROGRESS")
+    return (
+      <span className="rounded-full border border-amber-400/30 bg-amber-400/10 px-2 py-0.5 text-[10px] font-semibold text-amber-400">
+        진행중
+      </span>
+    );
+  return null;
+}
+
+// ─── 메인 컴포넌트 ──────────────────────────────────────────
 
 export function StageProblemList() {
   const router = useRouter();
-  const [openTopics, setOpenTopics] = useState<string[]>([
-    STAGE_SECTIONS[0]?.topic,
-  ]);
-  // 로그인 안 된 상태에서 누른 문제의 이동 경로 (로그인 성공 시 이동)
+  const [sections, setSections] = useState<Section[]>([]);
+  const [openTopics, setOpenTopics] = useState<string[]>([]);
+  const [loading, setLoading] = useState(true);
   const [pendingHref, setPendingHref] = useState<string | null>(null);
+
+  useEffect(() => {
+    fetch("/api/v1/stage-problems/sections", { headers: authHeaders() })
+      .then((r) => r.json())
+      .then((res) => {
+        if (res.success && res.data) {
+          setSections(res.data);
+          setOpenTopics([res.data[0]?.topic]);
+        }
+      })
+      .catch(() => {})
+      .finally(() => setLoading(false));
+  }, []);
 
   const toggleSection = (topic: string) => {
     setOpenTopics((current) =>
       current.includes(topic)
-        ? current.filter((openTopic) => openTopic !== topic)
+        ? current.filter((t) => t !== topic)
         : [...current, topic],
     );
   };
@@ -32,6 +88,34 @@ export function StageProblemList() {
       setPendingHref(href);
     }
   };
+
+  if (loading) {
+    return (
+      <section className="px-5 pb-20 pt-28 sm:px-8 sm:pb-24 sm:pt-32">
+        <div className="mx-auto max-w-5xl">
+          <div className="mb-8">
+            <p className="text-xs font-semibold uppercase tracking-[0.35em] text-blue">
+              {"// step problems"}
+            </p>
+            <h1 className="mt-4 text-3xl font-semibold text-white sm:text-5xl">
+              단계별 문제 풀기
+            </h1>
+          </div>
+          <div className="flex items-center justify-center py-20">
+            <div className="flex gap-1.5">
+              {[0, 1, 2].map((i) => (
+                <span
+                  key={i}
+                  className="inline-block h-2 w-2 animate-bounce rounded-full bg-blue"
+                  style={{ animationDelay: `${i * 0.15}s` }}
+                />
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section className="px-5 pb-20 pt-28 sm:px-8 sm:pb-24 sm:pt-32">
@@ -49,8 +133,12 @@ export function StageProblemList() {
         </div>
 
         <div className="space-y-3">
-          {STAGE_SECTIONS.map((section, index) => {
+          {sections.map((section, index) => {
             const isOpen = openTopics.includes(section.topic);
+            const progressPct =
+              section.totalCount > 0
+                ? Math.round((section.solvedCount / section.totalCount) * 100)
+                : 0;
 
             return (
               <div
@@ -74,8 +162,18 @@ export function StageProblemList() {
                       {section.description}
                     </span>
                   </span>
-                  <span className="shrink-0 text-sm font-semibold text-slate-400">
-                    {section.problems.length}문제 · {isOpen ? "-" : "+"}
+                  <span className="flex shrink-0 flex-col items-end gap-1">
+                    <span className="text-sm font-semibold text-slate-400">
+                      {section.solvedCount}/{section.totalCount} · {isOpen ? "-" : "+"}
+                    </span>
+                    {section.solvedCount > 0 && (
+                      <span className="h-1 w-16 overflow-hidden rounded-full bg-white/10">
+                        <span
+                          className="block h-full rounded-full bg-emerald-400"
+                          style={{ width: `${progressPct}%` }}
+                        />
+                      </span>
+                    )}
                   </span>
                 </button>
 
@@ -94,13 +192,14 @@ export function StageProblemList() {
                           }
                           className="group flex flex-col gap-2 rounded-lg border border-white/10 bg-white/[0.03] p-4 transition hover:border-blue/40 hover:bg-white/[0.06]"
                         >
-                          <span className="min-w-0">
+                          <span className="flex min-w-0 items-start justify-between gap-2">
                             <span className="block text-sm font-semibold text-slate-100 transition group-hover:text-white">
                               {problem.title}
                             </span>
-                            <span className="mt-1 block text-xs leading-5 text-slate-500 transition group-hover:text-slate-400">
-                              {problem.description}
-                            </span>
+                            <StatusBadge status={problem.status} />
+                          </span>
+                          <span className="block text-xs leading-5 text-slate-500 transition group-hover:text-slate-400">
+                            {problem.description}
                           </span>
                         </Link>
                       ))}

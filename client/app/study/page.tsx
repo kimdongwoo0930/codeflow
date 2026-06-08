@@ -3,7 +3,6 @@
 import { useEffect, useState, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { TestLab } from "@/components/TestLab";
-import { getStageProblem, type StageProblem as StageData } from "@/data/stageProblems";
 
 type GeneratedProblem = {
   title: string;
@@ -39,6 +38,20 @@ type ProblemDetail = {
   lastCode?: string;
 };
 
+type StageProblemDetail = {
+  id: number;
+  topic: string;
+  title: string;
+  difficulty: string;
+  description: string;
+  constraints: string[];
+  inputExample: string;
+  outputExample: string;
+  starterCode: string;
+  lastCode?: string;
+  status?: string;
+};
+
 type Problem = {
   title: string;
   difficulty: "입문" | "쉬움" | "보통" | "어려움";
@@ -53,7 +66,14 @@ type Problem = {
   expectedOutput?: string;
   answerCode?: string;
   problemId?: number | null;
+  stageProblemId?: number | null;
 };
+
+function authHeaders(): Record<string, string> {
+  const token =
+    typeof window !== "undefined" ? localStorage.getItem("accessToken") : null;
+  return token ? { Authorization: `Bearer ${token}` } : {};
+}
 
 function mapToProblem(data: GeneratedProblem, meta: Meta): Problem {
   return {
@@ -72,16 +92,18 @@ function mapToProblem(data: GeneratedProblem, meta: Meta): Problem {
   };
 }
 
-function mapStageToProblem(data: StageData): Problem {
+function mapStageApiToProblem(data: StageProblemDetail): Problem {
   return {
     title: data.title,
-    difficulty: data.difficulty,
+    difficulty: data.difficulty as Problem["difficulty"],
     description: data.description,
     inputFormat: data.inputExample,
     outputFormat: data.outputExample,
     examples: [{ input: data.inputExample, expected: data.outputExample }],
-    constraints: data.constraints ? [data.constraints] : [],
+    constraints: data.constraints ?? [],
     startCode: data.starterCode,
+    lastCode: data.lastCode ?? undefined,
+    stageProblemId: data.id,
     problemId: null,
   };
 }
@@ -116,25 +138,42 @@ function StudyPageInner() {
   const [fetchDone, setFetchDone] = useState(false);
 
   useEffect(() => {
-    // 단계별 문제(JSON 더미데이터)는 stageId로 로컬에서 직접 로드
+    // 단계별 문제: API에서 가져오기 (lastCode 포함)
     if (stageIdParam) {
-      const stage = getStageProblem(Number(stageIdParam));
-      if (stage) {
-        setProblem(mapStageToProblem(stage));
-        setIsAlgorithm(false);
-      }
-      setFetchDone(true);
+      fetch(`/api/v1/stage-problems/${stageIdParam}`, {
+        headers: authHeaders(),
+      })
+        .then((r) => r.json())
+        .then((res) => {
+          if (res.success && res.data) {
+            const data = res.data as StageProblemDetail;
+            setProblem(mapStageApiToProblem(data));
+
+            // 처음 진입 시 진행 중으로 등록 (이미 기록 있으면 서버에서 무시)
+            const token = localStorage.getItem("accessToken");
+            if (token && !data.status) {
+              fetch(`/api/v1/stage-problems/${stageIdParam}/progress`, {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                  Authorization: `Bearer ${token}`,
+                },
+                body: JSON.stringify({
+                  code: data.lastCode ?? data.starterCode ?? "",
+                  solved: false,
+                }),
+              }).catch(() => {});
+            }
+          }
+        })
+        .catch(() => {})
+        .finally(() => setFetchDone(true));
       return;
     }
 
     // URL에 problemId가 있으면 API에서 직접 fetch
     if (problemIdParam) {
-      const token = localStorage.getItem("accessToken");
-      const headers: Record<string, string> = token
-        ? { Authorization: `Bearer ${token}` }
-        : {};
-
-      fetch(`/api/v1/problems/${problemIdParam}`, { headers })
+      fetch(`/api/v1/problems/${problemIdParam}`, { headers: authHeaders() })
         .then((r) => r.json())
         .then((res) => {
           if (res.success && res.data) {
@@ -155,7 +194,6 @@ function StudyPageInner() {
       try {
         const data: GeneratedProblem = JSON.parse(raw);
         const meta: Meta = JSON.parse(rawMeta);
-        // problemId가 있으면 URL에 반영 → 재마운트 시 API fetch로 lastCode 복원
         if (meta.problemId) {
           router.replace(`/study?problemId=${meta.problemId}`);
           return;
@@ -169,7 +207,6 @@ function StudyPageInner() {
     setFetchDone(true);
   }, [problemIdParam, stageIdParam, router]);
 
-  // problem이 확정되기 전에 TestLab이 마운트되면 editorCode 초기화가 틀림 — 항상 대기
   if (!fetchDone) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-[#0b0f1a]">
