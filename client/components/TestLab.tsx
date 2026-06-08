@@ -58,6 +58,7 @@ type Problem = {
   expectedOutput?: string;
   answerCode?: string;
   problemId?: number | null;
+  stageProblemId?: number | null;
 };
 
 const JAVA_DEFAULT_CODE = `public class Main {
@@ -1511,16 +1512,29 @@ export function TestLab({
     window.addEventListener("pointerup", stopResize);
   };
 
-  const saveCodeToServer = (code: string) => {
+  const saveCodeToServer = (code: string, solved = false) => {
+    const token = localStorage.getItem("accessToken");
+    if (!token) return;
+    const headers = {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    };
+
+    const stageProblemId = DUMMY_PROBLEM.stageProblemId;
+    if (stageProblemId) {
+      fetch(`/api/v1/stage-problems/${stageProblemId}/progress`, {
+        method: "POST",
+        headers,
+        body: JSON.stringify({ code, solved }),
+      }).catch(() => {});
+      return;
+    }
+
     const problemId = DUMMY_PROBLEM.problemId;
     if (!problemId) return;
-    const token = localStorage.getItem("accessToken");
     fetch(`/api/v1/problems/${problemId}/code`, {
       method: "PATCH",
-      headers: {
-        "Content-Type": "application/json",
-        ...(token ? { Authorization: `Bearer ${token}` } : {}),
-      },
+      headers,
       body: JSON.stringify({ problemId, sourceCode: code }),
     }).catch(() => {});
   };
@@ -1574,6 +1588,7 @@ export function TestLab({
             },
       );
       if (passed) {
+        saveCodeToServer(editorCode, true);
         setTrace(generateTrace(editorCode, "java"));
         sessionStorage.setItem(
           "visualizationData",

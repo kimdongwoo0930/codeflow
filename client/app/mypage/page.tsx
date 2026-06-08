@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation";
 // ─── 타입 ────────────────────────────────────────────────────
 
 type ProblemStatus = "solved" | "inprogress" | "created";
+type ProblemType = "ai" | "stage";
 
 interface MyProblem {
   id: number;
@@ -15,6 +16,7 @@ interface MyProblem {
   difficulty: string;
   status: ProblemStatus;
   date: string;
+  type: ProblemType;
 }
 
 interface UserInfo {
@@ -27,20 +29,32 @@ interface UserInfo {
 // ─── 유틸 ────────────────────────────────────────────────────
 
 function difficultyStyle(difficulty: string) {
-  const d = difficulty;
-  if (d === "쉬움" || d === "EASY")
+  if (difficulty === "쉬움" || difficulty === "EASY")
     return "bg-emerald-400/10 text-emerald-400 border border-emerald-400/20";
-  if (d === "보통" || d === "MEDIUM")
+  if (difficulty === "보통" || difficulty === "MEDIUM")
     return "bg-amber-400/10 text-amber-400 border border-amber-400/20";
-  if (d === "어려움" || d === "HARD")
+  if (difficulty === "어려움" || difficulty === "HARD")
     return "bg-rose-400/10 text-rose-400 border border-rose-400/20";
-  return "bg-blue/10 text-blue border border-blue/20"; // 입문 등
+  return "bg-blue/10 text-blue border border-blue/20";
 }
 
 function authHeaders() {
   const token =
     typeof window !== "undefined" ? localStorage.getItem("accessToken") : null;
   return token ? { Authorization: `Bearer ${token}` } : {};
+}
+
+// AI 문제 status 정규화
+function normalizeAiStatus(status: string): ProblemStatus {
+  if (status === "solved") return "solved";
+  if (status === "inprogress") return "inprogress";
+  return "created";
+}
+
+// 단계별 문제 status 정규화
+function normalizeStageStatus(status: string): ProblemStatus {
+  if (status === "SOLVED") return "solved";
+  return "inprogress";
 }
 
 // ─── 서브 컴포넌트 ──────────────────────────────────────────
@@ -71,6 +85,11 @@ function ProblemRow({ problem }: { problem: MyProblem }) {
         ? "이어 풀기"
         : "풀기";
 
+  const href =
+    problem.type === "stage"
+      ? `/study?stageId=${problem.id}`
+      : `/study?problemId=${problem.id}`;
+
   return (
     <div className="group panel-border flex flex-col gap-3 rounded-xl bg-bg2/50 p-4 transition hover:border-blue/30 hover:bg-white/[0.04] sm:flex-row sm:items-center sm:gap-0">
       <div className="flex flex-1 flex-col gap-1.5 sm:flex-row sm:items-center sm:gap-4">
@@ -78,6 +97,15 @@ function ProblemRow({ problem }: { problem: MyProblem }) {
           {problem.title}
         </p>
         <div className="flex items-center gap-2">
+          <span
+            className={`rounded-full px-2 py-0.5 text-[10px] font-semibold border ${
+              problem.type === "stage"
+                ? "border-purple/30 bg-purple/10 text-purple-300"
+                : "border-blue/20 bg-blue/10 text-blue"
+            }`}
+          >
+            {problem.type === "stage" ? "단계별" : "AI"}
+          </span>
           <span className="rounded-full border border-blue/20 bg-blue/10 px-2.5 py-0.5 text-xs font-medium text-blue">
             {problem.topic}
           </span>
@@ -92,7 +120,7 @@ function ProblemRow({ problem }: { problem: MyProblem }) {
       <div className="flex items-center justify-between sm:ml-4 sm:justify-end sm:gap-3">
         <span className="text-xs text-slate-500">{problem.date}</span>
         <a
-          href={`/study?problemId=${problem.id}`}
+          href={href}
           className="rounded-lg border border-white/10 bg-white/5 px-3 py-1.5 text-xs text-slate-300 transition hover:border-blue/40 hover:text-blue"
         >
           {actionLabel}
@@ -130,13 +158,33 @@ export default function MyPage() {
     const fetchData = async () => {
       try {
         const headers = authHeaders() as Record<string, string>;
-        const [userRes, problemsRes] = await Promise.all([
+        const [userRes, aiProblemsRes, stageProblemsRes] = await Promise.all([
           fetch("/api/user/me", { headers }).then((r) => r.json()),
           fetch("/api/v1/problems/my", { headers }).then((r) => r.json()),
+          fetch("/api/v1/stage-problems/my", { headers }).then((r) => r.json()),
         ]);
+
         if (userRes.success) setUser(userRes.data);
         else setError(userRes.message ?? "사용자 정보를 불러올 수 없어요.");
-        if (problemsRes.success) setProblems(problemsRes.data ?? []);
+
+        const aiList: MyProblem[] = (aiProblemsRes.success ? aiProblemsRes.data ?? [] : []).map(
+          (p: { id: number; title: string; topic: string; difficulty: string; status: string; date: string }) => ({
+            ...p,
+            status: normalizeAiStatus(p.status),
+            type: "ai" as ProblemType,
+          }),
+        );
+
+        const stageList: MyProblem[] = (stageProblemsRes.success ? stageProblemsRes.data ?? [] : []).map(
+          (p: { id: number; title: string; topic: string; difficulty: string; status: string; date: string }) => ({
+            ...p,
+            status: normalizeStageStatus(p.status),
+            type: "stage" as ProblemType,
+          }),
+        );
+
+        // 단계별 문제는 created 탭에 없고, solved/inprogress만
+        setProblems([...aiList, ...stageList]);
       } catch (e) {
         console.error("마이페이지 로드 실패:", e);
         setError("서버에 연결할 수 없어요. 잠시 후 다시 시도해 주세요.");
@@ -149,10 +197,13 @@ export default function MyPage() {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [loading]);
 
-  const filtered = problems.filter((p) => p.status === tab);
+  const filtered = problems.filter((p) => {
+    if (tab === "created") return p.type === "ai" && p.status === "created";
+    return p.status === tab;
+  });
   const solvedCount = problems.filter((p) => p.status === "solved").length;
   const inProgressCount = problems.filter((p) => p.status === "inprogress").length;
-  const createdCount = problems.filter((p) => p.status === "created").length;
+  const createdCount = problems.filter((p) => p.type === "ai" && p.status === "created").length;
 
   if (loading) {
     return (
@@ -218,29 +269,35 @@ export default function MyPage() {
 
         {/* 탭 */}
         <div className="mb-6 flex rounded-xl border border-white/10 bg-white/5 p-1">
-          {TABS.map(({ key, label }) => (
-            <button
-              key={key}
-              onClick={() => setTab(key)}
-              className={`flex-1 rounded-lg py-2.5 text-sm font-medium transition ${
-                tab === key
-                  ? "bg-gradient-to-r from-blue to-purple text-white shadow"
-                  : "text-slate-400 hover:text-slate-200"
-              }`}
-            >
-              {label}
-              <span className="ml-1.5 text-xs opacity-70">
-                ({problems.filter((p) => p.status === key).length})
-              </span>
-            </button>
-          ))}
+          {TABS.map(({ key, label }) => {
+            const count =
+              key === "solved"
+                ? solvedCount
+                : key === "inprogress"
+                  ? inProgressCount
+                  : createdCount;
+            return (
+              <button
+                key={key}
+                onClick={() => setTab(key)}
+                className={`flex-1 rounded-lg py-2.5 text-sm font-medium transition ${
+                  tab === key
+                    ? "bg-gradient-to-r from-blue to-purple text-white shadow"
+                    : "text-slate-400 hover:text-slate-200"
+                }`}
+              >
+                {label}
+                <span className="ml-1.5 text-xs opacity-70">({count})</span>
+              </button>
+            );
+          })}
         </div>
 
         {/* 문제 목록 */}
         {filtered.length > 0 ? (
           <div className="flex flex-col gap-3">
             {filtered.map((problem) => (
-              <ProblemRow key={problem.id} problem={problem} />
+              <ProblemRow key={`${problem.type}-${problem.id}`} problem={problem} />
             ))}
           </div>
         ) : (

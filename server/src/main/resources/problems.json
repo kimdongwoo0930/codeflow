@@ -1,0 +1,888 @@
+[
+  {
+    "topic": "출력문",
+    "title": "문자열 출력하기",
+    "description": "문자열 str이 주어질 때, str을 출력하는 코드를 작성해 보세요.",
+    "constraints": [
+      "1 ≤ str의 길이 ≤ 1,000,000",
+      "str에는 공백이 없으며, 첫째 줄에 한 줄로만 주어집니다."
+    ],
+    "input_example": "HelloWorld!",
+    "output_example": "HelloWorld!",
+    "starter_code": "import java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        String str = sc.next();\n        // 여기에 코드를 작성하세요\n        System.out.println(str);\n    }\n}"
+  },
+  {
+    "topic": "출력문",
+    "title": "a와 b 출력하기",
+    "description": "정수 a와 b가 주어집니다. 각 수를 입력받아 입출력 예와 같은 형식으로 출력하는 코드를 작성해 보세요.",
+    "constraints": [
+      "-100,000 ≤ a, b ≤ 100,000"
+    ],
+    "input_example": "4 5",
+    "output_example": "a = 4\nb = 5",
+    "starter_code": "import java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int a = sc.nextInt();\n        int b = sc.nextInt();\n        // 여기에 코드를 작성하세요\n    }\n}"
+  },
+  {
+    "topic": "문자열",
+    "title": "문자열 반복해서 출력하기",
+    "description": "문자열 str과 정수 n이 주어집니다. str을 n번 반복한 문자열을 만들어 출력하는 코드를 작성해 보세요.",
+    "constraints": [
+      "1 ≤ str의 길이 ≤ 10",
+      "1 ≤ n ≤ 5"
+    ],
+    "input_example": "string\n5",
+    "output_example": "stringstringstringstringstring",
+    "starter_code": "import java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        String str = sc.next();\n        int n = sc.nextInt();\n        // 여기에 코드를 작성하세요\n    }\n}"
+  },
+  {
+    "topic": "문자열",
+    "title": "대소문자 바꿔서 출력하기",
+    "description": "영어 알파벳으로 이루어진 문자열 str이 주어집니다. 각 알파벳을 대문자는 소문자로, 소문자는 대문자로 변환해서 출력하는 코드를 작성해 보세요.",
+    "constraints": [
+      "1 ≤ str의 길이 ≤ 20",
+      "str은 알파벳으로 이루어진 문자열입니다."
+    ],
+    "input_example": "aBcDeFg",
+    "output_example": "AbCdEfG",
+    "starter_code": "import java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        String str = sc.next();\n        // 여기에 코드를 작성하세요\n    }\n}"
+  },
+  {
+    "topic": "출력문",
+    "title": "특수문자 출력하기",
+    "description": "다음과 같이 출력하도록 코드를 작성해 주세요.\n!@#$%^&*(\\'\"-<>?;:",
+    "constraints": [],
+    "input_example": "",
+    "output_example": "!@#$%^&*(\\'\"<>?;:",
+    "starter_code": "import java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) {\n        // 여기에 코드를 작성하세요\n    }\n}"
+  },
+  {
+    "topic": "출력문",
+    "title": "덧셈식 출력하기",
+    "description": "두 정수 a, b가 주어질 때 다음과 같은 형태의 계산식을 출력하는 코드를 작성해 보세요.\na + b = c",
+    "constraints": [
+      "1 ≤ a, b ≤ 100"
+    ],
+    "input_example": "4 5",
+    "output_example": "4 + 5 = 9",
+    "starter_code": "import java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int a = sc.nextInt();\n        int b = sc.nextInt();\n        // 여기에 코드를 작성하세요\n    }\n}"
+  },
+  {
+    "topic": "문자열",
+    "title": "문자열 붙여서 출력하기",
+    "description": "두 개의 문자열 str1, str2가 공백으로 구분되어 입력으로 주어집니다. 입출력 예와 같이 str1과 str2를 이어서 출력하는 코드를 작성해 보세요.",
+    "constraints": [
+      "1 ≤ str1, str2의 길이 ≤ 10"
+    ],
+    "input_example": "apple pen",
+    "output_example": "applepen",
+    "starter_code": "import java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        String str1 = sc.next();\n        String str2 = sc.next();\n        // 여기에 코드를 작성하세요\n    }\n}"
+  },
+  {
+    "topic": "문자열",
+    "title": "문자열 돌리기",
+    "description": "문자열 str이 주어집니다. 문자열을 시계방향으로 90도 돌려서 아래 입출력 예와 같이 출력하는 코드를 작성해 보세요.",
+    "constraints": [
+      "1 ≤ str의 길이 ≤ 10"
+    ],
+    "input_example": "abcde",
+    "output_example": "a\nb\nc\nd\ne",
+    "starter_code": "import java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        String str = sc.next();\n        // 여기에 코드를 작성하세요\n    }\n}"
+  },
+  {
+    "topic": "조건문",
+    "title": "홀짝 구분하기",
+    "description": "자연수 n이 입력으로 주어졌을 때 만약 n이 짝수이면 'n is even'을, 홀수이면 'n is odd'를 출력하는 코드를 작성해 보세요.",
+    "constraints": [
+      "1 ≤ n ≤ 1,000"
+    ],
+    "input_example": "100",
+    "output_example": "100 is even",
+    "starter_code": "import java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n        // 여기에 코드를 작성하세요\n    }\n}"
+  },
+  {
+    "topic": "문자열",
+    "title": "문자열 겹쳐쓰기",
+    "description": "문자열 my_string, overwrite_string과 정수 s가 주어집니다. 문자열 my_string의 인덱스 s부터 overwrite_string의 길이만큼을 문자열 overwrite_string으로 바꾼 문자열을 return하는 solution 함수를 작성해 주세요.",
+    "constraints": [
+      "my_string와 overwrite_string은 숫자와 알파벳으로 이루어져 있습니다.",
+      "1 ≤ overwrite_string의 길이 ≤ my_string의 길이 ≤ 1,000",
+      "0 ≤ s ≤ my_string의 길이 - overwrite_string의 길이"
+    ],
+    "input_example": "He11oWor1d\nI1oWor1\n2",
+    "output_example": "HelloWorld",
+    "starter_code": "import java.util.Scanner;\n\npublic class Main {\n    static String solution(String my_string, String overwrite_string, int s) {\n        String answer = \"\";\n        // 여기에 코드를 작성하세요\n        return answer;\n    }\n\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        String my_string = sc.next();\n        String overwrite_string = sc.next();\n        int s = sc.nextInt();\n        System.out.println(solution(my_string, overwrite_string, s));\n    }\n}"
+  },
+  {
+    "topic": "문자열",
+    "title": "문자열 섞기",
+    "description": "길이가 같은 두 문자열 str1과 str2가 주어집니다. 두 문자열의 각 문자가 앞에서부터 서로 번갈아가면서 한 번씩 등장하는 문자열을 만들어 return하는 solution 함수를 완성해 주세요.",
+    "constraints": [
+      "1 ≤ str1의 길이 = str2의 길이 ≤ 10",
+      "str1과 str2는 알파벳 소문자로 이루어진 문자열입니다."
+    ],
+    "input_example": "aaaaa\nbbbbb",
+    "output_example": "ababababab",
+    "starter_code": "import java.util.Scanner;\n\npublic class Main {\n    static String solution(String str1, String str2) {\n        String answer = \"\";\n        // 여기에 코드를 작성하세요\n        return answer;\n    }\n\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        String str1 = sc.next();\n        String str2 = sc.next();\n        System.out.println(solution(str1, str2));\n    }\n}"
+  },
+  {
+    "topic": "리스트",
+    "title": "문자 리스트를 문자열로 변환하기",
+    "description": "문자들이 담겨있는 배열 arr가 주어집니다. arr의 원소들을 순서대로 이어 붙인 문자열을 return하는 solution함수를 작성해 주세요.",
+    "constraints": [
+      "1 ≤ arr의 길이 ≤ 200",
+      "arr의 원소는 전부 알파벳 소문자로 이루어진 길이가 1인 문자열입니다."
+    ],
+    "input_example": "3\na b c",
+    "output_example": "abc",
+    "starter_code": "import java.util.Scanner;\n\npublic class Main {\n    static String solution(String[] arr) {\n        String answer = \"\";\n        // 여기에 코드를 작성하세요\n        return answer;\n    }\n\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n        String[] arr = new String[n];\n        for (int i = 0; i < n; i++) arr[i] = sc.next();\n        System.out.println(solution(arr));\n    }\n}"
+  },
+  {
+    "topic": "문자열",
+    "title": "문자열 곱하기",
+    "description": "문자열 my_string과 정수 k가 주어질 때, my_string을 k번 반복한 문자열을 return하는 solution 함수를 작성해 주세요.",
+    "constraints": [
+      "1 ≤ my_string의 길이 ≤ 100",
+      "my_string은 영소문자로만 이루어져 있습니다.",
+      "1 ≤ k ≤ 100"
+    ],
+    "input_example": "string\n3",
+    "output_example": "stringstringstring",
+    "starter_code": "import java.util.Scanner;\n\npublic class Main {\n    static String solution(String my_string, int k) {\n        String answer = \"\";\n        // 여기에 코드를 작성하세요\n        return answer;\n    }\n\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        String my_string = sc.next();\n        int k = sc.nextInt();\n        System.out.println(solution(my_string, k));\n    }\n}"
+  },
+  {
+    "topic": "연산",
+    "title": "더 크게 합치기",
+    "description": "연산 ⊕는 두 정수에 대한 연산으로 두 정수를 붙여서 쓴 값을 반환합니다. 양의 정수 a와 b가 주어졌을 때, a⊕b와 b⊕a 중 더 큰 값을 return하는 solution 함수를 완성해 주세요. 단, a⊕b와 b⊕a가 같다면 a⊕b를 return합니다.",
+    "constraints": [
+      "1 ≤ a, b < 10,000"
+    ],
+    "input_example": "9\n91",
+    "output_example": "991",
+    "starter_code": "import java.util.Scanner;\n\npublic class Main {\n    static int solution(int a, int b) {\n        int answer = 0;\n        // 여기에 코드를 작성하세요\n        return answer;\n    }\n\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int a = sc.nextInt();\n        int b = sc.nextInt();\n        System.out.println(solution(a, b));\n    }\n}"
+  },
+  {
+    "topic": "연산",
+    "title": "두 수의 연산값 비교하기",
+    "description": "연산 ⊕는 두 정수에 대한 연산으로 두 정수를 붙여서 쓴 값을 반환합니다. 양의 정수 a와 b가 주어졌을 때, a⊕b와 2*a*b 중 더 큰 값을 return하는 solution 함수를 완성해 주세요. 단, a⊕b와 2*a*b가 같으면 a⊕b를 return합니다.",
+    "constraints": [
+      "1 ≤ a, b < 10,000"
+    ],
+    "input_example": "2\n91",
+    "output_example": "364",
+    "starter_code": "import java.util.Scanner;\n\npublic class Main {\n    static int solution(int a, int b) {\n        int answer = 0;\n        // 여기에 코드를 작성하세요\n        return answer;\n    }\n\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int a = sc.nextInt();\n        int b = sc.nextInt();\n        System.out.println(solution(a, b));\n    }\n}"
+  },
+  {
+    "topic": "조건문",
+    "title": "n의 배수",
+    "description": "정수 num과 n이 매개변수로 주어질 때, num이 n의 배수이면 1을 return n의 배수가 아니라면 0을 return하도록 solution 함수를 완성해주세요.",
+    "constraints": [
+      "2 ≤ num ≤ 100",
+      "2 ≤ n ≤ 9"
+    ],
+    "input_example": "98\n2",
+    "output_example": "1",
+    "starter_code": "import java.util.Scanner;\n\npublic class Main {\n    static int solution(int num, int n) {\n        int answer = 0;\n        // 여기에 코드를 작성하세요\n        return answer;\n    }\n\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int num = sc.nextInt();\n        int n = sc.nextInt();\n        System.out.println(solution(num, n));\n    }\n}"
+  },
+  {
+    "topic": "조건문",
+    "title": "공배수",
+    "description": "정수 number와 n, m이 주어집니다. number가 n의 배수이면서 m의 배수이면 1을 아니라면 0을 return하도록 solution 함수를 완성해주세요.",
+    "constraints": [
+      "10 ≤ number ≤ 100",
+      "2 ≤ n, m < 10"
+    ],
+    "input_example": "60\n2\n3",
+    "output_example": "1",
+    "starter_code": "import java.util.Scanner;\n\npublic class Main {\n    static int solution(int number, int n, int m) {\n        int answer = 0;\n        // 여기에 코드를 작성하세요\n        return answer;\n    }\n\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int number = sc.nextInt();\n        int n = sc.nextInt();\n        int m = sc.nextInt();\n        System.out.println(solution(number, n, m));\n    }\n}"
+  },
+  {
+    "topic": "조건문",
+    "title": "홀짝에 따라 다른 값 반환하기",
+    "description": "양의 정수 n이 매개변수로 주어질 때, n이 홀수라면 n이하의 홀수인 모든 양의 정수의 합을 return하고, n이 짝수라면 n이하의 짝수인 모든 양의 정수의 제곱의 합을 return하는 solution 함수를 작성해 주세요.",
+    "constraints": [
+      "1 ≤ n ≤ 100"
+    ],
+    "input_example": "7",
+    "output_example": "16",
+    "starter_code": "import java.util.Scanner;\n\npublic class Main {\n    static int solution(int n) {\n        int answer = 0;\n        // 여기에 코드를 작성하세요\n        return answer;\n    }\n\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n        System.out.println(solution(n));\n    }\n}"
+  },
+  {
+    "topic": "조건문",
+    "title": "조건 문자열",
+    "description": "ineq와 eq는 '<'와 '>'중 하나이고, eq는 '='와 '!'중 하나입니다. 두 문자열 ineq와 eq, 두 정수 n과 m이 주어질 때, n과 m이 ineq와 eq의 조건에 맞으면 1을 아니면 0을 return하도록 solution 함수를 완성해주세요.",
+    "constraints": [
+      "1 ≤ n, m ≤ 100"
+    ],
+    "input_example": "<\n=\n20\n50",
+    "output_example": "1",
+    "starter_code": "import java.util.Scanner;\n\npublic class Main {\n    static int solution(String ineq, String eq, int n, int m) {\n        int answer = 0;\n        // 여기에 코드를 작성하세요\n        return answer;\n    }\n\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        String ineq = sc.next();\n        String eq = sc.next();\n        int n = sc.nextInt();\n        int m = sc.nextInt();\n        System.out.println(solution(ineq, eq, n, m));\n    }\n}"
+  },
+  {
+    "topic": "조건문",
+    "title": "flag에 따라 다른 값 반환하기",
+    "description": "두 정수 a, b와 boolean 변수 flag가 매개변수로 주어질 때, flag가 true이면 a+b를 false이면 a-b를 return하는 solution 함수를 작성해 주세요.",
+    "constraints": [
+      "-1,000 ≤ a, b ≤ 1,000"
+    ],
+    "input_example": "-4\n7\ntrue",
+    "output_example": "3",
+    "starter_code": "import java.util.Scanner;\n\npublic class Main {\n    static int solution(int a, int b, boolean flag) {\n        int answer = 0;\n        // 여기에 코드를 작성하세요\n        return answer;\n    }\n\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int a = sc.nextInt();\n        int b = sc.nextInt();\n        boolean flag = sc.nextBoolean();\n        System.out.println(solution(a, b, flag));\n    }\n}"
+  },
+  {
+    "topic": "리스트",
+    "title": "등차수열의 특정한 항만 더하기",
+    "description": "두 정수 a, d와 길이가 n인 boolean 배열 included가 주어집니다. 첫째항이 a, 공차가 d인 등차수열에서 included[i]가 true인 항들만 더한 값을 return하는 solution 함수를 작성해 주세요.",
+    "constraints": [
+      "1 ≤ a ≤ 100",
+      "1 ≤ d ≤ 100",
+      "1 ≤ included의 길이 ≤ 100",
+      "included에는 true가 적어도 하나 존재합니다."
+    ],
+    "input_example": "3\n4\n5\ntrue false false true true",
+    "output_example": "37",
+    "starter_code": "import java.util.Scanner;\n\npublic class Main {\n    static int solution(int a, int d, boolean[] included) {\n        int answer = 0;\n        // 여기에 코드를 작성하세요\n        return answer;\n    }\n\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int a = sc.nextInt();\n        int d = sc.nextInt();\n        int n = sc.nextInt();\n        boolean[] included = new boolean[n];\n        for (int i = 0; i < n; i++) included[i] = sc.nextBoolean();\n        System.out.println(solution(a, d, included));\n    }\n}"
+  },
+  {
+    "topic": "리스트",
+    "title": "원소들의 곱과 합",
+    "description": "정수가 담긴 리스트 num_list가 주어질 때, 모든 원소들의 곱이 모든 원소들의 합의 제곱보다 작으면 1을 크면 0을 return하도록 solution 함수를 완성해주세요.",
+    "constraints": [
+      "2 ≤ num_list의 길이 ≤ 10",
+      "1 ≤ num_list의 원소 ≤ 9"
+    ],
+    "input_example": "5\n3 4 5 2 1",
+    "output_example": "1",
+    "starter_code": "import java.util.Scanner;\n\npublic class Main {\n    static int solution(int[] num_list) {\n        int answer = 0;\n        // 여기에 코드를 작성하세요\n        return answer;\n    }\n\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n        int[] num_list = new int[n];\n        for (int i = 0; i < n; i++) num_list[i] = sc.nextInt();\n        System.out.println(solution(num_list));\n    }\n}"
+  },
+  {
+    "topic": "리스트",
+    "title": "이어 붙인 수",
+    "description": "정수가 담긴 리스트 num_list가 주어집니다. num_list의 홀수만 이어 붙인 수와 짝수만 이어 붙인 수의 합을 return하도록 solution 함수를 완성해주세요.",
+    "constraints": [
+      "2 ≤ num_list의 길이 ≤ 10",
+      "1 ≤ num_list의 원소 ≤ 9",
+      "num_list에는 적어도 한 개의 짝수와 홀수가 있습니다."
+    ],
+    "input_example": "5\n3 4 5 2 1",
+    "output_example": "393",
+    "starter_code": "import java.util.Scanner;\n\npublic class Main {\n    static int solution(int[] num_list) {\n        int answer = 0;\n        // 여기에 코드를 작성하세요\n        return answer;\n    }\n\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n        int[] num_list = new int[n];\n        for (int i = 0; i < n; i++) num_list[i] = sc.nextInt();\n        System.out.println(solution(num_list));\n    }\n}"
+  },
+  {
+    "topic": "리스트",
+    "title": "마지막 두 원소",
+    "description": "정수 리스트 num_list가 주어질 때, 마지막 원소가 그전 원소보다 크면 마지막 원소에서 그전 원소를 뺀 값을, 그렇지 않으면 마지막 원소를 두 배한 값을 추가해 return하도록 solution 함수를 완성해주세요.",
+    "constraints": [
+      "2 ≤ num_list의 길이 ≤ 10",
+      "1 ≤ num_list의 원소 ≤ 9"
+    ],
+    "input_example": "2\n2 1",
+    "output_example": "2 1 6",
+    "starter_code": "import java.util.Scanner;\nimport java.util.Arrays;\n\npublic class Main {\n    static int[] solution(int[] num_list) {\n        int[] answer = {};\n        // 여기에 코드를 작성하세요\n        return answer;\n    }\n\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n        int[] num_list = new int[n];\n        for (int i = 0; i < n; i++) num_list[i] = sc.nextInt();\n        System.out.println(Arrays.toString(solution(num_list)));\n    }\n}"
+  },
+  {
+    "topic": "반복문",
+    "title": "수 조작하기 1",
+    "description": "정수 n과 문자열 control이 주어집니다. control은 w, a, s, d의 4개의 문자로 이루어져 있으며, control의 앞에서부터 순서대로 n의 값을 바꿉니다. w: n이 1 커집니다. s: n이 1 작아집니다. d: n이 10 커집니다. a: n이 10 작아집니다. 위 규칙에 따라 n을 바꿨을 때 가장 마지막에 나오는 n의 값을 return하는 solution 함수를 완성해 주세요.",
+    "constraints": [
+      "-100,000 ≤ n ≤ 100,000",
+      "1 ≤ control의 길이 ≤ 100,000",
+      "control은 알파벳 소문자 w, a, s, d로 이루어진 문자열입니다."
+    ],
+    "input_example": "0\nwsdawsdassw",
+    "output_example": "-1",
+    "starter_code": "import java.util.Scanner;\n\npublic class Main {\n    static int solution(int n, String control) {\n        int answer = 0;\n        // 여기에 코드를 작성하세요\n        return answer;\n    }\n\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n        String control = sc.next();\n        System.out.println(solution(n, control));\n    }\n}"
+  },
+  {
+    "topic": "2차원 리스트",
+    "title": "수열과 구간 쿼리 3",
+    "description": "정수 배열 arr와 2차원 정수 배열 queries가 주어집니다. queries의 원소는 각각 하나의 query를 나타내며, [i, j] 꼴입니다. 각 query마다 순서대로 arr[i]의 값과 arr[j]의 값을 서로 바꿉니다. 위 규칙에 따라 queries를 처리한 이후의 arr를 return하는 solution 함수를 완성해 주세요.",
+    "constraints": [
+      "1 ≤ arr의 길이 ≤ 1,000",
+      "0 ≤ arr의 원소 ≤ 1,000,000",
+      "1 ≤ queries의 길이 ≤ 1,000",
+      "0 ≤ i < j < arr의 길이"
+    ],
+    "input_example": "4\n0 1 2 3\n3\n0 3\n1 2\n1 4",
+    "output_example": "[3, 4, 1, 0]",
+    "starter_code": "import java.util.Scanner;\nimport java.util.Arrays;\n\npublic class Main {\n    static int[] solution(int[] arr, int[][] queries) {\n        int[] answer = {};\n        // 여기에 코드를 작성하세요\n        return answer;\n    }\n\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n        int[] arr = new int[n];\n        for (int i = 0; i < n; i++) arr[i] = sc.nextInt();\n        int q = sc.nextInt();\n        int[][] queries = new int[q][2];\n        for (int i = 0; i < q; i++) {\n            queries[i][0] = sc.nextInt();\n            queries[i][1] = sc.nextInt();\n        }\n        System.out.println(Arrays.toString(solution(arr, queries)));\n    }\n}"
+  },
+  {
+    "topic": "2차원 리스트",
+    "title": "수열과 구간 쿼리 4",
+    "description": "정수 배열 arr와 2차원 정수 배열 queries가 주어집니다. queries의 원소는 [s, e, k] 꼴입니다. 각 query마다 순서대로 s ≤ l ≤ e인 모든 l에 대해 k가 arr[l]보다 크다면 arr[l]에 1을 더합니다. 위 규칙에 따라 queries를 처리한 이후의 arr를 return하는 solution 함수를 완성해 주세요.",
+    "constraints": [
+      "1 ≤ arr의 길이 ≤ 1,000",
+      "0 ≤ arr의 원소 ≤ 1,000,000",
+      "1 ≤ queries의 길이 ≤ 1,000",
+      "0 ≤ s ≤ e < arr의 길이",
+      "0 ≤ k ≤ 5"
+    ],
+    "input_example": "4\n0 1 2 3\n3\n0 4 1\n0 3 2\n0 3 3",
+    "output_example": "[3, 2, 4, 6, 4]",
+    "starter_code": "import java.util.Scanner;\nimport java.util.Arrays;\n\npublic class Main {\n    static int[] solution(int[] arr, int[][] queries) {\n        int[] answer = {};\n        // 여기에 코드를 작성하세요\n        return answer;\n    }\n\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n        int[] arr = new int[n];\n        for (int i = 0; i < n; i++) arr[i] = sc.nextInt();\n        int q = sc.nextInt();\n        int[][] queries = new int[q][3];\n        for (int i = 0; i < q; i++) {\n            queries[i][0] = sc.nextInt();\n            queries[i][1] = sc.nextInt();\n            queries[i][2] = sc.nextInt();\n        }\n        System.out.println(Arrays.toString(solution(arr, queries)));\n    }\n}"
+  },
+  {
+    "topic": "반복문",
+    "title": "카운트 업",
+    "description": "정수 start_num과 end_num이 주어질 때, start_num부터 end_num까지의 숫자를 차례로 담은 리스트를 return하도록 solution 함수를 완성해주세요.",
+    "constraints": [
+      "0 ≤ start_num ≤ end_num ≤ 50"
+    ],
+    "input_example": "3\n10",
+    "output_example": "[3, 4, 5, 6, 7, 8, 9, 10]",
+    "starter_code": "import java.util.Scanner;\nimport java.util.Arrays;\n\npublic class Main {\n    static int[] solution(int start_num, int end_num) {\n        int[] answer = {};\n        // 여기에 코드를 작성하세요\n        return answer;\n    }\n\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int start_num = sc.nextInt();\n        int end_num = sc.nextInt();\n        System.out.println(Arrays.toString(solution(start_num, end_num)));\n    }\n}"
+  },
+  {
+    "topic": "반복문",
+    "title": "콜라츠 수열 만들기",
+    "description": "모든 자연수 x에 대해 현재 값 x가 짝수이면 x를 2로 나누고, 홀수이면 3*x+1로 바꾸는 연산을 반복해서 언젠가는 반드시 x가 1이 되는 문제를 콜라츠 문제라고 합니다. 1,000보다 작거나 같은 수에 대해서는 전부 언젠가 1에 도달한다는 것이 알려져 있습니다. 임의의 1,000보다 작거나 같은 양의 정수 n이 주어질 때 초기값이 n인 콜라츠 수열을 return하는 solution 함수를 완성해 주세요.",
+    "constraints": [
+      "1 ≤ n ≤ 1,000"
+    ],
+    "input_example": "10",
+    "output_example": "[10, 5, 16, 8, 4, 2, 1]",
+    "starter_code": "import java.util.Scanner;\nimport java.util.Arrays;\n\npublic class Main {\n    static int[] solution(int n) {\n        int[] answer = {};\n        // 여기에 코드를 작성하세요\n        return answer;\n    }\n\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n        System.out.println(Arrays.toString(solution(n)));\n    }\n}"
+  },
+  {
+    "topic": "리스트",
+    "title": "배열 만들기 4",
+    "description": "정수 배열 arr가 주어집니다. arr를 이용해 새로운 배열 stk을 만들려고 합니다. 빈 리스트 stk을 만들어 arr의 원소들을 처음부터 살펴보며 다음 작업을 반복합니다: stk이 빈 배열이면 arr[i]를 stk에 추가하고 i를 1 늘립니다. stk에 원소가 있고 stk의 마지막 원소가 arr[i]보다 작으면 arr[i]를 stk에 추가하고 i를 1 늘립니다. stk에 원소가 있는데 stk의 마지막 원소가 arr[i]보다 크거나 같으면 stk의 마지막 원소를 stk에서 제거합니다. 위 작업을 마친 후 만들어진 stk을 return하는 solution 함수를 완성해 주세요.",
+    "constraints": [
+      "1 ≤ arr의 길이 ≤ 100,000",
+      "1 ≤ arr의 원소 ≤ 100,000"
+    ],
+    "input_example": "5\n1 4 2 5 3",
+    "output_example": "[1, 2, 3]",
+    "starter_code": "import java.util.Scanner;\nimport java.util.Arrays;\n\npublic class Main {\n    static int[] solution(int[] arr) {\n        int[] stk = {};\n        // 여기에 코드를 작성하세요\n        return stk;\n    }\n\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n        int[] arr = new int[n];\n        for (int i = 0; i < n; i++) arr[i] = sc.nextInt();\n        System.out.println(Arrays.toString(solution(arr)));\n    }\n}"
+  },
+  {
+    "topic": "조건문",
+    "title": "간단한 논리 연산",
+    "description": "boolean 변수 x1, x2, x3, x4가 매개변수로 주어질 때, 다음의 식의 true/false를 return하는 solution 함수를 작성해 주세요.\n(x1 ∨ x2) ∧ (x3 ∨ x4)",
+    "constraints": [],
+    "input_example": "false true true true",
+    "output_example": "true",
+    "starter_code": "import java.util.Scanner;\n\npublic class Main {\n    static boolean solution(boolean x1, boolean x2, boolean x3, boolean x4) {\n        boolean answer = true;\n        // 여기에 코드를 작성하세요\n        return answer;\n    }\n\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        boolean x1 = sc.nextBoolean();\n        boolean x2 = sc.nextBoolean();\n        boolean x3 = sc.nextBoolean();\n        boolean x4 = sc.nextBoolean();\n        System.out.println(solution(x1, x2, x3, x4));\n    }\n}"
+  },
+  {
+    "topic": "문자열",
+    "title": "글자 이어 붙여 문자열 만들기",
+    "description": "문자열 my_string과 정수 배열 index_list가 매개변수로 주어집니다. my_string의 index_list의 원소들에 해당하는 인덱스의 글자들을 순서대로 이어 붙인 문자열을 return하는 solution 함수를 작성해 주세요.",
+    "constraints": [
+      "1 ≤ my_string의 길이 ≤ 1,000",
+      "my_string의 원소는 영소문자로 이루어져 있습니다.",
+      "1 ≤ index_list의 길이 ≤ 1,000",
+      "0 ≤ index_list의 원소 < my_string의 길이"
+    ],
+    "input_example": "cvsgiorszzzmrpaqpe\n8\n16 6 5 3 12 14 11 17 12 7",
+    "output_example": "programmers",
+    "starter_code": "import java.util.Scanner;\n\npublic class Main {\n    static String solution(String my_string, int[] index_list) {\n        String answer = \"\";\n        // 여기에 코드를 작성하세요\n        return answer;\n    }\n\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        String my_string = sc.next();\n        int n = sc.nextInt();\n        int[] index_list = new int[n];\n        for (int i = 0; i < n; i++) index_list[i] = sc.nextInt();\n        System.out.println(solution(my_string, index_list));\n    }\n}"
+  },
+  {
+    "topic": "문자열",
+    "title": "9로 나는 나머지",
+    "description": "양의 정수를 문자열 number로 주어질 때, 이 정수를 9로 나눈 나머지를 return하는 solution 함수를 작성해주세요.",
+    "constraints": [
+      "1 ≤ number의 길이 ≤ 100,000",
+      "number의 원소는 숫자로만 이루어져 있습니다.",
+      "number는 정수 0이 아니라면 숫자 '0'으로 시작하지 않습니다."
+    ],
+    "input_example": "123",
+    "output_example": "6",
+    "starter_code": "import java.util.Scanner;\n\npublic class Main {\n    static int solution(String number) {\n        int answer = 0;\n        // 여기에 코드를 작성하세요\n        return answer;\n    }\n\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        String number = sc.next();\n        System.out.println(solution(number));\n    }\n}"
+  },
+  {
+    "topic": "문자열",
+    "title": "문자열의 뒤의 n글자",
+    "description": "문자열 my_string과 정수 n이 매개변수로 주어질 때, my_string의 뒤의 n글자로 이루어진 문자열을 return하는 solution 함수를 완성해 주세요.",
+    "constraints": [
+      "my_string은 숫자와 알파벳으로 이루어져 있습니다.",
+      "1 ≤ my_string의 길이 ≤ 1,000",
+      "1 ≤ n ≤ my_string의 길이"
+    ],
+    "input_example": "ProgrammerS123\n11",
+    "output_example": "grammerS123",
+    "starter_code": "import java.util.Scanner;\n\npublic class Main {\n    static String solution(String my_string, int n) {\n        String answer = \"\";\n        // 여기에 코드를 작성하세요\n        return answer;\n    }\n\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        String my_string = sc.next();\n        int n = sc.nextInt();\n        System.out.println(solution(my_string, n));\n    }\n}"
+  },
+  {
+    "topic": "문자열",
+    "title": "접미사 배열",
+    "description": "어떤 문자열에 대해서 접미사는 특정 인덱스부터 시작하는 문자열을 의미합니다. 예를 들어, \"banana\"의 모든 접미사는 \"banana\", \"anana\", \"nana\", \"ana\", \"na\", \"a\"입니다. 문자열 my_string이 매개변수로 주어질 때, my_string의 모든 접미사를 사전순으로 정렬한 문자열 배열을 return하는 solution 함수를 작성해 주세요.",
+    "constraints": [
+      "my_string은 알파벳 소문자로만 이루어져 있습니다.",
+      "1 ≤ my_string의 길이 ≤ 100"
+    ],
+    "input_example": "banana",
+    "output_example": "[a, ana, anana, banana, na, nana]",
+    "starter_code": "import java.util.Scanner;\nimport java.util.Arrays;\n\npublic class Main {\n    static String[] solution(String my_string) {\n        String[] answer = {};\n        // 여기에 코드를 작성하세요\n        return answer;\n    }\n\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        String my_string = sc.next();\n        System.out.println(Arrays.toString(solution(my_string)));\n    }\n}"
+  },
+  {
+    "topic": "문자열",
+    "title": "접미사인지 확인하기",
+    "description": "어떤 문자열에 대해서 접미사는 특정 인덱스부터 시작하는 문자열을 의미합니다. 문자열 my_string과 is_suffix가 주어질 때, is_suffix가 my_string의 접미사이면 1을, 아니면 0을 return하는 solution 함수를 작성해 주세요.",
+    "constraints": [
+      "1 ≤ my_string의 길이 ≤ 100",
+      "1 ≤ is_suffix의 길이 ≤ 100",
+      "my_string과 is_suffix는 영소문자로만 이루어져 있습니다."
+    ],
+    "input_example": "banana\nana",
+    "output_example": "1",
+    "starter_code": "import java.util.Scanner;\n\npublic class Main {\n    static int solution(String my_string, String is_suffix) {\n        int answer = 0;\n        // 여기에 코드를 작성하세요\n        return answer;\n    }\n\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        String my_string = sc.next();\n        String is_suffix = sc.next();\n        System.out.println(solution(my_string, is_suffix));\n    }\n}"
+  },
+  {
+    "topic": "문자열",
+    "title": "문자열의 앞의 n글자",
+    "description": "문자열 my_string과 정수 n이 매개변수로 주어질 때, my_string의 앞의 n글자로 이루어진 문자열을 return하는 solution 함수를 완성해 주세요.",
+    "constraints": [
+      "my_string은 숫자와 알파벳으로 이루어져 있습니다.",
+      "1 ≤ my_string의 길이 ≤ 1,000",
+      "1 ≤ n ≤ my_string의 길이"
+    ],
+    "input_example": "ProgrammerS123\n11",
+    "output_example": "ProgrammerS",
+    "starter_code": "import java.util.Scanner;\n\npublic class Main {\n    static String solution(String my_string, int n) {\n        String answer = \"\";\n        // 여기에 코드를 작성하세요\n        return answer;\n    }\n\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        String my_string = sc.next();\n        int n = sc.nextInt();\n        System.out.println(solution(my_string, n));\n    }\n}"
+  },
+  {
+    "topic": "문자열",
+    "title": "접두사인지 확인하기",
+    "description": "어떤 문자열에 대해서 접두사는 특정 인덱스까지의 문자열을 의미합니다. 문자열 my_string과 is_prefix가 주어질 때, is_prefix가 my_string의 접두사이면 1을, 아니면 0을 return하는 solution 함수를 작성해 주세요.",
+    "constraints": [
+      "1 ≤ my_string의 길이 ≤ 100",
+      "1 ≤ is_prefix의 길이 ≤ 100",
+      "my_string과 is_prefix는 영소문자로만 이루어져 있습니다."
+    ],
+    "input_example": "banana\nban",
+    "output_example": "1",
+    "starter_code": "import java.util.Scanner;\n\npublic class Main {\n    static int solution(String my_string, String is_prefix) {\n        int answer = 0;\n        // 여기에 코드를 작성하세요\n        return answer;\n    }\n\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        String my_string = sc.next();\n        String is_prefix = sc.next();\n        System.out.println(solution(my_string, is_prefix));\n    }\n}"
+  },
+  {
+    "topic": "문자열",
+    "title": "문자열 뒤집기",
+    "description": "문자열 my_string과 정수 s, e가 매개변수로 주어질 때, my_string에서 인덱스 s부터 인덱스 e까지를 뒤집은 문자열을 return하는 solution 함수를 작성해 주세요.",
+    "constraints": [
+      "my_string은 숫자와 알파벳으로만 이루어져 있습니다.",
+      "1 ≤ my_string의 길이 ≤ 1,000",
+      "0 ≤ s ≤ e < my_string의 길이"
+    ],
+    "input_example": "Progra21Sremm3\n6\n12",
+    "output_example": "ProgrammerS123",
+    "starter_code": "import java.util.Scanner;\n\npublic class Main {\n    static String solution(String my_string, int s, int e) {\n        String answer = \"\";\n        // 여기에 코드를 작성하세요\n        return answer;\n    }\n\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        String my_string = sc.next();\n        int s = sc.nextInt();\n        int e = sc.nextInt();\n        System.out.println(solution(my_string, s, e));\n    }\n}"
+  },
+  {
+    "topic": "문자열",
+    "title": "세로 읽기",
+    "description": "문자열 my_string과 두 정수 m, c가 주어집니다. my_string을 한 줄에 m글자씩 가로로 적었을 때 왼쪽부터 세로로 c번째 열에 적힌 글자들을 문자열로 return하는 solution 함수를 작성해 주세요.",
+    "constraints": [
+      "my_string은 영소문자로 이루어져 있습니다.",
+      "1 ≤ m ≤ my_string의 길이 ≤ 1,000",
+      "m은 my_string 길이의 약수로만 주어집니다.",
+      "1 ≤ c ≤ m"
+    ],
+    "input_example": "ihrhbakrfpndopijhygc\n4\n2",
+    "output_example": "happy",
+    "starter_code": "import java.util.Scanner;\n\npublic class Main {\n    static String solution(String my_string, int m, int c) {\n        String answer = \"\";\n        // 여기에 코드를 작성하세요\n        return answer;\n    }\n\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        String my_string = sc.next();\n        int m = sc.nextInt();\n        int c = sc.nextInt();\n        System.out.println(solution(my_string, m, c));\n    }\n}"
+  },
+  {
+    "topic": "문자열",
+    "title": "qr code",
+    "description": "두 정수 q, r과 문자열 code가 주어집니다. code의 각 인덱스를 q로 나누었을 때 나머지가 r인 위치의 문자들을 앞에서부터 순서대로 이어 붙인 문자열을 return하는 solution 함수를 작성해 주세요.",
+    "constraints": [
+      "0 ≤ r < q ≤ 20",
+      "r < code의 길이 ≤ 1,000",
+      "code는 영소문자로만 이루어져 있습니다."
+    ],
+    "input_example": "3\n1\nqinwezgrpirldjwt",
+    "output_example": "jerry",
+    "starter_code": "import java.util.Scanner;\n\npublic class Main {\n    static String solution(int q, int r, String code) {\n        String answer = \"\";\n        // 여기에 코드를 작성하세요\n        return answer;\n    }\n\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int q = sc.nextInt();\n        int r = sc.nextInt();\n        String code = sc.next();\n        System.out.println(solution(q, r, code));\n    }\n}"
+  },
+  {
+    "topic": "문자열",
+    "title": "문자 개수 세기",
+    "description": "알파벳 대소문자로만 이루어진 문자열 my_string이 주어질 때, my_string에서 'A'의 개수, my_string에서 'B'의 개수,..., my_string에서 'Z'의 개수, my_string에서 'a'의 개수,..., my_string에서 'z'의 개수를 순서대로 담은 길이 52의 정수 배열을 return하는 solution 함수를 작성해 주세요.",
+    "constraints": [
+      "1 ≤ my_string의 길이 ≤ 1,000"
+    ],
+    "input_example": "Programmers",
+    "output_example": "[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 2, 1, 0, 0, 3, 1, 0, 0, 0, 0, 0, 0, 0, 0]",
+    "starter_code": "import java.util.Scanner;\nimport java.util.Arrays;\n\npublic class Main {\n    static int[] solution(String my_string) {\n        int[] answer = new int[52];\n        // 여기에 코드를 작성하세요\n        return answer;\n    }\n\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        String my_string = sc.next();\n        System.out.println(Arrays.toString(solution(my_string)));\n    }\n}"
+  },
+  {
+    "topic": "리스트",
+    "title": "배열 만들기 1",
+    "description": "정수 n과 k가 주어졌을 때, 1 이상 n 이하의 정수 중에서 k의 배수를 오름차순으로 저장한 배열을 return하는 solution 함수를 완성해 주세요.",
+    "constraints": [
+      "1 ≤ n ≤ 1,000,000",
+      "1 ≤ k ≤ min(1,000, n)"
+    ],
+    "input_example": "10\n3",
+    "output_example": "[3, 6, 9]",
+    "starter_code": "import java.util.Scanner;\nimport java.util.Arrays;\n\npublic class Main {\n    static int[] solution(int n, int k) {\n        int[] answer = {};\n        // 여기에 코드를 작성하세요\n        return answer;\n    }\n\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n        int k = sc.nextInt();\n        System.out.println(Arrays.toString(solution(n, k)));\n    }\n}"
+  },
+  {
+    "topic": "문자열",
+    "title": "글자 지우기",
+    "description": "문자열 my_string과 정수 배열 indices가 주어질 때, my_string에서 indices의 원소에 해당하는 인덱스의 글자를 지우고 이어 붙인 문자열을 return하는 solution 함수를 작성해 주세요.",
+    "constraints": [
+      "1 ≤ indices의 길이 < my_string의 길이 ≤ 100",
+      "my_string은 영소문자로만 이루어져 있습니다.",
+      "0 ≤ indices의 원소 < my_string의 길이",
+      "indices의 원소는 모두 서로 다릅니다."
+    ],
+    "input_example": "apporoorapemmemprs\n8\n1 16 6 15 0 10 11 3",
+    "output_example": "programmers",
+    "starter_code": "import java.util.Scanner;\n\npublic class Main {\n    static String solution(String my_string, int[] indices) {\n        String answer = \"\";\n        // 여기에 코드를 작성하세요\n        return answer;\n    }\n\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        String my_string = sc.next();\n        int n = sc.nextInt();\n        int[] indices = new int[n];\n        for (int i = 0; i < n; i++) indices[i] = sc.nextInt();\n        System.out.println(solution(my_string, indices));\n    }\n}"
+  },
+  {
+    "topic": "반복문",
+    "title": "카운트 다운",
+    "description": "정수 start_num과 end_num이 주어질 때, start_num에서 end_num까지 1씩 감소하는 수들을 차례로 담은 리스트를 return하도록 solution 함수를 완성해주세요.",
+    "constraints": [
+      "0 ≤ end_num ≤ start_num ≤ 50"
+    ],
+    "input_example": "10\n3",
+    "output_example": "[10, 9, 8, 7, 6, 5, 4, 3]",
+    "starter_code": "import java.util.Scanner;\nimport java.util.Arrays;\n\npublic class Main {\n    static int[] solution(int start_num, int end_num) {\n        int[] answer = {};\n        // 여기에 코드를 작성하세요\n        return answer;\n    }\n\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int start_num = sc.nextInt();\n        int end_num = sc.nextInt();\n        System.out.println(Arrays.toString(solution(start_num, end_num)));\n    }\n}"
+  },
+  {
+    "topic": "리스트",
+    "title": "가까운 1 찾기",
+    "description": "정수 배열 arr가 있습니다. 이때 arr의 원소는 1 또는 0입니다. 정수 idx가 주어졌을 때, idx보다 크거나 같으면서 배열의 값이 1인 가장 작은 인덱스를 찾아서 반환하는 solution 함수를 완성해 주세요. 단, 만약 그러한 인덱스가 없다면 -1을 반환합니다.",
+    "constraints": [
+      "3 ≤ arr의 길이 ≤ 100,000",
+      "arr의 원소는 전부 1 또는 0입니다."
+    ],
+    "input_example": "4\n0 0 0 1\n1",
+    "output_example": "3",
+    "starter_code": "import java.util.Scanner;\n\npublic class Main {\n    static int solution(int[] arr, int idx) {\n        int answer = 0;\n        // 여기에 코드를 작성하세요\n        return answer;\n    }\n\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n        int[] arr = new int[n];\n        for (int i = 0; i < n; i++) arr[i] = sc.nextInt();\n        int idx = sc.nextInt();\n        System.out.println(solution(arr, idx));\n    }\n}"
+  },
+  {
+    "topic": "리스트",
+    "title": "첫 번째로 나오는 음수",
+    "description": "정수 리스트 num_list가 주어질 때, 첫 번째로 나오는 음수의 인덱스를 return하도록 solution 함수를 완성해주세요. 음수가 없다면 -1을 return합니다.",
+    "constraints": [
+      "5 ≤ num_list의 길이 ≤ 100",
+      "-10 ≤ num_list의 원소 ≤ 100"
+    ],
+    "input_example": "6\n12 4 15 46 -2 -15",
+    "output_example": "5",
+    "starter_code": "import java.util.Scanner;\n\npublic class Main {\n    static int solution(int[] num_list) {\n        int answer = 0;\n        // 여기에 코드를 작성하세요\n        return answer;\n    }\n\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n        int[] num_list = new int[n];\n        for (int i = 0; i < n; i++) num_list[i] = sc.nextInt();\n        System.out.println(solution(num_list));\n    }\n}"
+  },
+  {
+    "topic": "리스트",
+    "title": "n 번째 원소부터",
+    "description": "정수 리스트 num_list와 정수 n이 주어질 때, n 번째 원소부터 마지막 원소까지의 모든 원소를 담은 리스트를 return하도록 solution 함수를 완성해주세요.",
+    "constraints": [
+      "2 ≤ num_list의 길이 ≤ 30",
+      "1 ≤ num_list의 원소 ≤ 9",
+      "1 ≤ n ≤ num_list의 길이"
+    ],
+    "input_example": "2\n2 1\n3",
+    "output_example": "[6]",
+    "starter_code": "import java.util.Scanner;\nimport java.util.Arrays;\n\npublic class Main {\n    static int[] solution(int[] num_list, int n) {\n        int[] answer = {};\n        // 여기에 코드를 작성하세요\n        return answer;\n    }\n\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int size = sc.nextInt();\n        int[] num_list = new int[size];\n        for (int i = 0; i < size; i++) num_list[i] = sc.nextInt();\n        int n = sc.nextInt();\n        System.out.println(Arrays.toString(solution(num_list, n)));\n    }\n}"
+  },
+  {
+    "topic": "리스트",
+    "title": "순서 바꾸기",
+    "description": "정수 리스트 num_list와 정수 n이 주어질 때, num_list를 n 번째 원소 이후의 원소들과 n 번째까지의 원소들로 나눠 이어 붙인 리스트를 return하도록 solution 함수를 완성해주세요.",
+    "constraints": [
+      "2 ≤ num_list의 길이 ≤ 30",
+      "1 ≤ num_list의 원소 ≤ 9",
+      "1 ≤ n ≤ num_list의 길이"
+    ],
+    "input_example": "4\n2 1 6 5\n1",
+    "output_example": "[1, 6, 5, 2]",
+    "starter_code": "import java.util.Scanner;\nimport java.util.Arrays;\n\npublic class Main {\n    static int[] solution(int[] num_list, int n) {\n        int[] answer = {};\n        // 여기에 코드를 작성하세요\n        return answer;\n    }\n\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int size = sc.nextInt();\n        int[] num_list = new int[size];\n        for (int i = 0; i < size; i++) num_list[i] = sc.nextInt();\n        int n = sc.nextInt();\n        System.out.println(Arrays.toString(solution(num_list, n)));\n    }\n}"
+  },
+  {
+    "topic": "리스트",
+    "title": "n개 간격의 원소들",
+    "description": "정수 리스트 num_list와 정수 n이 주어질 때, num_list의 첫 번째 원소부터 마지막 원소까지 n개 간격으로 저장되어 있는 원소들을 차례로 담은 리스트를 return하도록 solution 함수를 완성해주세요.",
+    "constraints": [
+      "5 ≤ num_list의 길이 ≤ 20",
+      "1 ≤ num_list의 원소 ≤ 9",
+      "1 ≤ n ≤ 4"
+    ],
+    "input_example": "6\n4 2 6 1 7 6\n2",
+    "output_example": "[4, 6, 7]",
+    "starter_code": "import java.util.Scanner;\nimport java.util.Arrays;\n\npublic class Main {\n    static int[] solution(int[] num_list, int n) {\n        int[] answer = {};\n        // 여기에 코드를 작성하세요\n        return answer;\n    }\n\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int size = sc.nextInt();\n        int[] num_list = new int[size];\n        for (int i = 0; i < size; i++) num_list[i] = sc.nextInt();\n        int n = sc.nextInt();\n        System.out.println(Arrays.toString(solution(num_list, n)));\n    }\n}"
+  },
+  {
+    "topic": "리스트",
+    "title": "홀수 vs 짝수",
+    "description": "정수 리스트 num_list가 주어집니다. 가장 첫 번째 원소를 1번 원소라고 할 때, 홀수 번째 원소들의 합과 짝수 번째 원소들의 합 중 큰 값을 return하도록 solution 함수를 완성해주세요. 두 값이 같을 경우 그 값을 그대로 return합니다.",
+    "constraints": [
+      "5 ≤ num_list의 길이 ≤ 50",
+      "-9 ≤ num_list의 원소 ≤ 9"
+    ],
+    "input_example": "6\n4 2 6 1 7 6",
+    "output_example": "17",
+    "starter_code": "import java.util.Scanner;\n\npublic class Main {\n    static int solution(int[] num_list) {\n        int answer = 0;\n        // 여기에 코드를 작성하세요\n        return answer;\n    }\n\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n        int[] num_list = new int[n];\n        for (int i = 0; i < n; i++) num_list[i] = sc.nextInt();\n        System.out.println(solution(num_list));\n    }\n}"
+  },
+  {
+    "topic": "리스트",
+    "title": "할 일 목록",
+    "description": "오늘 해야 할 일이 담긴 문자열 배열 todo_list와 각각의 일을 지금 마쳤는지를 나타내는 boolean 배열 finished가 매개변수로 주어질 때, todo_list에서 아직 마치지 못한 일들을 순서대로 담은 문자열 배열을 return하는 solution 함수를 작성해 주세요.",
+    "constraints": [
+      "1 ≤ todo_list의 길이 ≤ 100",
+      "2 ≤ todo_list의 원소의 길이 ≤ 20",
+      "todo_list의 원소는 영소문자로만 이루어져 있습니다.",
+      "todo_list의 원소는 모두 서로 다릅니다.",
+      "아직 마치지 못한 일이 적어도 하나 있습니다."
+    ],
+    "input_example": "4\nproblemsolving practiceguitar swim studygraph\ntrue false true false",
+    "output_example": "[practiceguitar, studygraph]",
+    "starter_code": "import java.util.Scanner;\nimport java.util.Arrays;\n\npublic class Main {\n    static String[] solution(String[] todo_list, boolean[] finished) {\n        String[] answer = {};\n        // 여기에 코드를 작성하세요\n        return answer;\n    }\n\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n        String[] todo_list = new String[n];\n        for (int i = 0; i < n; i++) todo_list[i] = sc.next();\n        boolean[] finished = new boolean[n];\n        for (int i = 0; i < n; i++) finished[i] = sc.nextBoolean();\n        System.out.println(Arrays.toString(solution(todo_list, finished)));\n    }\n}"
+  },
+  {
+    "topic": "반복문",
+    "title": "n보다 커질 때까지 더하기",
+    "description": "정수 배열 numbers와 정수 n이 매개변수로 주어집니다. numbers의 원소를 앞에서부터 하나씩 더하다가 그 합이 n보다 커지는 순간 이때까지 더했던 원소들의 합을 return하는 solution 함수를 작성해 주세요.",
+    "constraints": [
+      "1 ≤ numbers의 길이 ≤ 100",
+      "1 ≤ numbers의 원소 ≤ 100",
+      "0 ≤ n < numbers의 모든 원소의 합"
+    ],
+    "input_example": "6\n34 5 71 29 100 34\n123",
+    "output_example": "139",
+    "starter_code": "import java.util.Scanner;\n\npublic class Main {\n    static int solution(int[] numbers, int n) {\n        int answer = 0;\n        // 여기에 코드를 작성하세요\n        return answer;\n    }\n\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int size = sc.nextInt();\n        int[] numbers = new int[size];\n        for (int i = 0; i < size; i++) numbers[i] = sc.nextInt();\n        int n = sc.nextInt();\n        System.out.println(solution(numbers, n));\n    }\n}"
+  },
+  {
+    "topic": "2차원 리스트",
+    "title": "수열과 구간 쿼리 1",
+    "description": "정수 배열 arr와 2차원 정수 배열 queries가 주어집니다. queries의 원소는 [s, e] 꼴입니다. 각 query마다 순서대로 s ≤ l ≤ e인 모든 l에 대해 arr[l]에 1을 더합니다. 위 규칙에 따라 queries를 처리한 이후의 arr를 return하는 solution 함수를 완성해 주세요.",
+    "constraints": [
+      "1 ≤ arr의 길이 ≤ 1,000",
+      "0 ≤ arr의 원소 ≤ 1,000,000",
+      "1 ≤ queries의 길이 ≤ 1,000",
+      "0 ≤ s ≤ e < arr의 길이"
+    ],
+    "input_example": "4\n0 1 2 3\n3\n0 1\n1 2\n2 3",
+    "output_example": "[1, 3, 4, 4]",
+    "starter_code": "import java.util.Scanner;\nimport java.util.Arrays;\n\npublic class Main {\n    static int[] solution(int[] arr, int[][] queries) {\n        int[] answer = {};\n        // 여기에 코드를 작성하세요\n        return answer;\n    }\n\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n        int[] arr = new int[n];\n        for (int i = 0; i < n; i++) arr[i] = sc.nextInt();\n        int q = sc.nextInt();\n        int[][] queries = new int[q][2];\n        for (int i = 0; i < q; i++) {\n            queries[i][0] = sc.nextInt();\n            queries[i][1] = sc.nextInt();\n        }\n        System.out.println(Arrays.toString(solution(arr, queries)));\n    }\n}"
+  },
+  {
+    "topic": "반복문",
+    "title": "조건에 맞게 수열 변환하기 1",
+    "description": "정수 배열 arr가 주어집니다. arr의 각 원소에 대해 값이 50보다 크거나 같은 짝수라면 2로 나누고, 50보다 작은 홀수라면 2를 곱합니다. 그 결과인 정수 배열을 return하는 solution 함수를 완성해주세요.",
+    "constraints": [
+      "1 ≤ arr의 길이 ≤ 1,000,000",
+      "1 ≤ arr의 원소의 값 ≤ 100"
+    ],
+    "input_example": "6\n1 2 3 100 99 98",
+    "output_example": "[2, 2, 6, 50, 99, 49]",
+    "starter_code": "import java.util.Scanner;\nimport java.util.Arrays;\n\npublic class Main {\n    static int[] solution(int[] arr) {\n        int[] answer = {};\n        // 여기에 코드를 작성하세요\n        return answer;\n    }\n\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n        int[] arr = new int[n];\n        for (int i = 0; i < n; i++) arr[i] = sc.nextInt();\n        System.out.println(Arrays.toString(solution(arr)));\n    }\n}"
+  },
+  {
+    "topic": "반복문",
+    "title": "조건에 맞게 수열 변환하기 2",
+    "description": "정수 배열 arr가 주어집니다. arr의 각 원소에 대해 값이 50보다 크거나 같은 짝수라면 2로 나누고, 50보다 작은 홀수라면 2를 곱합니다. 이러한 작업을 x번 반복한 결과인 배열을 arr(x) 라고 표현할 때, arr(x) = arr(x+1)인 x 중 가장 작은 정수를 return하는 solution 함수를 완성해주세요.",
+    "constraints": [
+      "1 ≤ arr의 길이 ≤ 1,000,000",
+      "1 ≤ arr의 원소의 값 ≤ 100"
+    ],
+    "input_example": "6\n1 2 3 100 99 98",
+    "output_example": "5",
+    "starter_code": "import java.util.Scanner;\nimport java.util.Arrays;\n\npublic class Main {\n    static int solution(int[] arr) {\n        int answer = 0;\n        // 여기에 코드를 작성하세요\n        return answer;\n    }\n\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n        int[] arr = new int[n];\n        for (int i = 0; i < n; i++) arr[i] = sc.nextInt();\n        System.out.println(solution(arr));\n    }\n}"
+  },
+  {
+    "topic": "반복문",
+    "title": "1로 만들기",
+    "description": "정수가 담긴 리스트 num_list가 주어질 때, num_list의 모든 원소를 1로 만들기 위해서 필요한 나누기 연산의 횟수를 return하도록 solution 함수를 완성해주세요. 짝수를 2로 나누고, 홀수에서 1을 뺀 뒤 반으로 나눠 1을 만듭니다.",
+    "constraints": [
+      "3 ≤ num_list의 길이 ≤ 15",
+      "1 ≤ num_list의 원소 ≤ 30"
+    ],
+    "input_example": "5\n12 4 15 1 14",
+    "output_example": "11",
+    "starter_code": "import java.util.Scanner;\n\npublic class Main {\n    static int solution(int[] num_list) {\n        int answer = 0;\n        // 여기에 코드를 작성하세요\n        return answer;\n    }\n\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n        int[] num_list = new int[n];\n        for (int i = 0; i < n; i++) num_list[i] = sc.nextInt();\n        System.out.println(solution(num_list));\n    }\n}"
+  },
+  {
+    "topic": "문자열",
+    "title": "원하는 문자열 찾기",
+    "description": "알파벳으로 이루어진 문자열 myString과 pat이 주어집니다. myString의 연속된 부분 문자열 중 pat이 존재하면 1을 그렇지 않으면 0을 return하는 solution 함수를 완성해 주세요. 단, 알파벳 대문자와 소문자는 구분하지 않습니다.",
+    "constraints": [
+      "1 ≤ myString의 길이 ≤ 100,000",
+      "1 ≤ pat의 길이 ≤ 300",
+      "myString과 pat은 모두 알파벳으로 이루어진 문자열입니다."
+    ],
+    "input_example": "AbCdEfG\nabc",
+    "output_example": "1",
+    "starter_code": "import java.util.Scanner;\n\npublic class Main {\n    static int solution(String myString, String pat) {\n        int answer = 0;\n        // 여기에 코드를 작성하세요\n        return answer;\n    }\n\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        String myString = sc.next();\n        String pat = sc.next();\n        System.out.println(solution(myString, pat));\n    }\n}"
+  },
+  {
+    "topic": "문자열",
+    "title": "대문자로 바꾸기",
+    "description": "알파벳으로 이루어진 문자열 myString이 주어집니다. 모든 알파벳을 대문자로 변환하여 return하는 solution 함수를 완성해 주세요.",
+    "constraints": [
+      "1 ≤ myString의 길이 ≤ 100,000",
+      "myString은 알파벳으로 이루어진 문자열입니다."
+    ],
+    "input_example": "aBcDeFg",
+    "output_example": "ABCDEFG",
+    "starter_code": "import java.util.Scanner;\n\npublic class Main {\n    static String solution(String myString) {\n        String answer = \"\";\n        // 여기에 코드를 작성하세요\n        return answer;\n    }\n\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        String myString = sc.next();\n        System.out.println(solution(myString));\n    }\n}"
+  },
+  {
+    "topic": "문자열",
+    "title": "소문자로 바꾸기",
+    "description": "알파벳으로 이루어진 문자열 myString이 주어집니다. 모든 알파벳을 소문자로 변환하여 return하는 solution 함수를 완성해 주세요.",
+    "constraints": [
+      "1 ≤ myString의 길이 ≤ 100,000",
+      "myString은 알파벳으로 이루어진 문자열입니다."
+    ],
+    "input_example": "aBcDeFg",
+    "output_example": "abcdefg",
+    "starter_code": "import java.util.Scanner;\n\npublic class Main {\n    static String solution(String myString) {\n        String answer = \"\";\n        // 여기에 코드를 작성하세요\n        return answer;\n    }\n\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        String myString = sc.next();\n        System.out.println(solution(myString));\n    }\n}"
+  },
+  {
+    "topic": "문자열",
+    "title": "A 강조하기",
+    "description": "문자열 myString이 주어집니다. myString에서 알파벳 'a'가 등장하면 전부 'A'로 변환하고, 'A'가 아닌 모든 대문자 알파벳은 소문자 알파벳으로 변환하여 return하는 solution 함수를 완성해 주세요.",
+    "constraints": [
+      "1 ≤ myString의 길이 ≤ 20",
+      "myString은 알파벳으로 이루어진 문자열입니다."
+    ],
+    "input_example": "abstract algebra",
+    "output_example": "AbstrAct AlgebrA",
+    "starter_code": "import java.util.Scanner;\n\npublic class Main {\n    static String solution(String myString) {\n        String answer = \"\";\n        // 여기에 코드를 작성하세요\n        return answer;\n    }\n\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        String myString = sc.nextLine();\n        System.out.println(solution(myString));\n    }\n}"
+  },
+  {
+    "topic": "문자열",
+    "title": "특정한 문자를 대문자로 바꾸기",
+    "description": "영소문자로 이루어진 문자열 my_string과 영소문자 1글자로 이루어진 문자열 alp가 매개변수로 주어질 때, my_string에서 alp에 해당하는 모든 글자를 대문자로 바꾼 문자열을 return하는 solution 함수를 작성해 주세요.",
+    "constraints": [
+      "1 ≤ my_string의 길이 ≤ 1,000"
+    ],
+    "input_example": "programmers\np",
+    "output_example": "Programmers",
+    "starter_code": "import java.util.Scanner;\n\npublic class Main {\n    static String solution(String my_string, String alp) {\n        String answer = \"\";\n        // 여기에 코드를 작성하세요\n        return answer;\n    }\n\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        String my_string = sc.next();\n        String alp = sc.next();\n        System.out.println(solution(my_string, alp));\n    }\n}"
+  },
+  {
+    "topic": "문자열",
+    "title": "특정 문자열로 끝나는 가장 긴 부분 문자열 찾기",
+    "description": "문자열 myString과 pat이 주어집니다. myString의 부분 문자열중 pat으로 끝나는 가장 긴 부분 문자열을 찾아서 return하는 solution 함수를 완성해 주세요.",
+    "constraints": [
+      "5 ≤ myString ≤ 20",
+      "1 ≤ pat ≤ 5",
+      "pat은 반드시 myString의 부분 문자열로 주어집니다.",
+      "myString과 pat에 등장하는 알파벳은 대문자와 소문자를 구분합니다."
+    ],
+    "input_example": "AbCdEFG\ndE",
+    "output_example": "AbCdE",
+    "starter_code": "import java.util.Scanner;\n\npublic class Main {\n    static String solution(String myString, String pat) {\n        String answer = \"\";\n        // 여기에 코드를 작성하세요\n        return answer;\n    }\n\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        String myString = sc.next();\n        String pat = sc.next();\n        System.out.println(solution(myString, pat));\n    }\n}"
+  },
+  {
+    "topic": "문자열",
+    "title": "문자열이 몇 번 등장하는지 세기",
+    "description": "문자열 myString과 pat이 주어집니다. myString에서 pat이 등장하는 횟수를 return하는 solution 함수를 완성해 주세요.",
+    "constraints": [
+      "1 ≤ myString ≤ 1000",
+      "1 ≤ pat ≤ 10"
+    ],
+    "input_example": "banana\nana",
+    "output_example": "2",
+    "starter_code": "import java.util.Scanner;\n\npublic class Main {\n    static int solution(String myString, String pat) {\n        int answer = 0;\n        // 여기에 코드를 작성하세요\n        return answer;\n    }\n\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        String myString = sc.next();\n        String pat = sc.next();\n        System.out.println(solution(myString, pat));\n    }\n}"
+  },
+  {
+    "topic": "리스트",
+    "title": "ad 제거하기",
+    "description": "문자열 배열 strArr가 있습니다. 배열 내의 문자열 중 'ad'라는 부분 문자열을 포함하고 있는 모든 문자열을 제거하고 남은 문자열을 순서를 유지하여 배열로 return하는 solution 함수를 완성해 주세요.",
+    "constraints": [
+      "1 ≤ strArr의 길이 ≤ 1,000",
+      "1 ≤ strArr의 원소의 길이 ≤ 20",
+      "strArr의 원소는 알파벳 소문자로 이루어진 문자열입니다."
+    ],
+    "input_example": "3\nand notad abcd",
+    "output_example": "[and, abcd]",
+    "starter_code": "import java.util.Scanner;\nimport java.util.Arrays;\n\npublic class Main {\n    static String[] solution(String[] strArr) {\n        String[] answer = {};\n        // 여기에 코드를 작성하세요\n        return answer;\n    }\n\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n        String[] strArr = new String[n];\n        for (int i = 0; i < n; i++) strArr[i] = sc.next();\n        System.out.println(Arrays.toString(solution(strArr)));\n    }\n}"
+  },
+  {
+    "topic": "문자열",
+    "title": "공백으로 구분하기 1",
+    "description": "단어가 공백 한 개로 구분되어 있는 문자열 my_string이 매개변수로 주어질 때, my_string에 나온 단어를 앞에서부터 순서대로 담은 문자열 배열을 return하는 solution 함수를 작성해 주세요.",
+    "constraints": [
+      "my_string은 영소문자와 공백으로만 이루어져 있습니다.",
+      "1 ≤ my_string의 길이 ≤ 1,000",
+      "my_string의 맨 앞과 맨 뒤에는 공백이 없습니다."
+    ],
+    "input_example": "i love you",
+    "output_example": "[i, love, you]",
+    "starter_code": "import java.util.Scanner;\nimport java.util.Arrays;\n\npublic class Main {\n    static String[] solution(String my_string) {\n        String[] answer = {};\n        // 여기에 코드를 작성하세요\n        return answer;\n    }\n\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        String my_string = sc.nextLine();\n        System.out.println(Arrays.toString(solution(my_string)));\n    }\n}"
+  },
+  {
+    "topic": "문자열",
+    "title": "공백으로 구분하기 2",
+    "description": "단어가 공백 한 개 이상으로 구분되어 있는 문자열 my_string이 매개변수로 주어질 때, my_string에 나온 단어를 앞에서부터 순서대로 담은 문자열 배열을 return하는 solution 함수를 작성해 주세요.",
+    "constraints": [
+      "my_string은 영소문자와 공백으로만 이루어져 있습니다.",
+      "1 ≤ my_string의 길이 ≤ 1,000",
+      "my_string의 맨 앞과 맨 뒤에도 공백이 있을 수 있습니다.",
+      "my_string에는 단어가 하나 이상 존재합니다."
+    ],
+    "input_example": " i  love  you ",
+    "output_example": "[i, love, you]",
+    "starter_code": "import java.util.Scanner;\nimport java.util.Arrays;\n\npublic class Main {\n    static String[] solution(String my_string) {\n        String[] answer = {};\n        // 여기에 코드를 작성하세요\n        return answer;\n    }\n\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        String my_string = sc.nextLine();\n        System.out.println(Arrays.toString(solution(my_string)));\n    }\n}"
+  },
+  {
+    "topic": "문자열",
+    "title": "간단한 식 계산하기",
+    "description": "문자열 binomial이 매개변수로 주어집니다. binomial은 'a op b' 형태이고 a와 b는 음이 아닌 정수, op는 '+', '-', '*' 중 하나입니다. 주어진 식을 계산한 정수를 return하는 solution 함수를 작성해 주세요.",
+    "constraints": [
+      "0 ≤ a, b ≤ 40,000",
+      "0을 제외하고 a, b는 0으로 시작하지 않습니다."
+    ],
+    "input_example": "43 + 12",
+    "output_example": "55",
+    "starter_code": "import java.util.Scanner;\n\npublic class Main {\n    static int solution(String binomial) {\n        int answer = 0;\n        // 여기에 코드를 작성하세요\n        return answer;\n    }\n\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        String binomial = sc.nextLine();\n        System.out.println(solution(binomial));\n    }\n}"
+  },
+  {
+    "topic": "리스트",
+    "title": "배열의 원소만큼 추가하기",
+    "description": "아무 원소도 들어있지 않은 빈 배열 X가 있습니다. 양의 정수 배열 arr가 매개변수로 주어질 때, arr의 앞에서부터 차례대로 원소를 보면서 원소가 a라면 X의 맨 뒤에 a를 a번 추가하는 일을 반복한 뒤의 배열 X를 return하는 solution 함수를 완성해주세요.",
+    "constraints": [
+      "1 ≤ arr의 길이 ≤ 100",
+      "1 ≤ arr의 원소 ≤ 100"
+    ],
+    "input_example": "3\n5 1 4",
+    "output_example": "[5, 5, 5, 5, 5, 1, 4, 4, 4, 4]",
+    "starter_code": "import java.util.Scanner;\nimport java.util.Arrays;\n\npublic class Main {\n    static int[] solution(int[] arr) {\n        int[] answer = {};\n        // 여기에 코드를 작성하세요\n        return answer;\n    }\n\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n        int[] arr = new int[n];\n        for (int i = 0; i < n; i++) arr[i] = sc.nextInt();\n        System.out.println(Arrays.toString(solution(arr)));\n    }\n}"
+  },
+  {
+    "topic": "문자열",
+    "title": "꼬리 문자열",
+    "description": "문자열들이 담긴 리스트가 주어졌을 때, 모든 문자열들을 순서대로 합쳐 꼬리 문자열이라고 합니다. 꼬리 문자열을 만들 때 특정 문자열을 포함하는 문자열은 제외시킵니다. 문자열 리스트 str_list와 제외할 문자열 ex가 주어졌을 때, str_list에서 ex를 포함한 문자열을 제외하고 만든 꼬리 문자열을 return하도록 solution 함수를 완성해주세요.",
+    "constraints": [
+      "2 ≤ str_list의 길이 ≤ 10",
+      "1 ≤ str_list의 원소의 길이 ≤ 10",
+      "1 ≤ ex의 길이 ≤ 5"
+    ],
+    "input_example": "3\nabc def ghi\nef",
+    "output_example": "abcghi",
+    "starter_code": "import java.util.Scanner;\n\npublic class Main {\n    static String solution(String[] str_list, String ex) {\n        String answer = \"\";\n        // 여기에 코드를 작성하세요\n        return answer;\n    }\n\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n        String[] str_list = new String[n];\n        for (int i = 0; i < n; i++) str_list[i] = sc.next();\n        String ex = sc.next();\n        System.out.println(solution(str_list, ex));\n    }\n}"
+  },
+  {
+    "topic": "2차원 리스트",
+    "title": "정수를 나선형으로 배치하기",
+    "description": "양의 정수 n이 주어집니다. n × n 배열에 1부터 n² 까지 정수를 인덱스 [0][0]부터 시계방향 나선형으로 배치한 이차원 배열을 return하는 solution 함수를 완성해주세요.",
+    "constraints": [
+      "1 ≤ n ≤ 30"
+    ],
+    "input_example": "4",
+    "output_example": "[[1, 2, 3, 4], [12, 13, 14, 5], [11, 16, 15, 6], [10, 9, 8, 7]]",
+    "starter_code": "import java.util.Scanner;\nimport java.util.Arrays;\n\npublic class Main {\n    static int[][] solution(int n) {\n        int[][] answer = {};\n        // 여기에 코드를 작성하세요\n        return answer;\n    }\n\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n        int[][] result = solution(n);\n        for (int[] row : result) System.out.println(Arrays.toString(row));\n    }\n}"
+  },
+  {
+    "topic": "2차원 리스트",
+    "title": "이차원 배열 대각선 순회하기",
+    "description": "2차원 정수 배열 board와 정수 k가 주어집니다. i + j = k인 모든 board[i][j]에 대한 합을 return하는 solution 함수를 완성해 주세요.",
+    "constraints": [
+      "1 ≤ board의 길이 ≤ 100",
+      "1 ≤ board[i]의 길이 ≤ 100",
+      "1 ≤ board[i][j] ≤ 10,000",
+      "모든 board[i]의 길이가 같습니다.",
+      "0 ≤ k < board의 길이 + board[i]의 길이"
+    ],
+    "input_example": "4\n0 1 2\n1 2 3\n2 3 4\n3 4 5\n2",
+    "output_example": "8",
+    "starter_code": "import java.util.Scanner;\n\npublic class Main {\n    static int solution(int[][] board, int k) {\n        int answer = 0;\n        // 여기에 코드를 작성하세요\n        return answer;\n    }\n\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        int n = sc.nextInt();\n        int m = sc.nextInt();\n        int[][] board = new int[n][m];\n        for (int i = 0; i < n; i++)\n            for (int j = 0; j < m; j++)\n                board[i][j] = sc.nextInt();\n        int k = sc.nextInt();\n        System.out.println(solution(board, k));\n    }\n}"
+  }
+]

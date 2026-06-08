@@ -17,7 +17,8 @@ public enum ErrorCode {
     EMAIL_CODE_INVALID("인증 코드가 올바르지 않습니다.", HttpStatus.BAD_REQUEST),
 
     // Problem
-    AI_RESPONSE_FAILURE("AI 응답 파싱에 실패했습니다.", HttpStatus.INTERNAL_SERVER_ERROR);
+    AI_RESPONSE_FAILURE("AI 응답 파싱에 실패했습니다.", HttpStatus.INTERNAL_SERVER_ERROR),
+    STAGE_PROBLEM_NOT_FOUND("단계별 문제를 찾을 수 없습니다.", HttpStatus.NOT_FOUND);
 
     private final String message;
     private final HttpStatus status;
