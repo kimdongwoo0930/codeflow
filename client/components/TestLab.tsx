@@ -276,7 +276,6 @@ const CONCEPT_PROBLEMS: Record<string, Problem> = {
 };
 
 const LEFT_PANEL_MIN_WIDTH = 280;
-const RIGHT_PANEL_MIN_WIDTH = 300;
 const EDITOR_PANEL_MIN_WIDTH = 520;
 const RESIZER_WIDTH = 10;
 const OUTPUT_PANEL_MIN_HEIGHT = 96;
@@ -1309,7 +1308,6 @@ export function TestLab({
     "실행 버튼을 누르면 결과가 여기에 표시됩니다.",
   );
   const [leftPanelWidth, setLeftPanelWidth] = useState(440);
-  const [rightPanelWidth, setRightPanelWidth] = useState(360);
   const [outputPanelHeight, setOutputPanelHeight] = useState(140);
   const [submissionReview, setSubmissionReview] =
     useState<SubmissionReview | null>(null);
@@ -1317,6 +1315,10 @@ export function TestLab({
 
   // 떠 있는 AI 튜터 채팅창 열림 상태
   const [isTutorOpen, setIsTutorOpen] = useState(false);
+  // 좌측 패널: "문제" / "단계별 문제" 중 어느 쪽을 보여줄지
+  const [leftPanelTab, setLeftPanelTab] = useState<"problem" | "stage">(
+    "problem",
+  );
   // 단계별 문제 리스트에서 펼쳐진 topic (기본: 현재 문제가 속한 topic)
   const [openStageTopics, setOpenStageTopics] = useState<string[]>(() => {
     const current = STAGE_SECTIONS.find((section) =>
@@ -1339,10 +1341,8 @@ export function TestLab({
   const [speed, setSpeed] = useState(750);
   const codeRef = useRef<HTMLDivElement>(null);
   const resizeStateRef = useRef<{
-    panel: "left" | "right";
     startX: number;
     startLeftWidth: number;
-    startRightWidth: number;
   } | null>(null);
   const outputResizeRef = useRef<{
     startY: number;
@@ -1380,7 +1380,7 @@ export function TestLab({
   const languageLabel = "Java";
   const fileName = "Main.java";
   const studyLayoutStyle = {
-    ["--study-layout" as any]: `${leftPanelWidth}px ${RESIZER_WIDTH}px minmax(0, 1fr) ${RESIZER_WIDTH}px ${rightPanelWidth}px`,
+    ["--study-layout" as any]: `${leftPanelWidth}px ${RESIZER_WIDTH}px minmax(0, 1fr)`,
   } as CSSProperties;
 
   useEffect(() => {
@@ -1413,76 +1413,44 @@ export function TestLab({
     };
   }, []);
 
-  const startPanelResize =
-    (panel: "left" | "right") => (event: ReactPointerEvent<HTMLDivElement>) => {
-      event.preventDefault();
-      resizeStateRef.current = {
-        panel,
-        startX: event.clientX,
-        startLeftWidth: leftPanelWidth,
-        startRightWidth: rightPanelWidth,
-      };
-      document.body.style.cursor = "col-resize";
-      document.body.style.userSelect = "none";
-
-      const handlePointerMove = (moveEvent: PointerEvent) => {
-        const state = resizeStateRef.current;
-        if (!state) return;
-
-        const delta = moveEvent.clientX - state.startX;
-        const nextLeftWidth =
-          state.panel === "left"
-            ? state.startLeftWidth + delta
-            : state.startLeftWidth;
-        const nextRightWidth =
-          state.panel === "right"
-            ? state.startRightWidth - delta
-            : state.startRightWidth;
-
-        const viewportWidth = window.innerWidth;
-        const maxLeftWidth = Math.max(
-          LEFT_PANEL_MIN_WIDTH,
-          viewportWidth -
-            nextRightWidth -
-            EDITOR_PANEL_MIN_WIDTH -
-            RESIZER_WIDTH * 2,
-        );
-        const maxRightWidth = Math.max(
-          RIGHT_PANEL_MIN_WIDTH,
-          viewportWidth -
-            nextLeftWidth -
-            EDITOR_PANEL_MIN_WIDTH -
-            RESIZER_WIDTH * 2,
-        );
-
-        if (state.panel === "left") {
-          setLeftPanelWidth(
-            Math.max(
-              LEFT_PANEL_MIN_WIDTH,
-              Math.min(nextLeftWidth, maxLeftWidth),
-            ),
-          );
-        } else {
-          setRightPanelWidth(
-            Math.max(
-              RIGHT_PANEL_MIN_WIDTH,
-              Math.min(nextRightWidth, maxRightWidth),
-            ),
-          );
-        }
-      };
-
-      const stopResize = () => {
-        resizeStateRef.current = null;
-        document.body.style.cursor = "";
-        document.body.style.userSelect = "";
-        window.removeEventListener("pointermove", handlePointerMove);
-        window.removeEventListener("pointerup", stopResize);
-      };
-
-      window.addEventListener("pointermove", handlePointerMove);
-      window.addEventListener("pointerup", stopResize);
+  const startPanelResize = (event: ReactPointerEvent<HTMLDivElement>) => {
+    event.preventDefault();
+    resizeStateRef.current = {
+      startX: event.clientX,
+      startLeftWidth: leftPanelWidth,
     };
+    document.body.style.cursor = "col-resize";
+    document.body.style.userSelect = "none";
+
+    const handlePointerMove = (moveEvent: PointerEvent) => {
+      const state = resizeStateRef.current;
+      if (!state) return;
+
+      const delta = moveEvent.clientX - state.startX;
+      const nextLeftWidth = state.startLeftWidth + delta;
+
+      const viewportWidth = window.innerWidth;
+      const maxLeftWidth = Math.max(
+        LEFT_PANEL_MIN_WIDTH,
+        viewportWidth - EDITOR_PANEL_MIN_WIDTH - RESIZER_WIDTH,
+      );
+
+      setLeftPanelWidth(
+        Math.max(LEFT_PANEL_MIN_WIDTH, Math.min(nextLeftWidth, maxLeftWidth)),
+      );
+    };
+
+    const stopResize = () => {
+      resizeStateRef.current = null;
+      document.body.style.cursor = "";
+      document.body.style.userSelect = "";
+      window.removeEventListener("pointermove", handlePointerMove);
+      window.removeEventListener("pointerup", stopResize);
+    };
+
+    window.addEventListener("pointermove", handlePointerMove);
+    window.addEventListener("pointerup", stopResize);
+  };
 
   const startOutputResize = (event: ReactPointerEvent<HTMLDivElement>) => {
     event.preventDefault();
@@ -1784,91 +1752,168 @@ export function TestLab({
             className="relative z-10 grid h-[calc(100vh-92px)] min-h-0 grid-cols-1 overflow-hidden xl:[grid-template-columns:var(--study-layout)]"
             style={studyLayoutStyle}
           >
-            <aside className="min-h-0 overflow-hidden border-r border-white/10 bg-[#0b0f1a]/70">
-              <div className="flex h-11 items-center justify-between border-b border-white/10 bg-[#1f2937] px-4">
-                <span className="text-[11px] uppercase tracking-[0.24em] text-slate-500">
+            <aside className="flex min-h-0 flex-col overflow-hidden border-r border-white/10 bg-[#0b0f1a]/70">
+              <div className="flex h-11 shrink-0 items-center gap-1 border-b border-white/10 bg-[#1f2937] px-2">
+                <button
+                  type="button"
+                  onClick={() => setLeftPanelTab("problem")}
+                  className={`rounded-md px-3 py-1.5 text-[11px] uppercase tracking-[0.24em] transition ${
+                    leftPanelTab === "problem"
+                      ? "bg-blue/15 text-blue"
+                      : "text-slate-500 hover:text-slate-300"
+                  }`}
+                >
                   문제
-                </span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setLeftPanelTab("stage")}
+                  className={`rounded-md px-3 py-1.5 text-[11px] uppercase tracking-[0.24em] transition ${
+                    leftPanelTab === "stage"
+                      ? "bg-blue/15 text-blue"
+                      : "text-slate-500 hover:text-slate-300"
+                  }`}
+                >
+                  단계별 문제
+                </button>
               </div>
-              <div className="h-[calc(100%-44px)] space-y-5 overflow-y-auto p-4 pb-8">
-                <div>
-                  <h1 className="text-lg font-semibold text-white">
-                    {DUMMY_PROBLEM.title}
-                  </h1>
-                  <div className="mt-3 flex flex-wrap gap-2">
-                    <span
-                      className={`rounded-full border px-2.5 py-1 text-[11px] font-semibold ${DIFFICULTY_COLOR[DUMMY_PROBLEM.difficulty]}`}
-                    >
-                      {DUMMY_PROBLEM.difficulty}
-                    </span>
-                  </div>
-                  <p className="mt-4 text-sm leading-7 text-slate-300">
-                    {DUMMY_PROBLEM.description}
-                  </p>
-                </div>
 
-                <section>
-                  <p className="mb-2 text-[11px] uppercase tracking-[0.24em] text-slate-500">
-                    입력 / 출력 예시
-                  </p>
-                  {DUMMY_PROBLEM.examples.slice(0, 1).map((example, index) => (
-                    <div key={index} className="space-y-2">
-                      <div className="rounded-xl bg-[#1f2937] p-3 font-mono text-xs text-slate-300">
-                        <p className="mb-1 text-[10px] text-slate-500">입력</p>
-                        <p className="whitespace-pre-wrap text-cyan-400">
-                          {example.input}
-                        </p>
-                      </div>
-                      <div className="rounded-xl bg-[#1f2937] p-3 font-mono text-xs text-slate-300">
-                        <p className="mb-1 text-[10px] text-slate-500">출력</p>
-                        <p className="text-cyan-400">{example.expected}</p>
-                      </div>
+              {leftPanelTab === "problem" ? (
+                <div className="min-h-0 flex-1 space-y-5 overflow-y-auto p-4 pb-8">
+                  <div>
+                    <h1 className="text-lg font-semibold text-white">
+                      {DUMMY_PROBLEM.title}
+                    </h1>
+                    <div className="mt-3 flex flex-wrap gap-2">
+                      <span
+                        className={`rounded-full border px-2.5 py-1 text-[11px] font-semibold ${DIFFICULTY_COLOR[DUMMY_PROBLEM.difficulty]}`}
+                      >
+                        {DUMMY_PROBLEM.difficulty}
+                      </span>
                     </div>
-                  ))}
-                </section>
-
-                <section>
-                  <p className="mb-2 text-[11px] uppercase tracking-[0.24em] text-slate-500">
-                    제한 사항
-                  </p>
-                  <ul className="space-y-2 pl-4 text-sm leading-6 text-slate-300">
-                    {DUMMY_PROBLEM.constraints.map((constraint) => (
-                      <li key={constraint} className="list-disc">
-                        {constraint}
-                      </li>
-                    ))}
-                  </ul>
-                </section>
-
-                <section>
-                  <p className="mb-2 text-[11px] uppercase tracking-[0.24em] text-slate-500">
-                    힌트
-                  </p>
-                  <div className="rounded-xl border-l-4 border-yellow-400 bg-[#1f2937] px-4 py-3 text-sm leading-6 text-slate-300">
-                    {DUMMY_PROBLEM.hint ??
-                      "문제를 풀다가 막히면 AI 튜터에게 질문해보세요."}
+                    <p className="mt-4 text-sm leading-7 text-slate-300">
+                      {DUMMY_PROBLEM.description}
+                    </p>
                   </div>
-                </section>
 
-                <section>
-                  <p className="mb-2 text-[11px] uppercase tracking-[0.24em] text-slate-500">
-                    지원 문법
-                  </p>
-                  <ul className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-slate-400">
-                    {SUPPORTED_SYNTAX_BY_LANGUAGE.java.map((item) => (
-                      <li key={item} className="flex gap-1.5">
-                        <span className="text-blue/60">•</span>
-                        {item}
-                      </li>
+                  <section>
+                    <p className="mb-2 text-[11px] uppercase tracking-[0.24em] text-slate-500">
+                      입력 / 출력 예시
+                    </p>
+                    {DUMMY_PROBLEM.examples.slice(0, 1).map((example, index) => (
+                      <div key={index} className="space-y-2">
+                        <div className="rounded-xl bg-[#1f2937] p-3 font-mono text-xs text-slate-300">
+                          <p className="mb-1 text-[10px] text-slate-500">입력</p>
+                          <p className="whitespace-pre-wrap text-cyan-400">
+                            {example.input}
+                          </p>
+                        </div>
+                        <div className="rounded-xl bg-[#1f2937] p-3 font-mono text-xs text-slate-300">
+                          <p className="mb-1 text-[10px] text-slate-500">출력</p>
+                          <p className="text-cyan-400">{example.expected}</p>
+                        </div>
+                      </div>
                     ))}
-                  </ul>
-                </section>
-              </div>
+                  </section>
+
+                  <section>
+                    <p className="mb-2 text-[11px] uppercase tracking-[0.24em] text-slate-500">
+                      제한 사항
+                    </p>
+                    <ul className="space-y-2 pl-4 text-sm leading-6 text-slate-300">
+                      {DUMMY_PROBLEM.constraints.map((constraint) => (
+                        <li key={constraint} className="list-disc">
+                          {constraint}
+                        </li>
+                      ))}
+                    </ul>
+                  </section>
+
+                  <section>
+                    <p className="mb-2 text-[11px] uppercase tracking-[0.24em] text-slate-500">
+                      힌트
+                    </p>
+                    <div className="rounded-xl border-l-4 border-yellow-400 bg-[#1f2937] px-4 py-3 text-sm leading-6 text-slate-300">
+                      {DUMMY_PROBLEM.hint ??
+                        "문제를 풀다가 막히면 AI 튜터에게 질문해보세요."}
+                    </div>
+                  </section>
+
+                  <section>
+                    <p className="mb-2 text-[11px] uppercase tracking-[0.24em] text-slate-500">
+                      지원 문법
+                    </p>
+                    <ul className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-slate-400">
+                      {SUPPORTED_SYNTAX_BY_LANGUAGE.java.map((item) => (
+                        <li key={item} className="flex gap-1.5">
+                          <span className="text-blue/60">•</span>
+                          {item}
+                        </li>
+                      ))}
+                    </ul>
+                  </section>
+                </div>
+              ) : (
+                <div className="min-h-0 flex-1 space-y-2 overflow-y-auto p-3">
+                  {STAGE_SECTIONS.map((section, index) => {
+                    const isOpen = openStageTopics.includes(section.topic);
+
+                    return (
+                      <div
+                        key={section.topic}
+                        className="overflow-hidden rounded-lg border border-white/10 bg-white/[0.02]"
+                      >
+                        <button
+                          type="button"
+                          onClick={() => toggleStageTopic(section.topic)}
+                          className="flex w-full items-center gap-2.5 px-3 py-2.5 text-left transition hover:bg-white/[0.04]"
+                          aria-expanded={isOpen}
+                        >
+                          <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-md border border-blue/25 bg-blue/10 text-[11px] font-semibold text-blue">
+                            {index + 1}
+                          </span>
+                          <span className="min-w-0 flex-1 truncate text-sm font-medium text-slate-200">
+                            {section.topic}
+                          </span>
+                          <span className="shrink-0 text-[11px] text-slate-500">
+                            {section.problems.length} · {isOpen ? "−" : "+"}
+                          </span>
+                        </button>
+
+                        {isOpen && (
+                          <div className="space-y-1 border-t border-white/5 px-2 py-2">
+                            {section.problems.map((problem) => {
+                              const isCurrent =
+                                problem.title === DUMMY_PROBLEM.title;
+
+                              return (
+                                <Link
+                                  key={problem.id}
+                                  href={`/study?stageId=${problem.id}`}
+                                  onClick={() => setLeftPanelTab("problem")}
+                                  className={`block truncate rounded-md px-2.5 py-1.5 text-xs transition ${
+                                    isCurrent
+                                      ? "bg-blue/15 font-medium text-blue"
+                                      : "text-slate-400 hover:bg-white/[0.05] hover:text-slate-200"
+                                  }`}
+                                  title={problem.title}
+                                >
+                                  {problem.title}
+                                </Link>
+                              );
+                            })}
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
             </aside>
 
             <div
               className="hidden touch-none select-none xl:flex"
-              onPointerDown={startPanelResize("left")}
+              onPointerDown={startPanelResize}
             >
               <div className="flex w-full cursor-col-resize items-stretch justify-center bg-[#0b0f1a]/70 transition-colors hover:bg-white/5">
                 <div className="my-4 w-px rounded-full bg-white/15" />
@@ -2325,76 +2370,6 @@ export function TestLab({
               </div>
             </section>
 
-            <div
-              className="hidden touch-none select-none xl:flex"
-              onPointerDown={startPanelResize("right")}
-            >
-              <div className="flex w-full cursor-col-resize items-stretch justify-center bg-[#0b0f1a]/70 transition-colors hover:bg-white/5">
-                <div className="my-4 w-px rounded-full bg-white/15" />
-              </div>
-            </div>
-
-            <aside className="flex min-h-0 h-full flex-col overflow-hidden bg-[#0b0f1a]/80">
-              <div className="flex h-11 items-center justify-between border-b border-white/10 bg-[#1f2937] px-4">
-                <span className="text-[11px] uppercase tracking-[0.24em] text-slate-500">
-                  단계별 문제
-                </span>
-              </div>
-
-              <div className="min-h-0 flex-1 space-y-2 overflow-y-auto p-3">
-                {STAGE_SECTIONS.map((section, index) => {
-                  const isOpen = openStageTopics.includes(section.topic);
-
-                  return (
-                    <div
-                      key={section.topic}
-                      className="overflow-hidden rounded-lg border border-white/10 bg-white/[0.02]"
-                    >
-                      <button
-                        type="button"
-                        onClick={() => toggleStageTopic(section.topic)}
-                        className="flex w-full items-center gap-2.5 px-3 py-2.5 text-left transition hover:bg-white/[0.04]"
-                        aria-expanded={isOpen}
-                      >
-                        <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-md border border-blue/25 bg-blue/10 text-[11px] font-semibold text-blue">
-                          {index + 1}
-                        </span>
-                        <span className="min-w-0 flex-1 truncate text-sm font-medium text-slate-200">
-                          {section.topic}
-                        </span>
-                        <span className="shrink-0 text-[11px] text-slate-500">
-                          {section.problems.length} · {isOpen ? "−" : "+"}
-                        </span>
-                      </button>
-
-                      {isOpen && (
-                        <div className="space-y-1 border-t border-white/5 px-2 py-2">
-                          {section.problems.map((problem) => {
-                            const isCurrent =
-                              problem.title === DUMMY_PROBLEM.title;
-
-                            return (
-                              <Link
-                                key={problem.id}
-                                href={`/study?stageId=${problem.id}`}
-                                className={`block truncate rounded-md px-2.5 py-1.5 text-xs transition ${
-                                  isCurrent
-                                    ? "bg-blue/15 font-medium text-blue"
-                                    : "text-slate-400 hover:bg-white/[0.05] hover:text-slate-200"
-                                }`}
-                                title={problem.title}
-                              >
-                                {problem.title}
-                              </Link>
-                            );
-                          })}
-                        </div>
-                      )}
-                    </div>
-                  );
-                })}
-              </div>
-            </aside>
           </div>
 
           {/* 떠 있는 AI 튜터 채팅 위젯 */}

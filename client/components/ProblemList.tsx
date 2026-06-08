@@ -1,75 +1,41 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { AuthModal } from "@/components/AuthModal";
+import { STAGE_SECTIONS, type StageDifficulty } from "@/data/stageProblems";
 
-// ─── 더미 데이터 ────────────────────────────────────────────
-
-type Difficulty = "쉬움" | "보통" | "어려움";
+// ─── 데이터 ──────────────────────────────────────────────────
 
 interface Problem {
   id: number;
   title: string;
   category: string;
-  difficulty: Difficulty;
+  difficulty: StageDifficulty;
   description: string;
 }
 
-const CURATED_PROBLEMS: Problem[] = [
-  {
-    id: 1,
-    title: "투 포인터 입문",
-    category: "배열",
-    difficulty: "쉬움",
-    description:
-      "정렬된 배열에서 두 포인터를 이용해 합이 목표값인 쌍을 찾습니다.",
-  },
-  {
-    id: 2,
-    title: "스택으로 괄호 검사",
-    category: "스택",
-    difficulty: "쉬움",
-    description: "스택 자료구조를 활용해 올바른 괄호 문자열인지 판별합니다.",
-  },
-  {
-    id: 3,
-    title: "BFS로 최단 경로 찾기",
-    category: "그래프",
-    difficulty: "보통",
-    description:
-      "너비 우선 탐색으로 미로에서 출발지부터 목적지까지 최단 거리를 구합니다.",
-  },
-  {
-    id: 4,
-    title: "DP 첫걸음 — 계단 오르기",
-    category: "동적 프로그래밍",
-    difficulty: "보통",
-    description:
-      "n번째 계단에 오르는 방법의 수를 메모이제이션으로 효율적으로 계산합니다.",
-  },
-  {
-    id: 5,
-    title: "재귀로 구현하는 팩토리얼",
-    category: "재귀",
-    difficulty: "쉬움",
-    description:
-      "재귀 함수의 기본 원리를 팩토리얼 계산으로 이해하고 Call Stack 흐름을 시각화합니다.",
-  },
-  {
-    id: 6,
-    title: "다익스트라 기초",
-    category: "그래프",
-    difficulty: "어려움",
-    description:
-      "우선순위 큐를 활용한 다익스트라 알고리즘으로 가중치 그래프의 최단 경로를 구합니다.",
-  },
-];
+// 단계별 문제 전체를 평탄화해 카드용 데이터로 변환
+const ALL_STAGE_PROBLEMS: Problem[] = STAGE_SECTIONS.flatMap((section) =>
+  section.problems.map((problem) => ({
+    id: problem.id,
+    title: problem.title,
+    category: section.topic,
+    difficulty: problem.difficulty,
+    description: problem.description,
+  })),
+);
+
+function pickRandomProblems(count: number): Problem[] {
+  const shuffled = [...ALL_STAGE_PROBLEMS].sort(() => Math.random() - 0.5);
+  return shuffled.slice(0, count);
+}
 
 // ─── 서브 컴포넌트 ──────────────────────────────────────────
 
-const DIFFICULTY_STYLE: Record<Difficulty, string> = {
+const DIFFICULTY_STYLE: Record<StageDifficulty, string> = {
+  입문: "bg-blue/10 text-blue border border-blue/20",
   쉬움: "bg-emerald-400/10 text-emerald-400 border border-emerald-400/20",
   보통: "bg-amber-400/10 text-amber-400 border border-amber-400/20",
   어려움: "bg-rose-400/10 text-rose-400 border border-rose-400/20",
@@ -85,7 +51,7 @@ function ProblemCard({
     href: string,
   ) => void;
 }) {
-  const href = `/study?id=${problem.id}`;
+  const href = `/study?stageId=${problem.id}`;
   return (
     <Link
       href={href}
@@ -119,6 +85,14 @@ export function ProblemList() {
   const router = useRouter();
   // 로그인 안 된 상태에서 누른 문제의 이동 경로 (로그인 성공 시 이동)
   const [pendingHref, setPendingHref] = useState<string | null>(null);
+  // 단계별 문제 중 무작위 6개 (서버/클라이언트 첫 렌더 불일치 방지를 위해 마운트 후 선정)
+  const [curatedProblems, setCuratedProblems] = useState<Problem[]>(() =>
+    ALL_STAGE_PROBLEMS.slice(0, 6),
+  );
+
+  useEffect(() => {
+    setCuratedProblems(pickRandomProblems(6));
+  }, []);
 
   const handleProtectedClick = (
     event: React.MouseEvent<HTMLAnchorElement>,
@@ -158,7 +132,7 @@ export function ProblemList() {
 
         {/* 콘텐츠 */}
         <div className="mt-10 grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
-          {CURATED_PROBLEMS.map((problem) => (
+          {curatedProblems.map((problem) => (
             <ProblemCard
               key={problem.id}
               problem={problem}

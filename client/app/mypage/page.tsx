@@ -3,6 +3,8 @@
 import { Navbar } from "@/components/Navbar";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
+import { STAGE_SECTIONS } from "@/data/stageProblems";
 
 // ─── 타입 ────────────────────────────────────────────────────
 
@@ -132,9 +134,15 @@ function ProblemRow({ problem }: { problem: MyProblem }) {
 
 // ─── 메인 컴포넌트 ──────────────────────────────────────────
 
-type Tab = "solved" | "inprogress" | "created";
+type MainTab = "stage" | "generated";
+type SubTab = "solved" | "inprogress" | "created";
 
-const TABS: { key: Tab; label: string }[] = [
+const MAIN_TABS: { key: MainTab; label: string }[] = [
+  { key: "stage", label: "단계별 학습" },
+  { key: "generated", label: "생성된 문제" },
+];
+
+const SUB_TABS: { key: SubTab; label: string }[] = [
   { key: "solved", label: "풀었던 문제" },
   { key: "inprogress", label: "풀던 문제" },
   { key: "created", label: "생성한 문제" },
@@ -142,11 +150,23 @@ const TABS: { key: Tab; label: string }[] = [
 
 export default function MyPage() {
   const router = useRouter();
-  const [tab, setTab] = useState<Tab>("solved");
+  const [tab, setTab] = useState<MainTab>("stage");
+  const [subTab, setSubTab] = useState<SubTab>("solved");
+  const [openStageTopics, setOpenStageTopics] = useState<string[]>([
+    STAGE_SECTIONS[0]?.topic,
+  ]);
   const [user, setUser] = useState<UserInfo | null>(null);
   const [problems, setProblems] = useState<MyProblem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  const toggleStageTopic = (topic: string) => {
+    setOpenStageTopics((current) =>
+      current.includes(topic)
+        ? current.filter((openTopic) => openTopic !== topic)
+        : [...current, topic],
+    );
+  };
 
   useEffect(() => {
     const token = localStorage.getItem("accessToken");
@@ -197,10 +217,7 @@ export default function MyPage() {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [loading]);
 
-  const filtered = problems.filter((p) => {
-    if (tab === "created") return p.type === "ai" && p.status === "created";
-    return p.status === tab;
-  });
+  const filtered = problems.filter((p) => p.status === subTab);
   const solvedCount = problems.filter((p) => p.status === "solved").length;
   const inProgressCount = problems.filter((p) => p.status === "inprogress").length;
   const createdCount = problems.filter((p) => p.type === "ai" && p.status === "created").length;
@@ -260,51 +277,124 @@ export default function MyPage() {
           </div>
         </div>
 
-        {/* 통계 */}
-        <div className="mb-10 grid grid-cols-3 gap-4">
-          <StatCard label="풀었던 문제" value={solvedCount} sub="개" />
-          <StatCard label="풀던 문제" value={inProgressCount} sub="개" />
-          <StatCard label="생성한 문제" value={createdCount} sub="개" />
-        </div>
-
-        {/* 탭 */}
+        {/* 메인 탭 */}
         <div className="mb-6 flex rounded-xl border border-white/10 bg-white/5 p-1">
-          {TABS.map(({ key, label }) => {
-            const count =
-              key === "solved"
-                ? solvedCount
-                : key === "inprogress"
-                  ? inProgressCount
-                  : createdCount;
-            return (
-              <button
-                key={key}
-                onClick={() => setTab(key)}
-                className={`flex-1 rounded-lg py-2.5 text-sm font-medium transition ${
-                  tab === key
-                    ? "bg-gradient-to-r from-blue to-purple text-white shadow"
-                    : "text-slate-400 hover:text-slate-200"
-                }`}
-              >
-                {label}
-                <span className="ml-1.5 text-xs opacity-70">({count})</span>
-              </button>
-            );
-          })}
+          {MAIN_TABS.map(({ key, label }) => (
+            <button
+              key={key}
+              onClick={() => setTab(key)}
+              className={`flex-1 rounded-lg py-2.5 text-sm font-medium transition ${
+                tab === key
+                  ? "bg-gradient-to-r from-blue to-purple text-white shadow"
+                  : "text-slate-400 hover:text-slate-200"
+              }`}
+            >
+              {label}
+            </button>
+          ))}
         </div>
 
-        {/* 문제 목록 */}
-        {filtered.length > 0 ? (
-          <div className="flex flex-col gap-3">
-            {filtered.map((problem) => (
-              <ProblemRow key={`${problem.type}-${problem.id}`} problem={problem} />
-            ))}
+        {tab === "stage" ? (
+          <div className="space-y-3">
+            {STAGE_SECTIONS.map((section, index) => {
+              const isOpen = openStageTopics.includes(section.topic);
+
+              return (
+                <div
+                  key={section.topic}
+                  className="overflow-hidden rounded-xl border border-white/10 bg-bg2/70"
+                >
+                  <button
+                    type="button"
+                    onClick={() => toggleStageTopic(section.topic)}
+                    className="flex w-full items-center gap-4 px-5 py-4 text-left transition hover:bg-white/[0.04]"
+                    aria-expanded={isOpen}
+                  >
+                    <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-blue/25 bg-blue/10 text-sm font-semibold text-blue">
+                      {index + 1}
+                    </span>
+                    <span className="min-w-0 flex-1">
+                      <span className="block font-semibold text-slate-100">
+                        {section.topic}
+                      </span>
+                      <span className="mt-1 block text-sm leading-5 text-slate-400">
+                        {section.description}
+                      </span>
+                    </span>
+                    <span className="shrink-0 text-sm font-semibold text-slate-400">
+                      {section.problems.length}문제 · {isOpen ? "-" : "+"}
+                    </span>
+                  </button>
+
+                  {isOpen && (
+                    <div className="border-t border-white/10 px-5 py-4">
+                      <div className="space-y-2">
+                        {section.problems.map((problem) => (
+                          <Link
+                            key={problem.id}
+                            href={`/study?stageId=${problem.id}`}
+                            className="group flex flex-col gap-2 rounded-lg border border-white/10 bg-white/[0.03] p-4 transition hover:border-blue/40 hover:bg-white/[0.06]"
+                          >
+                            <span className="min-w-0">
+                              <span className="block text-sm font-semibold text-slate-100 transition group-hover:text-white">
+                                {problem.title}
+                              </span>
+                              <span className="mt-1 block text-xs leading-5 text-slate-500 transition group-hover:text-slate-400">
+                                {problem.description}
+                              </span>
+                            </span>
+                          </Link>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              );
+            })}
           </div>
         ) : (
-          <div className="flex flex-col items-center justify-center py-20 text-slate-500">
-            <p className="mb-4 text-4xl">📭</p>
-            <p className="text-sm">아직 문제가 없어요.</p>
-          </div>
+          <>
+            {/* 통계 */}
+            <div className="mb-6 grid grid-cols-3 gap-4">
+              <StatCard label="풀었던 문제" value={solvedCount} sub="개" />
+              <StatCard label="풀던 문제" value={inProgressCount} sub="개" />
+              <StatCard label="생성한 문제" value={createdCount} sub="개" />
+            </div>
+
+            {/* 서브 탭 */}
+            <div className="mb-6 flex rounded-xl border border-white/10 bg-white/5 p-1">
+              {SUB_TABS.map(({ key, label }) => (
+                <button
+                  key={key}
+                  onClick={() => setSubTab(key)}
+                  className={`flex-1 rounded-lg py-2.5 text-sm font-medium transition ${
+                    subTab === key
+                      ? "bg-gradient-to-r from-blue to-purple text-white shadow"
+                      : "text-slate-400 hover:text-slate-200"
+                  }`}
+                >
+                  {label}
+                  <span className="ml-1.5 text-xs opacity-70">
+                    ({problems.filter((p) => p.status === key).length})
+                  </span>
+                </button>
+              ))}
+            </div>
+
+            {/* 문제 목록 */}
+            {filtered.length > 0 ? (
+              <div className="flex flex-col gap-3">
+                {filtered.map((problem) => (
+                  <ProblemRow key={problem.id} problem={problem} />
+                ))}
+              </div>
+            ) : (
+              <div className="flex flex-col items-center justify-center py-20 text-slate-500">
+                <p className="mb-4 text-4xl">📭</p>
+                <p className="text-sm">아직 문제가 없어요.</p>
+              </div>
+            )}
+          </>
         )}
       </div>
     </div>
