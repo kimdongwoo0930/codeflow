@@ -1363,6 +1363,18 @@ export function TestLab({
     return () => window.removeEventListener("popstate", onPopState);
   }, [phase]);
 
+  // 1분마다 자동 저장 (ref로 최신 코드 참조, 인터벌은 고정)
+  const editorCodeRef = useRef(editorCode);
+  useEffect(() => { editorCodeRef.current = editorCode; }, [editorCode]);
+
+  useEffect(() => {
+    const id = setInterval(() => {
+      if (phase === "editor") saveCodeToServer(editorCodeRef.current);
+    }, 60_000);
+    return () => clearInterval(id);
+  // phase가 바뀔 때만 인터벌 재설정 (editor 진입/이탈 시)
+  }, [phase]);
+
   const lineCount = editorCode.split("\n").length;
   const MONACO_LINE_HEIGHT = 20;
   const languageLabel = "Java";

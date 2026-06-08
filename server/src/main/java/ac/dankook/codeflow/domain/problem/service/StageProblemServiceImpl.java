@@ -91,19 +91,15 @@ public class StageProblemServiceImpl implements StageProblemService {
         stageProblemRepository.findById(id)
                 .orElseThrow(() -> new BusinessException(ErrorCode.STAGE_PROBLEM_NOT_FOUND));
 
-        Optional<UserStageProblem> existing =
-                userStageProblemRepository.findByUserIdAndStageProblemId(userId, id);
+        UserStageProblem progress = userStageProblemRepository
+                .findByUserIdAndStageProblemId(userId, id)
+                .map(existing -> {
+                    existing.updateProgress(request.code(), request.solved());
+                    return existing;
+                })
+                .orElseGet(() -> UserStageProblem.of(userId, id, request.code()));
 
-        if (existing.isPresent()) {
-            existing.get().updateProgress(request.code(), request.solved());
-        } else {
-            userStageProblemRepository.save(
-                    UserStageProblem.of(userId, id, request.code()));
-            if (request.solved()) {
-                existing = userStageProblemRepository.findByUserIdAndStageProblemId(userId, id);
-                existing.ifPresent(u -> u.updateProgress(request.code(), true));
-            }
-        }
+        userStageProblemRepository.save(progress);
     }
 
     @Override
