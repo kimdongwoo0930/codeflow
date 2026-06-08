@@ -6,7 +6,7 @@ type RawProblem = {
   topic: string;
   title: string;
   description: string;
-  constraints: string;
+  constraints: string[];
   input_example: string;
   output_example: string;
   starter_code: string;
@@ -18,7 +18,7 @@ export type StageProblem = {
   title: string;
   difficulty: StageDifficulty;
   description: string;
-  constraints: string;
+  constraints: string[];
   inputExample: string;
   outputExample: string;
   starterCode: string;

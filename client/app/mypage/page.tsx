@@ -4,7 +4,6 @@ import { Navbar } from "@/components/Navbar";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { STAGE_SECTIONS } from "@/data/stageProblems";
 
 // ─── 타입 ────────────────────────────────────────────────────
 
@@ -19,6 +18,23 @@ interface MyProblem {
   status: ProblemStatus;
   date: string;
   type: ProblemType;
+}
+
+interface StageProblemSummary {
+  id: number;
+  title: string;
+  topic: string;
+  difficulty: string;
+  description: string;
+  status: "IN_PROGRESS" | "SOLVED" | null;
+}
+
+interface StageSection {
+  topic: string;
+  description: string;
+  totalCount: number;
+  solvedCount: number;
+  problems: StageProblemSummary[];
 }
 
 interface UserInfo {
@@ -46,17 +62,26 @@ function authHeaders() {
   return token ? { Authorization: `Bearer ${token}` } : {};
 }
 
-// AI 문제 status 정규화
 function normalizeAiStatus(status: string): ProblemStatus {
   if (status === "solved") return "solved";
   if (status === "inprogress") return "inprogress";
   return "created";
 }
 
-// 단계별 문제 status 정규화
-function normalizeStageStatus(status: string): ProblemStatus {
-  if (status === "SOLVED") return "solved";
-  return "inprogress";
+function StatusBadge({ status }: { status: StageProblemSummary["status"] }) {
+  if (status === "SOLVED")
+    return (
+      <span className="rounded-full border border-emerald-400/30 bg-emerald-400/10 px-2 py-0.5 text-[10px] font-semibold text-emerald-400">
+        완료
+      </span>
+    );
+  if (status === "IN_PROGRESS")
+    return (
+      <span className="rounded-full border border-amber-400/30 bg-amber-400/10 px-2 py-0.5 text-[10px] font-semibold text-amber-400">
+        진행중
+      </span>
+    );
+  return null;
 }
 
 // ─── 서브 컴포넌트 ──────────────────────────────────────────
@@ -99,15 +124,6 @@ function ProblemRow({ problem }: { problem: MyProblem }) {
           {problem.title}
         </p>
         <div className="flex items-center gap-2">
-          <span
-            className={`rounded-full px-2 py-0.5 text-[10px] font-semibold border ${
-              problem.type === "stage"
-                ? "border-purple/30 bg-purple/10 text-purple-300"
-                : "border-blue/20 bg-blue/10 text-blue"
-            }`}
-          >
-            {problem.type === "stage" ? "단계별" : "AI"}
-          </span>
           <span className="rounded-full border border-blue/20 bg-blue/10 px-2.5 py-0.5 text-xs font-medium text-blue">
             {problem.topic}
           </span>
@@ -118,7 +134,6 @@ function ProblemRow({ problem }: { problem: MyProblem }) {
           </span>
         </div>
       </div>
-
       <div className="flex items-center justify-between sm:ml-4 sm:justify-end sm:gap-3">
         <span className="text-xs text-slate-500">{problem.date}</span>
         <a
@@ -152,18 +167,17 @@ export default function MyPage() {
   const router = useRouter();
   const [tab, setTab] = useState<MainTab>("stage");
   const [subTab, setSubTab] = useState<SubTab>("solved");
-  const [openStageTopics, setOpenStageTopics] = useState<string[]>([
-    STAGE_SECTIONS[0]?.topic,
-  ]);
+  const [openStageTopics, setOpenStageTopics] = useState<string[]>([]);
   const [user, setUser] = useState<UserInfo | null>(null);
-  const [problems, setProblems] = useState<MyProblem[]>([]);
+  const [aiProblems, setAiProblems] = useState<MyProblem[]>([]);
+  const [stageSections, setStageSections] = useState<StageSection[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   const toggleStageTopic = (topic: string) => {
     setOpenStageTopics((current) =>
       current.includes(topic)
-        ? current.filter((openTopic) => openTopic !== topic)
+        ? current.filter((t) => t !== topic)
         : [...current, topic],
     );
   };
@@ -178,10 +192,10 @@ export default function MyPage() {
     const fetchData = async () => {
       try {
         const headers = authHeaders() as Record<string, string>;
-        const [userRes, aiProblemsRes, stageProblemsRes] = await Promise.all([
+        const [userRes, aiProblemsRes, stageSectionsRes] = await Promise.all([
           fetch("/api/user/me", { headers }).then((r) => r.json()),
           fetch("/api/v1/problems/my", { headers }).then((r) => r.json()),
-          fetch("/api/v1/stage-problems/my", { headers }).then((r) => r.json()),
+          fetch("/api/v1/stage-problems/sections", { headers }).then((r) => r.json()),
         ]);
 
         if (userRes.success) setUser(userRes.data);
@@ -194,17 +208,13 @@ export default function MyPage() {
             type: "ai" as ProblemType,
           }),
         );
+        setAiProblems(aiList);
 
-        const stageList: MyProblem[] = (stageProblemsRes.success ? stageProblemsRes.data ?? [] : []).map(
-          (p: { id: number; title: string; topic: string; difficulty: string; status: string; date: string }) => ({
-            ...p,
-            status: normalizeStageStatus(p.status),
-            type: "stage" as ProblemType,
-          }),
-        );
-
-        // 단계별 문제는 created 탭에 없고, solved/inprogress만
-        setProblems([...aiList, ...stageList]);
+        if (stageSectionsRes.success && stageSectionsRes.data) {
+          setStageSections(stageSectionsRes.data);
+          // 첫 섹션 기본 열기
+          setOpenStageTopics([stageSectionsRes.data[0]?.topic]);
+        }
       } catch (e) {
         console.error("마이페이지 로드 실패:", e);
         setError("서버에 연결할 수 없어요. 잠시 후 다시 시도해 주세요.");
@@ -214,13 +224,15 @@ export default function MyPage() {
     };
 
     fetchData();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [loading]);
 
-  const filtered = problems.filter((p) => p.status === subTab);
-  const solvedCount = problems.filter((p) => p.status === "solved").length;
-  const inProgressCount = problems.filter((p) => p.status === "inprogress").length;
-  const createdCount = problems.filter((p) => p.type === "ai" && p.status === "created").length;
+  const filtered = aiProblems.filter((p) =>
+    subTab === "created" ? p.status === "created" : p.status === subTab,
+  );
+  const solvedCount = aiProblems.filter((p) => p.status === "solved").length;
+  const inProgressCount = aiProblems.filter((p) => p.status === "inprogress").length;
+  const createdCount = aiProblems.filter((p) => p.status === "created").length;
 
   if (loading) {
     return (
@@ -295,9 +307,14 @@ export default function MyPage() {
         </div>
 
         {tab === "stage" ? (
+          /* ── 단계별 학습 탭 ── */
           <div className="space-y-3">
-            {STAGE_SECTIONS.map((section, index) => {
+            {stageSections.map((section, index) => {
               const isOpen = openStageTopics.includes(section.topic);
+              const progressPct =
+                section.totalCount > 0
+                  ? Math.round((section.solvedCount / section.totalCount) * 100)
+                  : 0;
 
               return (
                 <div
@@ -321,8 +338,18 @@ export default function MyPage() {
                         {section.description}
                       </span>
                     </span>
-                    <span className="shrink-0 text-sm font-semibold text-slate-400">
-                      {section.problems.length}문제 · {isOpen ? "-" : "+"}
+                    <span className="flex shrink-0 flex-col items-end gap-1">
+                      <span className="text-sm font-semibold text-slate-400">
+                        {section.solvedCount}/{section.totalCount} · {isOpen ? "-" : "+"}
+                      </span>
+                      {section.solvedCount > 0 && (
+                        <span className="h-1 w-16 overflow-hidden rounded-full bg-white/10">
+                          <span
+                            className="block h-full rounded-full bg-emerald-400"
+                            style={{ width: `${progressPct}%` }}
+                          />
+                        </span>
+                      )}
                     </span>
                   </button>
 
@@ -333,7 +360,7 @@ export default function MyPage() {
                           <Link
                             key={problem.id}
                             href={`/study?stageId=${problem.id}`}
-                            className="group flex flex-col gap-2 rounded-lg border border-white/10 bg-white/[0.03] p-4 transition hover:border-blue/40 hover:bg-white/[0.06]"
+                            className="group flex items-start justify-between gap-2 rounded-lg border border-white/10 bg-white/[0.03] p-4 transition hover:border-blue/40 hover:bg-white/[0.06]"
                           >
                             <span className="min-w-0">
                               <span className="block text-sm font-semibold text-slate-100 transition group-hover:text-white">
@@ -343,6 +370,7 @@ export default function MyPage() {
                                 {problem.description}
                               </span>
                             </span>
+                            <StatusBadge status={problem.status} />
                           </Link>
                         ))}
                       </div>
@@ -353,15 +381,14 @@ export default function MyPage() {
             })}
           </div>
         ) : (
+          /* ── 생성된 문제 탭 ── */
           <>
-            {/* 통계 */}
             <div className="mb-6 grid grid-cols-3 gap-4">
               <StatCard label="풀었던 문제" value={solvedCount} sub="개" />
               <StatCard label="풀던 문제" value={inProgressCount} sub="개" />
               <StatCard label="생성한 문제" value={createdCount} sub="개" />
             </div>
 
-            {/* 서브 탭 */}
             <div className="mb-6 flex rounded-xl border border-white/10 bg-white/5 p-1">
               {SUB_TABS.map(({ key, label }) => (
                 <button
@@ -375,17 +402,16 @@ export default function MyPage() {
                 >
                   {label}
                   <span className="ml-1.5 text-xs opacity-70">
-                    ({problems.filter((p) => p.status === key).length})
+                    ({aiProblems.filter((p) => p.status === key).length})
                   </span>
                 </button>
               ))}
             </div>
 
-            {/* 문제 목록 */}
             {filtered.length > 0 ? (
               <div className="flex flex-col gap-3">
                 {filtered.map((problem) => (
-                  <ProblemRow key={problem.id} problem={problem} />
+                  <ProblemRow key={`ai-${problem.id}`} problem={problem} />
                 ))}
               </div>
             ) : (
