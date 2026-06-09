@@ -77,10 +77,10 @@ function indentJavaCode(code: string): string {
     .join("\n");
 }
 
-// JSON 문제는 DB id가 없으므로 배열 인덱스를 안정적인 id로 사용한다.
+// 백엔드 DB가 1-based 순번 id로 저장하므로 index + 1 을 id로 사용한다.
 export const STAGE_PROBLEMS: StageProblem[] = (rawProblems as RawProblem[]).map(
   (problem, index) => ({
-    id: index,
+    id: index + 1,
     topic: problem.topic,
     title: problem.title,
     difficulty: TOPIC_DIFFICULTY[problem.topic] ?? "보통",
@@ -113,5 +113,5 @@ export const STAGE_SECTIONS: StageSection[] = (() => {
 })();
 
 export function getStageProblem(id: number): StageProblem | undefined {
-  return STAGE_PROBLEMS[id];
+  return STAGE_PROBLEMS.find((p) => p.id === id);
 }
