@@ -12,6 +12,7 @@ import ac.dankook.codeflow.domain.problem.dto.MyStageProgressDto;
 import ac.dankook.codeflow.domain.problem.dto.StageProblemDetailDto;
 import ac.dankook.codeflow.domain.problem.dto.StageSectionDto;
 import ac.dankook.codeflow.domain.problem.dto.StageProgressRequestDto;
+import ac.dankook.codeflow.domain.problem.dto.SubmitResponseDto;
 import ac.dankook.codeflow.domain.problem.service.StageProblemService;
 import ac.dankook.codeflow.global.response.CommonResponse;
 import lombok.RequiredArgsConstructor;
@@ -42,6 +43,15 @@ public class StageProblemController {
             @RequestBody StageProgressRequestDto request) {
         stageProblemService.saveProgress(id, request);
         return ResponseEntity.ok(CommonResponse.success(null));
+    }
+
+    /** 단계별 문제 채점 */
+    @PostMapping("/{id}/submit")
+    public ResponseEntity<CommonResponse<SubmitResponseDto>> submit(
+            @PathVariable Long id,
+            @RequestBody java.util.Map<String, String> body) throws Exception {
+        String sourceCode = body.get("sourceCode");
+        return ResponseEntity.ok(CommonResponse.success(stageProblemService.submit(id, sourceCode)));
     }
 
     /** 마이페이지: 유저가 시도한 단계별 문제 목록 */

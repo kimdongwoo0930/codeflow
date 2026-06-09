@@ -16,6 +16,8 @@ import ac.dankook.codeflow.domain.problem.dto.StageProblemDetailDto;
 import ac.dankook.codeflow.domain.problem.dto.StageProblemSummaryDto;
 import ac.dankook.codeflow.domain.problem.dto.StageSectionDto;
 import ac.dankook.codeflow.domain.problem.dto.StageProgressRequestDto;
+import ac.dankook.codeflow.domain.problem.dto.SubmitResponseDto;
+import ac.dankook.codeflow.domain.visualizer.service.DockerTracker;
 import ac.dankook.codeflow.domain.problem.entity.StageProblem;
 import ac.dankook.codeflow.domain.problem.entity.UserStageProblem;
 import ac.dankook.codeflow.domain.problem.repository.StageProblemRepository;
@@ -31,6 +33,7 @@ public class StageProblemServiceImpl implements StageProblemService {
 
     private final StageProblemRepository stageProblemRepository;
     private final UserStageProblemRepository userStageProblemRepository;
+    private final DockerTracker dockerTracker;
 
     @Override
     public List<StageSectionDto> getSections() {
@@ -124,6 +127,42 @@ public class StageProblemServiceImpl implements StageProblemService {
             return new MyStageProgressDto(p.getId(), p.getTitle(), p.getTopic(),
                     p.getDifficulty(), u.getStatus().name(), date);
         }).filter(d -> d != null).toList();
+    }
+
+    @Override
+    @Transactional
+    public SubmitResponseDto submit(Long id, String sourceCode) throws Exception {
+        StageProblem p = stageProblemRepository.findById(id)
+                .orElseThrow(() -> new BusinessException(ErrorCode.STAGE_PROBLEM_NOT_FOUND));
+
+        DockerTracker.TraceResult result;
+        try {
+            result = dockerTracker.runAndTrace(sourceCode, p.getInputExample());
+        } catch (RuntimeException e) {
+            String msg = e.getMessage() != null ? e.getMessage() : "실행 중 오류가 발생했습니다.";
+            String compileError = msg.startsWith("컴파일 오류:\n") ? msg.substring("컴파일 오류:\n".length()) : msg;
+            return new SubmitResponseDto(false, "", "", null, "컴파일 오류가 있어요.\n\n" + compileError);
+        }
+
+        String actual = result.programOutput().trim();
+        String expected = p.getOutputExample() == null ? "" : p.getOutputExample().trim();
+        boolean passed = actual.equals(expected);
+
+        // 진행 상태 저장
+        Long userId = getCurrentUserId();
+        if (userId != null) {
+            UserStageProblem progress = userStageProblemRepository
+                    .findByUserIdAndStageProblemId(userId, id)
+                    .map(existing -> {
+                        existing.updateProgress(sourceCode, passed);
+                        return existing;
+                    })
+                    .orElseGet(() -> UserStageProblem.of(userId, id, sourceCode));
+            if (passed) progress.updateProgress(sourceCode, true);
+            userStageProblemRepository.save(progress);
+        }
+
+        return new SubmitResponseDto(passed, actual, expected, result.traceJson(), null);
     }
 
     private Long getCurrentUserId() {

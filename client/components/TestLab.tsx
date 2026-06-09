@@ -1550,17 +1550,21 @@ export function TestLab({
       const token = typeof window !== "undefined"
         ? localStorage.getItem("accessToken")
         : null;
-      const res = await fetch("/api/v1/problems/submit", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          ...(token ? { Authorization: `Bearer ${token}` } : {}),
-        },
-        body: JSON.stringify({
-          problemId: DUMMY_PROBLEM.problemId,
-          sourceCode: editorCode,
-        }),
-      });
+      const headers: Record<string, string> = {
+        "Content-Type": "application/json",
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      };
+
+      // 단계별 문제는 전용 채점 엔드포인트 사용
+      const stageProblemId = DUMMY_PROBLEM.stageProblemId;
+      const url = stageProblemId
+        ? `/api/v1/stage-problems/${stageProblemId}/submit`
+        : "/api/v1/problems/submit";
+      const body = stageProblemId
+        ? JSON.stringify({ sourceCode: editorCode })
+        : JSON.stringify({ problemId: DUMMY_PROBLEM.problemId, sourceCode: editorCode });
+
+      const res = await fetch(url, { method: "POST", headers, body });
       const json = await res.json();
       const result = json?.data;
       const passed: boolean = result?.passed ?? false;
