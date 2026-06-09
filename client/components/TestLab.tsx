@@ -1319,6 +1319,9 @@ export function TestLab({
   const [leftPanelTab, setLeftPanelTab] = useState<"problem" | "stage">(
     "problem",
   );
+  const [stageStatusMap, setStageStatusMap] = useState<
+    Record<number, "IN_PROGRESS" | "SOLVED" | null>
+  >({});
   // 단계별 문제 리스트에서 펼쳐진 topic (기본: 현재 문제가 속한 topic)
   const [openStageTopics, setOpenStageTopics] = useState<string[]>(() => {
     const current = STAGE_SECTIONS.find((section) =>
@@ -1350,6 +1353,26 @@ export function TestLab({
   } | null>(null);
 
   const maxIndex = (trace?.snapshots.length ?? 1) - 1;
+
+  useEffect(() => {
+    const token = typeof window !== "undefined" ? localStorage.getItem("accessToken") : null;
+    if (!token) return;
+    fetch("/api/v1/stage-problems/sections", {
+      headers: { Authorization: `Bearer ${token}` },
+    })
+      .then((r) => r.json())
+      .then((json) => {
+        if (!json?.success || !json?.data) return;
+        const map: Record<number, "IN_PROGRESS" | "SOLVED" | null> = {};
+        for (const section of json.data) {
+          for (const p of section.problems) {
+            map[p.id] = p.status;
+          }
+        }
+        setStageStatusMap(map);
+      })
+      .catch(() => {});
+  }, []);
 
   // 채점 결과 페이지에서 브라우저 뒤로가기 차단
   useEffect(() => {
@@ -1886,19 +1909,30 @@ export function TestLab({
                               const isCurrent =
                                 problem.title === DUMMY_PROBLEM.title;
 
+                              const status = stageStatusMap[problem.id];
                               return (
                                 <Link
                                   key={problem.id}
                                   href={`/study?stageId=${problem.id}`}
                                   onClick={() => setLeftPanelTab("problem")}
-                                  className={`block truncate rounded-md px-2.5 py-1.5 text-xs transition ${
+                                  className={`flex items-center justify-between gap-1 rounded-md px-2.5 py-1.5 text-xs transition ${
                                     isCurrent
                                       ? "bg-blue/15 font-medium text-blue"
                                       : "text-slate-400 hover:bg-white/[0.05] hover:text-slate-200"
                                   }`}
                                   title={problem.title}
                                 >
-                                  {problem.title}
+                                  <span className="truncate">{problem.title}</span>
+                                  {status === "SOLVED" && (
+                                    <span className="shrink-0 whitespace-nowrap rounded-full border border-emerald-400/30 bg-emerald-400/10 px-1.5 py-0.5 text-[9px] font-semibold text-emerald-400">
+                                      완료
+                                    </span>
+                                  )}
+                                  {status === "IN_PROGRESS" && (
+                                    <span className="shrink-0 whitespace-nowrap rounded-full border border-amber-400/30 bg-amber-400/10 px-1.5 py-0.5 text-[9px] font-semibold text-amber-400">
+                                      진행중
+                                    </span>
+                                  )}
                                 </Link>
                               );
                             })}
