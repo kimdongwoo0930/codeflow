@@ -229,47 +229,13 @@ const SNAPSHOTS: Snapshot[] = [
   },
 ];
 
-// ─── AI Quick Prompts & Responses ─────────────────────────
-const QUICK_PROMPTS: Record<number, string[]> = {
-  1: ["배열이 힙에 저장되는 이유?", "스택과 힙 차이?"],
-  2: ["기본형은 왜 스택에?", "참조형 설명해주세요"],
-  3: ["i가 1부터 시작하는 이유?", "for문 구조 설명"],
-  4: ["max가 왜 바뀌었나요?", "비교 연산자 설명"],
-  5: ["조건이 false이면?", "if문 동작 원리"],
-  6: ["반복은 언제 끝나요?", "배열 인덱스 범위"],
-  7: ["i가 사라진 이유?", "시간복잡도는?"],
-};
-
-const AI_RESPONSES: Record<string, string> = {
-  "배열이 힙에 저장되는 이유?":
-    "Java에서 배열은 객체(Object)로 취급됩니다. 객체는 크기가 동적이라 스택에 올릴 수 없어 힙에 저장됩니다. 스택에는 힙 주소(참조값)만 올라갑니다.",
-  "스택과 힙 차이?":
-    "스택은 메서드 호출/기본형을 관리하고 LIFO 구조입니다. 힙은 객체/배열을 저장하며 GC가 관리합니다. 스택은 빠르지만 크기가 제한적이고, 힙은 큰 대신 관리 비용이 있습니다.",
-  "기본형은 왜 스택에?":
-    "int, boolean 같은 기본형(primitive)은 크기가 고정되어 있어 스택에 값 자체를 직접 저장합니다. 반면 배열/객체는 크기가 가변적이라 힙에 두고 참조만 스택에 저장합니다.",
-  "참조형 설명해주세요":
-    "배열, String, 직접 만든 클래스가 참조형입니다. 스택의 변수에는 실제 데이터가 아닌 힙 주소(→ 0xB1 같은)가 들어 있고, 실제 데이터는 힙에 있습니다.",
-  "i가 1부터 시작하는 이유?":
-    "arr[0]은 이미 max의 초기값으로 사용했으므로 비교할 필요가 없습니다. i=1부터 시작하면 불필요한 비교 1회를 줄일 수 있어요.",
-  "for문 구조 설명":
-    "`for (초기화; 조건; 증감)` 순으로 실행됩니다. `int i = 1`(초기화) → `i < arr.length`(조건, false이면 종료) → `i++`(매 반복 후 증가).",
-  "max가 왜 바뀌었나요?":
-    "arr[1]=9가 현재 max=3보다 크므로 `arr[i] > max` 조건이 true입니다. 따라서 `max = arr[i]`가 실행되어 max가 9로 갱신됩니다.",
-  "비교 연산자 설명":
-    "`>`는 '크다'를 의미합니다. `arr[i] > max`는 arr[i]가 max보다 클 때 true입니다. 관련 연산자: `>`, `<`, `>=`, `<=`, `==`(같다), `!=`(다르다).",
-  "조건이 false이면?":
-    "if 조건이 false이면 블록 안 코드를 건너뜁니다. 이 경우 max는 변경되지 않고 i++로 넘어가 다음 반복이 시작됩니다.",
-  "if문 동작 원리":
-    "if (조건)이 true이면 블록 안 코드를 실행하고, false이면 건너뜁니다. else가 없으면 false 시 아무 작업도 하지 않습니다.",
-  "반복은 언제 끝나요?":
-    "`i < arr.length` 즉 `i < 4` 조건이 false가 되는 순간, 즉 i=4가 되면 반복이 끝납니다. i=3일 때가 마지막 반복(arr[3])입니다.",
-  "배열 인덱스 범위":
-    "배열의 유효 인덱스는 0부터 length-1까지입니다. arr.length=4이면 arr[0]~arr[3]이 유효하며, arr[4]에 접근하면 ArrayIndexOutOfBoundsException이 발생합니다.",
-  "i가 사라진 이유?":
-    "for문이 끝나면서 블록 스코프가 종료됩니다. `i`는 for 초기화 부분에서 선언됐으므로 for 블록이 끝나면 스택 프레임에서 제거됩니다.",
-  "시간복잡도는?":
-    "배열 최댓값을 찾으려면 모든 원소를 최소 한 번 확인해야 합니다. 따라서 최선/최악 모두 O(n)이며, 이미 최적 알고리즘을 사용하고 있습니다!",
-};
+// ─── AI Quick Prompts ─────────────────────────────────────
+const QUICK_PROMPTS = [
+  "이 단계에서 무슨 일이 일어나고 있나요?",
+  "스택과 힙 차이가 뭔가요?",
+  "이 변수가 왜 이 값인가요?",
+  "다음에 무슨 일이 일어나나요?",
+];
 
 // ─── Helpers ──────────────────────────────────────────────
 function getChangedVars(current: Snapshot, prev: Snapshot | null): Set<string> {
@@ -309,11 +275,12 @@ export default function VisualizationPage() {
   const [chatMessages, setChatMessages] = useState<ChatMessage[]>([
     {
       role: "ai",
-      content:
-        "배열 최댓값 찾기 알고리즘의 실행 과정을 단계별로 확인할 수 있어요. 스택과 힙 메모리가 어떻게 변하는지 살펴보세요!",
+      content: "코드 실행 과정을 단계별로 확인할 수 있어요. 스택과 힙 메모리가 어떻게 변하는지 살펴보세요!",
     },
   ]);
   const [chatInput, setChatInput] = useState("");
+  const [isTutorLoading, setIsTutorLoading] = useState(false);
+  const [problemTitle, setProblemTitle] = useState("코드 시각화");
 
   // ── Panel widths (resizable) ────────────────────────────
   const [codePanelWidth,  setCodePanelWidth]  = useState(320);
@@ -358,6 +325,7 @@ export default function VisualizationPage() {
       setSnapshots(transformed);
       setCodeLines(data.sourceCode.split("\n"));
       setStepIndex(0);
+      setProblemTitle(data.title ?? "코드 시각화");
       setChatMessages([{
         role: "ai",
         content: `"${data.title}" 문제의 실행 과정을 단계별로 확인할 수 있어요. 스택과 힙 메모리가 어떻게 변하는지 살펴보세요!`,
@@ -423,7 +391,7 @@ export default function VisualizationPage() {
   const newVars = getNewVars(snap, prevSnap);
   const allVars = snap.frames.flatMap((f) => f.vars);
   const activeArrayIndex = getActiveArrayIndex(allVars);
-  const quickPrompts = QUICK_PROMPTS[snap.step] ?? ["이 단계 설명", "다음에 무슨 일이?"];
+  const quickPrompts = QUICK_PROMPTS;
 
   // Auto-play
   useEffect(() => {
@@ -461,18 +429,45 @@ export default function VisualizationPage() {
     }
   };
 
-  const handleSend = (msg?: string) => {
+  const handleSend = async (msg?: string) => {
     const text = (msg ?? chatInput).trim();
-    if (!text) return;
+    if (!text || isTutorLoading) return;
+
     setChatMessages((prev) => [...prev, { role: "user", content: text }]);
     setChatInput("");
-    const response =
-      AI_RESPONSES[text] ??
-      "좋은 질문이에요! 현재 스냅샷의 스택과 힙 변화를 주의깊게 살펴보면 힌트를 찾을 수 있어요.";
-    setTimeout(
-      () => setChatMessages((prev) => [...prev, { role: "ai", content: response }]),
-      380
-    );
+    setIsTutorLoading(true);
+
+    // 현재 스냅샷 컨텍스트 구성
+    const vars = snap.frames.flatMap((f) => f.vars)
+      .map((v) => `${v.name}(${v.type})=${v.value}`).join(", ");
+    const heapInfo = snap.heap.map((h) => `${h.addr}:${h.typeLabel}[${h.rawValues}]`).join(", ");
+    const context = `[현재 실행 상태] Line ${snap.line} | 스택: ${vars || "없음"} | 힙: ${heapInfo || "없음"} | 출력: ${snap.output || "없음"}`;
+
+    try {
+      const res = await fetch("/api/v1/problems/hint", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          topic: problemTitle,
+          difficulty: "시각화",
+          problem: context,
+          userCode: codeLines.join("\n"),
+          question: text,
+        }),
+      });
+      const answer = await res.text();
+      setChatMessages((prev) => [...prev, {
+        role: "ai",
+        content: answer || "답변을 가져오지 못했어요. 다시 시도해보세요.",
+      }]);
+    } catch {
+      setChatMessages((prev) => [...prev, {
+        role: "ai",
+        content: "AI 튜터 연결에 실패했어요. 잠시 후 다시 시도해보세요.",
+      }]);
+    } finally {
+      setIsTutorLoading(false);
+    }
   };
 
   return (
@@ -983,10 +978,25 @@ export default function VisualizationPage() {
 
           {/* Input */}
           <div className="shrink-0 border-t border-white/10 p-4">
+            {isTutorLoading && (
+              <div className="mb-2 flex items-center gap-2 px-1">
+                <div className="flex gap-1">
+                  {[0, 1, 2].map((i) => (
+                    <span
+                      key={i}
+                      className="inline-block h-1.5 w-1.5 animate-bounce rounded-full bg-blue/60"
+                      style={{ animationDelay: `${i * 0.15}s` }}
+                    />
+                  ))}
+                </div>
+                <span className="text-[11px] text-slate-500">AI가 답변을 생성 중이에요...</span>
+              </div>
+            )}
             <div className="flex gap-2">
               <textarea
                 rows={1}
                 value={chatInput}
+                disabled={isTutorLoading}
                 onChange={(e) => setChatInput(e.target.value)}
                 onKeyDown={(e) => {
                   if (e.key === "Enter" && !e.shiftKey) {
@@ -995,11 +1005,12 @@ export default function VisualizationPage() {
                   }
                 }}
                 placeholder="현재 스냅샷에 대해 질문하세요..."
-                className="min-h-[42px] flex-1 resize-none rounded-xl border border-white/15 bg-[#1f2937] px-3 py-2 text-sm text-white outline-none transition placeholder:text-slate-500 focus:border-blue/40"
+                className="min-h-[42px] flex-1 resize-none rounded-xl border border-white/15 bg-[#1f2937] px-3 py-2 text-sm text-white outline-none transition placeholder:text-slate-500 focus:border-blue/40 disabled:opacity-50"
               />
               <button
                 onClick={() => handleSend()}
-                className="flex h-[42px] w-[42px] shrink-0 items-center justify-center rounded-xl bg-blue text-sm font-semibold text-white transition hover:opacity-90"
+                disabled={isTutorLoading}
+                className="flex h-[42px] w-[42px] shrink-0 items-center justify-center rounded-xl bg-blue text-sm font-semibold text-white transition hover:opacity-90 disabled:opacity-50"
               >
                 ↑
               </button>

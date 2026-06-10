@@ -140,8 +140,15 @@ function StudyPageInner() {
   useEffect(() => {
     // 단계별 문제: API에서 가져오기 (lastCode 포함)
     if (stageIdParam) {
+      // stageId가 바뀌면 즉시 이전 문제 초기화 + 로딩 상태로
+      setProblem(undefined);
+      setFetchDone(false);
+
+      const controller = new AbortController();
+
       fetch(`/api/v1/stage-problems/${stageIdParam}`, {
         headers: authHeaders(),
+        signal: controller.signal,
       })
         .then((r) => r.json())
         .then((res) => {
@@ -149,7 +156,7 @@ function StudyPageInner() {
             const data = res.data as StageProblemDetail;
             setProblem(mapStageApiToProblem(data));
 
-            // 처음 진입 시 진행 중으로 등록 (이미 기록 있으면 서버에서 무시)
+            // 처음 진입 시 진행 중으로 등록
             const token = localStorage.getItem("accessToken");
             if (token && !data.status) {
               fetch(`/api/v1/stage-problems/${stageIdParam}/progress`, {
@@ -166,9 +173,10 @@ function StudyPageInner() {
             }
           }
         })
-        .catch(() => {})
+        .catch((e) => { if (e?.name !== "AbortError") console.error(e); })
         .finally(() => setFetchDone(true));
-      return;
+
+      return () => controller.abort();
     }
 
     // URL에 problemId가 있으면 API에서 직접 fetch

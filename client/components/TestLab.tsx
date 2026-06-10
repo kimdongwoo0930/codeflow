@@ -1390,20 +1390,23 @@ export function TestLab({
   const editorCodeRef = useRef(editorCode);
   useEffect(() => { editorCodeRef.current = editorCode; }, [editorCode]);
 
-  // 단계별 문제 전환 시: 현재 코드 저장 → 새 문제 코드로 교체
-  const prevStageIdRef = useRef(problemProp?.stageProblemId);
+  // 단계별 문제 전환 시: 새 문제 코드로 에디터 교체
+  // study/page.tsx가 문제 전환 시 즉시 undefined로 리셋 후 새 문제를 세팅하므로
+  // problemProp이 undefined → 새값으로 바뀌는 패턴을 감지한다
+  const prevStageIdRef = useRef<number | null | undefined>(null);
   useEffect(() => {
+    const next = problemProp?.stageProblemId ?? null;
+    if (prevStageIdRef.current === next) return;
     const prev = prevStageIdRef.current;
-    const next = problemProp?.stageProblemId;
-    if (prev === next) return;
     prevStageIdRef.current = next;
-    if (prev === undefined) return; // 첫 마운트는 스킵
 
-    // 이전 문제 코드 저장
-    saveCodeToServer(editorCodeRef.current);
+    // 새 문제가 로드됐을 때만 에디터 갱신 (null이면 로딩 중)
+    if (next === null || problemProp === undefined) return;
 
-    // 새 문제 코드로 에디터 초기화
-    setEditorCode(problemProp?.lastCode ?? problemProp?.startCode ?? JAVA_DEFAULT_CODE);
+    // 이전 문제가 있었으면 코드 저장
+    if (prev !== null) saveCodeToServer(editorCodeRef.current);
+
+    setEditorCode(problemProp.lastCode ?? problemProp.startCode ?? JAVA_DEFAULT_CODE);
     setPhase("editor");
     setTrace(null);
     setTestResults(null);
@@ -1619,20 +1622,21 @@ export function TestLab({
               feedback: aiFeedback || `예상 출력: "${expected}" / 실제 출력: "${output}"`,
             },
       );
+      // 통과 여부와 무관하게 현재 문제 정보를 항상 저장 (시각화 페이지 복귀용)
+      sessionStorage.setItem(
+        "visualizationData",
+        JSON.stringify({
+          sourceCode: editorCode,
+          trace: result?.trace ?? [],
+          programOutput: output,
+          title: DUMMY_PROBLEM.title,
+          problemId: DUMMY_PROBLEM.problemId ?? null,
+          stageProblemId: DUMMY_PROBLEM.stageProblemId ?? null,
+        }),
+      );
       if (passed) {
         saveCodeToServer(editorCode, true);
         setTrace(generateTrace(editorCode, "java"));
-        sessionStorage.setItem(
-          "visualizationData",
-          JSON.stringify({
-            sourceCode: editorCode,
-            trace: result?.trace ?? [],
-            programOutput: output,
-            title: DUMMY_PROBLEM.title,
-            problemId: DUMMY_PROBLEM.problemId ?? null,
-            stageProblemId: DUMMY_PROBLEM.stageProblemId ?? null,
-          }),
-        );
       }
       setPhase("result");
     } catch {
@@ -1647,18 +1651,15 @@ export function TestLab({
   };
 
   const handleNextProblem = () => {
-    // 단계별 문제면 다음 문제로 이동
+    // 단계별 문제면 다음 문제로 이동 (DB ID는 1~72 순번이므로 +1)
     const currentStageId = DUMMY_PROBLEM.stageProblemId;
     if (currentStageId) {
-      const allProblems = STAGE_SECTIONS.flatMap((s) => s.problems);
-      const currentIdx = allProblems.findIndex((p) => p.id === currentStageId);
-      const next = allProblems[currentIdx + 1];
-      if (next) {
-        router.push(`/study?stageId=${next.id}`);
-        return;
+      const totalProblems = STAGE_SECTIONS.flatMap((s) => s.problems).length;
+      if (currentStageId < totalProblems) {
+        router.push(`/study?stageId=${currentStageId + 1}`);
+      } else {
+        router.push("/stages");
       }
-      // 마지막 문제면 단계별 목록으로
-      router.push("/stages");
       return;
     }
 
