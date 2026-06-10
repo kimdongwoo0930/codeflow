@@ -7,8 +7,6 @@ import { useEffect, useRef, useState } from "react";
 // ─── Resize constants ─────────────────────────────────────
 const CODE_MIN = 160;
 const CODE_MAX = 500;
-const AI_MIN   = 220;
-const AI_MAX   = 520;
 const STACK_MIN = 160;
 const HEAP_MIN  = 160;
 const DIVIDER_W = 8;
@@ -280,18 +278,17 @@ export default function VisualizationPage() {
   ]);
   const [chatInput, setChatInput] = useState("");
   const [isTutorLoading, setIsTutorLoading] = useState(false);
+  const [isTutorOpen, setIsTutorOpen] = useState(false);
   const [problemTitle, setProblemTitle] = useState("코드 시각화");
 
   // ── Panel widths (resizable) ────────────────────────────
   const [codePanelWidth,  setCodePanelWidth]  = useState(320);
-  const [aiPanelWidth,    setAiPanelWidth]    = useState(320);
   const [stackPanelWidth, setStackPanelWidth] = useState(0); // 0 = measure on mount
 
   const resizeRef = useRef<{
-    panel: "code" | "ai" | "stack";
+    panel: "code" | "stack";
     startX: number;
     startCode: number;
-    startAi: number;
     startStack: number;
   } | null>(null);
 
@@ -341,14 +338,13 @@ export default function VisualizationPage() {
   }, []);
 
   const startResize =
-    (panel: "code" | "ai" | "stack") =>
+    (panel: "code" | "stack") =>
     (e: ReactPointerEvent<HTMLDivElement>) => {
       e.preventDefault();
       resizeRef.current = {
         panel,
         startX:     e.clientX,
         startCode:  codePanelWidth,
-        startAi:    aiPanelWidth,
         startStack: stackPanelWidth,
       };
       document.body.style.cursor     = "col-resize";
@@ -360,8 +356,6 @@ export default function VisualizationPage() {
         const d = ev.clientX - s.startX;
         if (s.panel === "code") {
           setCodePanelWidth(Math.max(CODE_MIN, Math.min(CODE_MAX, s.startCode + d)));
-        } else if (s.panel === "ai") {
-          setAiPanelWidth(Math.max(AI_MIN, Math.min(AI_MAX, s.startAi - d)));
         } else {
           setStackPanelWidth(Math.max(STACK_MIN, s.startStack + d));
         }
@@ -902,121 +896,124 @@ export default function VisualizationPage() {
           </div>
         </section>
 
-        {/* Center ↔ AI divider */}
-        <div
-          className="hidden touch-none select-none xl:flex"
-          onPointerDown={startResize("ai")}
-          style={{ width: DIVIDER_W }}
-        >
-          <div className="flex w-full cursor-col-resize items-stretch justify-center bg-bg transition-colors hover:bg-white/[0.06]">
-            <div className="my-3 w-px rounded-full bg-white/15" />
-          </div>
-        </div>
+      </div>
 
-        {/* ── Right: AI Tutor ──────────────────────────── */}
-        <aside
-          className="hidden shrink-0 flex-col overflow-hidden border-l border-white/10 bg-bg/80 xl:flex"
-          style={{ width: aiPanelWidth }}
-        >
-          {/* Title bar */}
-          <div className="flex h-10 shrink-0 items-center justify-between border-b border-white/10 bg-[#1f2937] px-4">
-            <span className="text-[11px] uppercase tracking-[0.25em] text-slate-500">AI 튜터</span>
-            <span className="text-[11px] text-emerald-400">● Gemini</span>
-          </div>
-
-          {/* Snapshot context badge */}
-          <div className="shrink-0 border-b border-white/[0.07] px-4 py-2">
-            <span className="rounded-lg border border-blue/20 bg-blue/[0.07] px-2.5 py-1 text-[11px] text-blue/80">
-              스냅샷 {snap.step}: {snap.frames[0]?.label} · Line {snap.line}
-            </span>
-          </div>
-
-          {/* Chat messages */}
-          <div className="flex-1 space-y-3 overflow-y-auto px-4 py-4">
-            {chatMessages.map((msg, i) => (
-              <div
-                key={i}
-                className={`flex gap-2 ${msg.role === "user" ? "flex-row-reverse" : ""}`}
-              >
-                <div
-                  className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-[11px] font-bold ${
-                    msg.role === "ai"
-                      ? "bg-blue/20 text-blue"
-                      : "bg-purple/20 text-purple-300"
-                  }`}
-                >
-                  {msg.role === "ai" ? "AI" : "나"}
-                </div>
-                <div
-                  className={`max-w-[88%] rounded-2xl px-3 py-2 text-sm leading-6 ${
-                    msg.role === "ai"
-                      ? "rounded-bl-md bg-[#1f2937] text-slate-100"
-                      : "rounded-br-md border border-blue/20 bg-blue/10 text-slate-100"
-                  }`}
-                >
-                  {msg.content}
-                </div>
-              </div>
-            ))}
-            <div ref={chatEndRef} />
-          </div>
-
-          {/* Quick prompts */}
-          <div className="shrink-0 px-4 pb-3">
-            <div className="flex flex-wrap gap-2">
-              {quickPrompts.map((prompt) => (
-                <button
-                  key={prompt}
-                  onClick={() => handleSend(prompt)}
-                  className="rounded-full border border-white/15 px-3 py-1 text-[11px] text-slate-400 transition hover:border-blue/35 hover:text-blue"
-                >
-                  {prompt}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {/* Input */}
-          <div className="shrink-0 border-t border-white/10 p-4">
-            {isTutorLoading && (
-              <div className="mb-2 flex items-center gap-2 px-1">
-                <div className="flex gap-1">
-                  {[0, 1, 2].map((i) => (
-                    <span
-                      key={i}
-                      className="inline-block h-1.5 w-1.5 animate-bounce rounded-full bg-blue/60"
-                      style={{ animationDelay: `${i * 0.15}s` }}
-                    />
-                  ))}
-                </div>
-                <span className="text-[11px] text-slate-500">AI가 답변을 생성 중이에요...</span>
-              </div>
-            )}
-            <div className="flex gap-2">
-              <textarea
-                rows={1}
-                value={chatInput}
-                disabled={isTutorLoading}
-                onChange={(e) => setChatInput(e.target.value)}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter" && !e.shiftKey) {
-                    e.preventDefault();
-                    handleSend();
-                  }
-                }}
-                placeholder="현재 스냅샷에 대해 질문하세요..."
-                className="min-h-[42px] flex-1 resize-none rounded-xl border border-white/15 bg-[#1f2937] px-3 py-2 text-sm text-white outline-none transition placeholder:text-slate-500 focus:border-blue/40 disabled:opacity-50"
-              />
+      {/* ── 플로팅 AI 튜터 위젯 ─────────────────────── */}
+      <div className="fixed bottom-6 right-6 z-30 flex flex-col items-end">
+        {isTutorOpen && (
+          <div className="mb-3 flex h-[460px] w-[340px] max-w-[calc(100vw-3rem)] flex-col overflow-hidden rounded-2xl border border-white/10 bg-[#0b0f1a] shadow-2xl shadow-black/50">
+            {/* 헤더 */}
+            <div className="flex h-11 shrink-0 items-center justify-between border-b border-white/10 bg-[#1f2937] px-4">
+              <span className="flex items-center gap-2 text-sm font-medium text-slate-200">
+                AI 튜터
+                <span className="text-[11px] text-emerald-400">● Gemini</span>
+              </span>
               <button
-                onClick={() => handleSend()}
-                disabled={isTutorLoading}
-                className="flex h-[42px] w-[42px] shrink-0 items-center justify-center rounded-xl bg-blue text-sm font-semibold text-white transition hover:opacity-90 disabled:opacity-50"
+                onClick={() => setIsTutorOpen(false)}
+                className="flex h-6 w-6 items-center justify-center rounded-md text-slate-400 transition hover:bg-white/10 hover:text-slate-200"
               >
-                ↑
+                ✕
               </button>
             </div>
+
+            {/* 현재 스냅샷 컨텍스트 뱃지 */}
+            <div className="shrink-0 border-b border-white/[0.07] px-4 py-2">
+              <span className="rounded-lg border border-blue/20 bg-blue/[0.07] px-2.5 py-1 text-[11px] text-blue/80">
+                Step {snap.step} · Line {snap.line}
+              </span>
+            </div>
+
+            <div className="flex min-h-0 flex-1 flex-col overflow-hidden">
+              {/* 메시지 목록 */}
+              <div className="flex-1 space-y-3 overflow-y-auto px-4 py-4">
+                {chatMessages.map((msg, i) => (
+                  <div
+                    key={i}
+                    className={`flex gap-2 ${msg.role === "user" ? "flex-row-reverse" : ""}`}
+                  >
+                    <div
+                      className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-[11px] font-bold ${
+                        msg.role === "ai" ? "bg-blue/20 text-blue" : "bg-purple/20 text-purple-300"
+                      }`}
+                    >
+                      {msg.role === "ai" ? "AI" : "나"}
+                    </div>
+                    <div
+                      className={`max-w-[88%] whitespace-pre-wrap rounded-2xl px-3 py-2 text-sm leading-6 ${
+                        msg.role === "ai"
+                          ? "rounded-bl-md bg-[#1f2937] text-slate-100"
+                          : "rounded-br-md border border-blue/20 bg-blue/10 text-slate-100"
+                      }`}
+                    >
+                      {msg.content}
+                    </div>
+                  </div>
+                ))}
+                {isTutorLoading && (
+                  <div className="flex gap-2">
+                    <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-blue/20 text-[11px] font-bold text-blue">AI</div>
+                    <div className="flex items-center gap-1 rounded-2xl rounded-bl-md bg-[#1f2937] px-4 py-3">
+                      <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-slate-400 [animation-delay:0ms]" />
+                      <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-slate-400 [animation-delay:150ms]" />
+                      <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-slate-400 [animation-delay:300ms]" />
+                    </div>
+                  </div>
+                )}
+                <div ref={chatEndRef} />
+              </div>
+
+              {/* 빠른 질문 */}
+              <div className="shrink-0 px-4 pb-3">
+                <div className="flex flex-wrap gap-2">
+                  {quickPrompts.map((prompt) => (
+                    <button
+                      key={prompt}
+                      onClick={() => handleSend(prompt)}
+                      className="rounded-full border border-white/15 px-3 py-1 text-[11px] text-slate-400 transition hover:border-blue/35 hover:text-blue"
+                    >
+                      {prompt}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* 입력창 */}
+              <div className="border-t border-white/10 p-3">
+                <div className="flex gap-2">
+                  <textarea
+                    rows={1}
+                    value={chatInput}
+                    disabled={isTutorLoading}
+                    onChange={(e) => setChatInput(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter" && !e.shiftKey) {
+                        e.preventDefault();
+                        handleSend();
+                      }
+                    }}
+                    placeholder={isTutorLoading ? "AI가 생각 중이에요..." : "현재 단계에 대해 질문하세요..."}
+                    className="min-h-[42px] flex-1 resize-none rounded-xl border border-white/15 bg-[#1f2937] px-3 py-2 text-sm text-white outline-none transition placeholder:text-slate-500 focus:border-blue/40 disabled:opacity-50"
+                  />
+                  <button
+                    onClick={() => handleSend()}
+                    disabled={isTutorLoading}
+                    className="flex h-[42px] w-[42px] items-center justify-center rounded-xl bg-blue text-sm font-semibold text-white transition hover:opacity-90 disabled:opacity-40"
+                  >
+                    ↑
+                  </button>
+                </div>
+              </div>
+            </div>
           </div>
-        </aside>
+        )}
+
+        <button
+          onClick={() => setIsTutorOpen((o) => !o)}
+          className="flex h-14 w-14 items-center justify-center rounded-full bg-gradient-to-br from-blue to-indigo-500 text-xl shadow-lg shadow-blue/30 transition hover:scale-105 hover:opacity-95"
+          aria-label={isTutorOpen ? "AI 튜터 닫기" : "AI 튜터 열기"}
+        >
+          {isTutorOpen ? "✕" : "💬"}
+        </button>
       </div>
 
       {/* ─── Bottom Controls ──────────────────────────── */}
