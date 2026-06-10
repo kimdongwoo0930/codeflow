@@ -1390,6 +1390,31 @@ export function TestLab({
   const editorCodeRef = useRef(editorCode);
   useEffect(() => { editorCodeRef.current = editorCode; }, [editorCode]);
 
+  // 단계별 문제 전환 시: 현재 코드 저장 → 새 문제 코드로 교체
+  const prevStageIdRef = useRef(problemProp?.stageProblemId);
+  useEffect(() => {
+    const prev = prevStageIdRef.current;
+    const next = problemProp?.stageProblemId;
+    if (prev === next) return;
+    prevStageIdRef.current = next;
+    if (prev === undefined) return; // 첫 마운트는 스킵
+
+    // 이전 문제 코드 저장
+    saveCodeToServer(editorCodeRef.current);
+
+    // 새 문제 코드로 에디터 초기화
+    setEditorCode(problemProp?.lastCode ?? problemProp?.startCode ?? JAVA_DEFAULT_CODE);
+    setPhase("editor");
+    setTrace(null);
+    setTestResults(null);
+    setSubmissionReview(null);
+    setEditorStatus("idle");
+    setEditorOutput("실행 버튼을 누르면 결과가 여기에 표시됩니다.");
+    setSnapshotIndex(0);
+    setIsRunning(false);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [problemProp?.stageProblemId]);
+
   useEffect(() => {
     const id = setInterval(() => {
       if (phase === "editor") saveCodeToServer(editorCodeRef.current);
@@ -1604,6 +1629,8 @@ export function TestLab({
             trace: result?.trace ?? [],
             programOutput: output,
             title: DUMMY_PROBLEM.title,
+            problemId: DUMMY_PROBLEM.problemId ?? null,
+            stageProblemId: DUMMY_PROBLEM.stageProblemId ?? null,
           }),
         );
       }
@@ -1620,6 +1647,21 @@ export function TestLab({
   };
 
   const handleNextProblem = () => {
+    // 단계별 문제면 다음 문제로 이동
+    const currentStageId = DUMMY_PROBLEM.stageProblemId;
+    if (currentStageId) {
+      const allProblems = STAGE_SECTIONS.flatMap((s) => s.problems);
+      const currentIdx = allProblems.findIndex((p) => p.id === currentStageId);
+      const next = allProblems[currentIdx + 1];
+      if (next) {
+        router.push(`/study?stageId=${next.id}`);
+        return;
+      }
+      // 마지막 문제면 단계별 목록으로
+      router.push("/stages");
+      return;
+    }
+
     setEditorCode(DUMMY_PROBLEM.startCode ?? JAVA_DEFAULT_CODE);
     setTrace(null);
     setPhase("editor");
@@ -2627,12 +2669,6 @@ export function TestLab({
                 className="rounded-xl border border-cyan-400/25 bg-cyan-400/10 px-4 py-2.5 text-sm font-semibold text-cyan-300 transition hover:border-cyan-300/40 hover:bg-cyan-400/15"
               >
                 시각화 보기
-              </Link>
-              <Link
-                href="/study/records"
-                className="rounded-xl border border-white/15 px-4 py-2.5 text-sm text-slate-200 transition hover:border-blue/40 hover:text-white"
-              >
-                제출 기록 보기
               </Link>
               {resultPassed ? (
                 <button

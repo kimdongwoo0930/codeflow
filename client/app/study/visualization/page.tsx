@@ -305,6 +305,7 @@ export default function VisualizationPage() {
   const [speed, setSpeed] = useState(1200);
   const [snapshots, setSnapshots] = useState<Snapshot[]>(SNAPSHOTS);
   const [codeLines, setCodeLines] = useState<string[]>(CODE_LINES);
+  const [backHref, setBackHref] = useState("/study");
   const [chatMessages, setChatMessages] = useState<ChatMessage[]>([
     {
       role: "ai",
@@ -361,6 +362,11 @@ export default function VisualizationPage() {
         role: "ai",
         content: `"${data.title}" 문제의 실행 과정을 단계별로 확인할 수 있어요. 스택과 힙 메모리가 어떻게 변하는지 살펴보세요!`,
       }]);
+
+      // 돌아갈 문제 링크 설정
+      const d = data as typeof data & { problemId?: number; stageProblemId?: number };
+      if (d.stageProblemId) setBackHref(`/study?stageId=${d.stageProblemId}`);
+      else if (d.problemId) setBackHref(`/study?problemId=${d.problemId}`);
     } catch {
       // sessionStorage 없거나 파싱 실패 시 기본 더미 데이터 유지
     }
@@ -475,7 +481,7 @@ export default function VisualizationPage() {
       <header className="z-20 shrink-0 border-b border-white/10 bg-bg/95 backdrop-blur-xl">
         <div className="flex h-14 items-center justify-between px-4 sm:px-6">
           <Link
-            href="/study"
+            href={backHref}
             className="flex items-center gap-1.5 text-sm text-slate-400 transition hover:text-white"
           >
             ← 학습으로
